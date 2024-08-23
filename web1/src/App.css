@@ -1,0 +1,110 @@
+.App {
+  display: flex;
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.vertical-navbar {
+  height: 100vh;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #f8f9fa;
+  border-right: 1px solid #ddd;
+}
+
+.vertical-menu {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.nav-link {
+  padding: 10px 20px;
+  text-align: left;
+  color: #000;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  background-color: #0080ff;
+}
+
+.dropdown-toggle {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown-toggle:hover {
+  background-color: #343a40; /* Background saat hover */
+  color: #ffffff; /* Warna teks saat hover */
+  border: 1px solid #ffffff; /* Border saat hover */
+}
+
+hr {
+  border-top: 1px solid white;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+  .vertical-navbar {
+    width: 100%;
+    height: auto;
+    position: static;
+  }
+
+  .vertical-menu {
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 0;
+  }
+
+  .nav-link {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .vertical-menu {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
