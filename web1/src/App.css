@@ -37,6 +37,11 @@
   background-color: #0080ff;
 }
 
+.nav-link:active {
+  background-color: #0080ff;
+  color: #0080ff;
+}
+
 .dropdown-toggle {
   transition: background-color 0.3s, color 0.3s;
 }
