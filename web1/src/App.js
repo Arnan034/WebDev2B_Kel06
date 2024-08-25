@@ -20,6 +20,9 @@ import {
   NavLink,
 } from "react-router-dom";
 import Countries from "./Countries";
+import Awards from "./Awards";
+import Genres from "./Genres";
+import Actors from "./Actors";
 
 function Sidebar() {
   return (
@@ -136,6 +139,9 @@ function App() {
             <Routes>
               <Route path="/" element={<h3>Welcome to DramaKu</h3>} />
               <Route path="/countries" element={<Countries />} />
+              <Route path="/awards" element={<Awards />} />
+              <Route path="/genres" element={<Genres />} />
+              <Route path="/actors" element={<Actors />} />
               {/* Tambahkan route lainnya di sini */}
             </Routes>
           </div>
