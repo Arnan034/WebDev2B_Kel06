@@ -1,0 +1,267 @@
+/* General reset and styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Side Bar */
+/* User image styling */
+.user-img {
+  width: 50px;
+  border-radius: 50%;
+  border: 1px solid #eee;
+}
+
+/* Sidebar styling */
+.sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 80px;
+  background-color: #12171e;
+  padding: 0.4rem 0.8rem;
+  transition: all 0.5s ease;
+}
+
+/* Adjust sidebar width and content shift when active */
+.sidebar.active {
+  width: 250px;
+}
+
+.sidebar.active ~ .main-contents {
+  margin-left: 250px; /* Shift main content to the right */
+  width: calc(100% - 250px); /* Adjust width to fill available space */
+}
+
+/* Sidebar toggle button styling */
+#btn {
+  position: absolute;
+  color: #fff;
+  top: 0.4rem;
+  left: 50%;
+  font-size: 1.2rem;
+  line-height: 50px;
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+
+/* Adjust button position when sidebar is active */
+.sidebar.active #btn {
+  left: 90%;
+}
+
+/* Sidebar logo styling */
+.sidebar .top .logo {
+  color: #fff;
+  display: flex;
+  height: 50px;
+  width: 100%;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+/* Show logo when sidebar is active */
+.sidebar.active .top .logo {
+  opacity: 1;
+}
+
+.sidebar .top .logo i {
+  font-size: 2rem;
+  margin-right: 5px;
+}
+/* User section styling */
+.user {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.user p {
+  color: #fff;
+  margin-left: 1.2rem;
+}
+
+/* Bold text styling */
+.bold {
+  font-weight: 600;
+}
+
+/* Navigation items styling */
+.sidebar ul {
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar ul li {
+  position: relative;
+  list-style-type: none;
+  height: 50px;
+  margin: 0.8rem auto;
+  line-height: 50px;
+}
+
+.sidebar ul li a {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  border-radius: 0.8rem;
+  padding: 0 1rem;
+  height: 100%;
+}
+
+.sidebar ul li a:hover {
+  background-color: #fff;
+  color: #12171e;
+}
+
+.sidebar ul li a i {
+  min-width: 55px;
+  text-align: left;
+  height: 50px;
+  line-height: 50px;
+  border-radius: 12px;
+  padding-left: 5px;
+}
+
+.sidebar navlink:active {
+  background-color: #ffb700;
+  color: #ffffff;
+}
+
+/* Tooltip styling */
+.tooltip {
+  position: absolute;
+  left: 125px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0.5rem 0.8rem rgba(0, 0, 0, 0.2);
+  border-radius: .6rem;
+  padding: .4rem 1.2rem;
+  line-height: 1.8;
+  z-index: 20;
+  opacity: 0;
+  background-color: #333;
+  color: #fff;
+}
+
+/* Show tooltip on hover */
+.sidebar ul li:hover .tooltip {
+  opacity: 1;
+}
+
+/* Hide tooltip when sidebar is active */
+.sidebar.active ul li .tooltip {
+  display: none;
+}
+
+/* End Sidebar */
+
+/* Main content styling */
+.main-contents {
+  position: relative;
+  background-color: #eee;
+  min-height: 100vh;
+  margin-left: 80px; /* Margin to account for the default sidebar width */
+  transition: margin-left 0.5s ease;
+  padding: 1rem;
+}
+
+.container-main {
+  display: flex;
+  justify-content: space-around;
+}
+
+/* Search */
+.btn-custom {
+  width: auto; /* Set to auto to ensure the button size fits its content */
+}
+.input-group {
+  max-width: 800px; /* Adjust max-width as needed */
+}
+
+/* End Search */
+
+
+/* Card */
+.card {
+  width: 100%; /* Make card take full width of its container */
+  max-width: 400px; /* Set a maximum width for the card */
+  border: 1px solid #ddd; /* Add a border to the card */
+  border-radius: 10px; /* Rounded corners for the card */
+  overflow: hidden; /* Ensure content doesn't overflow */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add shadow to the card */
+}
+
+.card a {
+  display: block; /* Make entire card clickable */
+  text-decoration: none; /* Remove underline from links */
+  color: inherit; /* Inherit color from parent */
+}
+
+.card-thumbnail {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+}
+
+.card:hover img {
+  transform: scale(1.1); /* Slightly enlarge image on hover */
+  border-radius: 5px;
+}
+.card-label {
+  position: absolute;
+  top: 10px; /* Distance from top */
+  right: 7px; /* Distance from right */
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  color: white;
+  padding: 5px 5px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  transition: transform 0.3s ease; /* Smooth scaling effect */
+  z-index: 1; /* Ensure label is above image */
+}
+
+.card:hover .card-label {
+    transform: scale(1.05); /* Slightly enlarge label on hover */
+}
+
+.card-thumbnail img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 10px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  text-align: left;
+  max-height: 50px;
+}
+
+.card-text {
+  font-size: 0.875rem;
+  color: #6c757d;
+  text-align: left;
+}
+
+.card-view {
+  font-size: 0.875rem;
+  /* color: #6c757d; */
+  text-align: right;
+}
+
+  /* End Card */
