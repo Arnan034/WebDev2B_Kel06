@@ -1,3 +1,73 @@
+/* Title Web */
+.title-web{
+  width: 15%;
+  position: absolute;
+  padding: 15px;
+  background-color: transparent;
+  justify-content: space-between; /* justify-content-between */
+}
+
+.title-web .name-web {
+  padding-bottom: 0.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.title-web .title{
+  text-decoration: none;
+  color: gold;
+  font-weight: 700;
+}
+
+.title-web .title:hover{
+  color: black;
+}
+/* End Title Web */
+
+/* Sidebaar Left */
+.sidebar-left{
+  width: 230px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: gold; /* bg-dark */
+  padding: 20px;
+  justify-content: space-between; /* justify-content-between */
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  border-left: 2px solid black;
+}
+  
+.sidebar-left .name-web {
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid black;
+  text-align: center;
+  margin-bottom: 20px;
+}
+  
+.sidebar-left .title{
+  text-decoration: none;
+  color: black;
+  font-weight: 700;
+}
+  
+.sidebar-left .title:hover .title:active {
+  color: white;
+}
+
+/* Smaller screen adjustments */
+@media (max-width: 992px) {
+  .sidebar-left {
+    width: 220px;
+  }
+}
+  
+@media (max-width: 768px) {
+  .sidebar-left {
+    width: 180px;
+  }
+}
+
 .vertical-navbar {
   height: 100vh;
   width: 250px;
