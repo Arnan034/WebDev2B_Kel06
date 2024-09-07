@@ -1046,7 +1046,8 @@ p {
   max-width: 500px;
   width: 100%;
   padding: 20px;
-  left: 35%;
+  left: 30%;
+  margin-bottom: 30px;
 }
 
 .comment-form-container h2 {
@@ -1159,6 +1160,14 @@ p {
 
 .comment-stars label:hover ~ label {
   color: #f39c12; /* Warna kuning saat hover */
+}
+
+@media (max-width: 900px) {
+  .comment-form-container {
+      left: 0;
+      margin-right: auto;
+      margin-left: auto;
+  }
 }
 
 @media (max-width: 768px) {
