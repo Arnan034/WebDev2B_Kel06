@@ -18,12 +18,27 @@
             </a>
             <hr class="text-white my-2">
             <ul class="nav nav-pills flex-column mt-4">
-              <li class="nav-item py-2 py-sm-0">
-                <a href="CMSDramas.html" class="nav-link text-white">
+              <li class="nav-item">
+                <a class="nav-link text-white">
                   <i class="fas fa-film fa-lg"></i>
                   <span class="fs-5 ms-2 d-none d-sm-inline">Dramas</span>
-                </a>
-              </li>
+                  <i class="fas fa-caret-down ms-2 fa-lg"></i> <!-- Icon untuk menandakan dropdown -->
+                </a>              
+                <ul class="nav flex-column ms-3" id="dramasSubmenu">
+                    <li class="nav-item">
+                        <a href="CMSValidate.html" class="nav-link text-white">
+                          <i class="fas fa-circle-check fa-lg"></i>
+                          <span class="fs-5 ms-2 d-none d-sm-inline">Validate</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="CMSInputNewDrama.html" class="nav-link text-white">
+                          <i class="fas fa-pen-to-square fa-lg"></i>
+                          <span class="fs-5 ms-2 d-none d-sm-inline">Input New Drama</span>
+                        </a>
+                    </li>
+                </ul>
+              </li> 
               <li class="nav-item py-2 py-sm-0">
                 <a href="CMSCountries.html" class="nav-link text-white active">
                   <i class="fas fa-globe fa-lg"></i>

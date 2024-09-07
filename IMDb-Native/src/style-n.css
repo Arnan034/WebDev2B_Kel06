@@ -16,6 +16,18 @@
   margin-top: 20px;
 }
 
+/* Hide the submenu by default */
+#dramasSubmenu {
+  display: none;
+  /* Optionally add transition for a smooth effect */
+  transition: display 0.1s ease;
+}
+
+/* Show the submenu when hovering over the parent item */
+.nav-item:hover #dramasSubmenu {
+  display: block;
+}
+
 .nav-link {
   padding: 10px 20px;
   text-align: left;
