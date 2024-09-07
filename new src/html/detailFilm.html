@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film Detail Page</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+    /* Detail Page */
+    .film-detail-container {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 30px auto; /* Center align container */
+        max-width: 75%; /* Optional: constrain the width */
+    }
+
+    .film-image {
+        flex: 1;
+        max-width: 300px;
+        height: auto;
+        aspect-ratio: 3 / 4;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-right: 30px;
+    }
+
+    .film-info {
+        flex: 2;
+        padding: 15px;
+    }
+
+    .film-info h1 {
+        font-size: 1.75rem;
+        margin-bottom: 0.8rem;
+        font-weight: bold;
+    }
+
+    .film-info h2 {
+        font-size: 1.3rem;
+        color: #6c757d;
+        margin: 0.8rem 0;
+    }
+
+    .film-info p {
+        margin: 5px 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+    
+    .film-info .genre-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .film-info .genre-item {
+        background-color: transparent;
+        border: 2px solid gold;
+        border-radius: 30px;
+        padding: 2px 10px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .film-info .genre-item:hover {
+        background-color: gold;
+        color: white;
+        cursor: default;
+    }
+
+    /* Responsive */
+    @media (max-width: 1020px){
+        .film-detail-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .film-image {
+        max-width: 100%;
+        margin-right: 0;
+    }
+
+    .film-info {
+        width: 100%;
+        text-align: left;
+        margin-top: 20px; /* Add space above film-info */
+    }
+    }
+
+    @media (max-width: 768px) {
+        .film-detail-container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .film-image {
+            max-width: 100%;
+            aspect-ratio: auto;
+            margin-right: 0;
+        }
+
+        .film-info {
+            width: 100%;
+            text-align: left;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="film-detail-container">
+            <img src="https://i.pinimg.com/564x/8d/8a/36/8d8a360ed8d6b3e121f7fcec50a71ae7.jpg" alt="Film Image" class="film-image">
+            <div class="film-info">
+                <h1>Ini untuk judul film yang menarikkk</h1>
+                <div class="genre-list">
+                    <span class="genre-item">Action</span>
+                    <span class="genre-item">Adventure</span>
+                    <span class="genre-item">Drama</span>
+                </div>
+                <h2>Other Title</h2>                
+                <p><strong>Year:</strong> 2024</p>
+                <p class="my-2">This is a brief synopsis of the film. This is a brief synopsis of the film.<br>...<br>...</p>
+                <p><strong>Award:</strong> TOP TIP TAP TOP</p>
+                <p><strong>Rate:</strong> 4.5/5</p>
+                <p><strong>Availability:</strong> Yes</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

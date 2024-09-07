@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film Detail</title>
+    <!-- Link to Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Link to Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .actor-list-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .actor-list {
+            display: flex;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            width: 1040px; /* Default for 8 actors */
+        }
+        .actor-item {
+            width: 120px;
+            margin: 0 5px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .actor-item img {
+            width: 120px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .actor-item p {
+            font-size: medium;
+            font-weight: bold;
+        }
+        .prev-btn-actor, .next-btn-actor {
+            font-size: 24px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        .prev-btn-actor i, .next-btn-actor i {
+            font-size: 32px;
+        }
+        .prev-btn-actor i:hover, .next-btn-actor i:hover {
+            color: gold;
+        }
+
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .actor-list {
+                width: 780px; /* Display 6 actors */
+            }
+        }
+
+        @media (max-width: 992px) {
+            .actor-list {
+                width: 520px; /* Display 4 actors */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .actor-list {
+                width: 390px; /* Display 4 actors */
+            }
+        }
+
+        @media (max-width: 576px) {
+            .actor-list {
+                width: 260px; /* Display 3 actors */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>Actors Involved</h2>
+    <div class="actor-list-container">
+        <button class="prev-btn-actor" onclick="scrollActors(-1)">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <div class="actor-list" id="actorList">
+            <div class="actor-item">
+                <img src="https://via.placeholder.com/120x160" alt="Actor 1">
+                <p>Actor 1</p>
+            </div>
+            <div class="actor-item">
+                <img src="https://via.placeholder.com/120x160" alt="Actor 2">
+                <p>Actor 2</p>
+            </div>
+            <div class="actor-item">
+                <img src="https://via.placeholder.com/120x160" alt="Actor 3">
+                <p>Actor 3</p>
+            </div>
+            <div class="actor-item">
+                <img src="https://via.placeholder.com/120x160" alt="Actor 4">
+                <p>Actor 4</p>
+            </div>
+            <div class="actor-item">
+                <img src="https://via.placeholder.com/120x160" alt="Actor 5">
+                <p>Actor 5</p>
+            </div>
+            <div class="actor-item">
+                <img src="https://via.placeholder.com/120x160" alt="Actor 6">
+                <p>Actor 6</p>
+            </div>
+            <div class="actor-item">
+                <img src="https://via.placeholder.com/120x160" alt="Actor 7">
+                <p>Actor 7</p>
+            </div>
+            <div class="actor-item">
+                <img src="https://via.placeholder.com/120x160" alt="Actor 8">
+                <p>Actor 8</p>
+            </div>
+            <div class="actor-item">
+                <img src="https://via.placeholder.com/120x160" alt="Actor 9">
+                <p>Actor 9</p>
+            </div>
+            <div class="actor-item">
+                <img src="https://via.placeholder.com/120x160" alt="Actor 10">
+                <p>Actor 10</p>
+            </div>
+        </div>
+        <button class="next-btn-actor" onclick="scrollActors(1)">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function scrollActors(direction) {
+        const container = document.getElementById('actorList');
+        const scrollAmount = 130 * direction; // Scroll by 8 actors at a time
+        container.scrollBy({
+            left: scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+</script>
+
+</body>
+</html>
