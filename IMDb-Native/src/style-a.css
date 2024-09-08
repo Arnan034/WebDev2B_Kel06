@@ -5,6 +5,38 @@
   box-sizing: border-box;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+/* Color Pallete */
+.bg-black-color{
+  background-color: #202020;
+}
+
+.bg-jet-color{
+  background-color: #333533;
+}
+
+.bg-orange-peel-color{
+  background-color: #ffa200;
+}
+
+.bg-selective-yellow-color{
+  background-color: #ffb700;
+}
+
+.black-color{
+  color: #202020;
+}
+
+.jet-color{
+  color: #333533;
+}
+
+.orange-peel-color{
+  color: #ffa200;
+}
+
+.selective-yellow-color{
+  color: #ffb700;
+}
 
 /* Side Bar */
 /* User image styling */

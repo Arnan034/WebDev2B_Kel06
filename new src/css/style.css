@@ -15,6 +15,41 @@ p {
   font-size: medium;
 }
 
+/* Color Pallete */
+/* Color Pallete */
+.bg-black-color{
+  background-color: #202020;
+}
+
+.bg-jet-color{
+  background-color: #333533;
+}
+
+.bg-orange-peel-color{
+  background-color: #ffa200;
+}
+
+.bg-selective-yellow-color{
+  background-color: #ffb700;
+}
+
+.black-color{
+  color: #202020;
+}
+
+.jet-color{
+  color: #333533;
+}
+
+.orange-peel-color{
+  color: #ffa200;
+}
+
+.selective-yellow-color{
+  color: #ffb700;
+}
+/* End Color Pallete */
+
 /* End Title Web */
 .title-web{
   width: 15%;
@@ -32,12 +67,11 @@ p {
 
 .title-web .title{
   text-decoration: none;
-  color: gold;
   font-weight: 700;
 }
 
 .title-web .title:hover{
-  color: black;
+  color: #202020;
 }
 /* End Title Web */
 
@@ -50,13 +84,13 @@ p {
 
 .back-button-detail-page a {
   text-decoration: none;
-  color: gold;
+  color: #ffb700;
   font-size: 2rem;
 }
 
 .back-button-detail-page a:hover {
   text-decoration: underline;
-  color:black;
+  color: #202020;
 }
 
 /* End back button */
@@ -67,6 +101,7 @@ p {
   transition: margin-right 0.3s ease;
   margin-left: 230px;
   padding: 20px;
+  /* background-color: #ffffff; */
 }
 
 .content.shifted {
@@ -81,11 +116,9 @@ p {
   top: 0;
   left: 0;
   height: 100%;
-  background-color: gold; /* bg-dark */
   padding: 20px;
   justify-content: space-between; /* justify-content-between */
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-  border-left: 2px solid black;
 }
 
 .sidebar-left .name-web {
@@ -97,12 +130,11 @@ p {
 
 .sidebar-left .title{
   text-decoration: none;
-  color: black;
   font-weight: 700;
 }
 
 .sidebar-left .title:hover{
-  color: white;
+  color: #ffffff;
 }
 
 /* Smaller screen adjustments */
@@ -110,11 +142,19 @@ p {
   .sidebar-left {
     width: 220px;
   }
+
+  .content {
+    margin-left: 220px;
+  }
 }
 
 @media (max-width: 768px) {
   .sidebar-left {
     width: 180px;
+  }
+
+  .content {
+    margin-left: 180px;
   }
 }
 
@@ -134,11 +174,10 @@ p {
 /* Efek hover untuk ikon dan link di dalam .region */
 .region:hover i,
 .region:hover a {
-  color: #f0f0f0;
+  color: #ffffff;
 }
 
 .region i {
-  color: black; /* Pastikan warna ikon sesuai dengan latar belakang */
   margin: 0 10px 0 10px;
 }
 
@@ -158,7 +197,6 @@ p {
     top: 0;
     right: -320px;
     height: 100%;
-    background-color: #fff;
     padding: 20px;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
     border-left: 2px solid gold;
@@ -178,7 +216,6 @@ p {
     z-index: 1000;
     width: 40px;
     height: 40px;
-    background-color: gold;
     border-radius: 10px 0 0 10px ;
     cursor: pointer;
     display: flex;
@@ -187,6 +224,7 @@ p {
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
     transition: right 0.3s ease;
 }
+
 .toggle-btn:hover {
     background-color: grey;
     color: black;
@@ -194,7 +232,7 @@ p {
 
 .toggle-btn i {
     font-size: 24px; /* Sesuaikan ukuran ikon di sini */
-    color: white;
+    color: #ffffff;
 }
 
 .sidebar-right.open + .toggle-btn {
@@ -202,10 +240,10 @@ p {
 }
 
 .sidebar-right h2 {
-    color: gold;
-    border-bottom: 2px solid gold;
+    border-bottom: 2px solid grey;
     padding-bottom: 10px;
     margin-bottom: 20px;
+    font-weight: bold;
 }
 
 .form-label {
@@ -213,39 +251,34 @@ p {
 }
 
 .form-select, .form-range, .form-control, .btn-primary {
-    border-color: gold;
+    border-color: #ffa200;
 }
 
 .form-select:focus, .form-range:focus, .form-control:focus, .btn-primary:focus {
-    border-color: #d4af37;
+    border-color: #ffa200;
     box-shadow: none;
 }
 
 .btn-primary {
     background-color: white;
-    color: gold;
+    color: #ffa200;
     font-weight: 500;
 }
 
 .btn-primary:hover {
-    background-color: #d4af37;
-    border-color: #d4af37;
+    background-color: gray;
+    border-color: darkgray;
     color: white;
+    transform: scale(1.03);
 }
 
 .btn-secondary {
-    background-color: white;
-    color: gold;
-    border: 1px solid gold;
-}
-
-.btn-secondary:hover {
-    background-color: gold;
+    background-color: #238b45;
     color: white;
 }
 
 .btn.active {
-  background-color: goldenrod; /* Warna latar belakang aktif */
+  background-color: #006ec1; /* Warna latar belakang aktif */
   color: white; /* Warna teks aktif */
 }
 
@@ -281,8 +314,6 @@ p {
     }
 }
 /* End Sidebar Right */
-
-
 
 /* Custom White-Gold Theme */
 .custom-container-fluid {
@@ -329,7 +360,7 @@ p {
 .search {
   margin-top: 2px;
   height: 70px;
-  background-color: #fff;
+  background-color: #f5f5f5;
   border-radius: 40px;
   padding: 10px;
   display: flex;
@@ -340,7 +371,7 @@ p {
 }
 
 .search_input {
-  color: black;
+  color: #ffa200;
   border: 0;
   outline: 0;
   background: none;
@@ -350,6 +381,7 @@ p {
   line-height: 40px;
   padding: 0 15px;
   transition: width 0.4s linear;
+  font-weight: 600;
 }
 
 .search_icon {
@@ -360,20 +392,20 @@ p {
   align-items: center;
   border-radius: 50%;
   color: white;
-  background-color: goldenrod;
+  background-color: #ffa200;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .search:hover .search_icon {
   background-color: white;
-  color: gold;
+  color: #ffa200;
 }
 
 /* Media queries for responsive design */
 @media (max-width: 1100px) {
   .search {
-    width: 60%;
+    width: 80%;
   }
 
   .search_icon {
@@ -387,7 +419,7 @@ p {
 
 @media (max-width: 950px) {
   .search {
-    width: 50%;
+    width: 70%;
   }
 
   .search_icon {
@@ -402,7 +434,7 @@ p {
 
 @media (max-width: 600px) {
   .search {
-    width: 40%;
+    width: 60%;
     padding: 10px;
   }
 
@@ -468,6 +500,7 @@ p {
 
 .category-button:hover {
   background-color: grey;
+  border-color: grey;
   color: white;
 }
 
@@ -479,7 +512,7 @@ p {
   transform: translateY(-50%);
   border: none;
   color: white;
-  background-color: gold;
+  background-color: #ffa200;
   font-size: 24px;
   cursor: pointer;
   padding: 10px;
@@ -503,7 +536,7 @@ p {
 }
 
 .category-button.active {
-  background-color: gold;
+  background-color: #ffb700;
   color: white;
 }
 
@@ -584,7 +617,7 @@ p {
 }
 
 .rating {
-  color: #f39c12;
+  color: #ffb700;
   font-size: 1.1rem;
 }
 
@@ -619,22 +652,53 @@ p {
   color: inherit;
 }
 
+
+.sidebar-right.open + .toggle-btn {
+  right: 320px;
+}
+
 /* Responsive adjustments */
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
   .col-lg-3 {
     flex: 0 0 25%;
     max-width: 25%;
   }
+
+  .sidebar-right {
+    width: 280px;
+  }
+
+  .content.shifted {
+    margin-right: 280px;
+  }
+
+  .sidebar-right.open + .toggle-btn {
+    right: 280px;
+  }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1300px) {
+  .sidebar-right {
+    width: 240px;
+  }
+
+  .content.shifted {
+    margin-right: 240px;
+  }
+
+  .sidebar-right.open + .toggle-btn {
+    right: 240px;
+  }
+}
+
+@media (max-width: 1250px) {
   .col-md-4 {
     flex: 0 0 33.33%;
     max-width: 33.33%;
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1060px) {
   .col-sm-6 {
     flex: 0 0 50%;
     max-width: 50%;
@@ -758,6 +822,22 @@ p {
   width: 100%; /* Pastikan lebar penuh */
   height: 100%; /* Pastikan tinggi penuh */
 }
+
+@media (max-width: 768px) {
+  .card-search-horizontal {
+    flex-direction: column;
+  }
+
+  .card-search-img-left {
+    width: 100%; /* Menyesuaikan lebar gambar pada perangkat kecil */
+    height: auto;
+  }
+
+  .card-search-body {
+    padding: 10px;
+  }
+}
+
 
 @media (max-width: 768px) {
   .card-search-horizontal {
