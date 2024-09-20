@@ -1,19 +1,20 @@
-// import LeftSidebar from './pages/leftSidebar';
-// import ContentHome from './pages/contentHome'
-// import RightSidebar from './pages/rightSidebar';
-// import SearchHome from './pages/searchHome';
-// import DetailPage from './pages/detailPage';
-// import FilmDetail from './pages/FilmDetail';
-
-import ValidationMovie from './pages/ValidationMovie';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages1/home';
+import DetailFilm from './pages1/detailFilm';
+import SearchPage from './pages1/searchPage'; // Impor halaman pencarian
 
 import './App.css';
 
 function App() {
   return (
-    <>
-      <ValidationMovie />
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/detail" element={<DetailFilm />} />
+        <Route path="/search" element={<SearchPage />} /> {/* Rute untuk halaman pencarian */}
+      </Routes>
+    </Router>
   );
 }
 
