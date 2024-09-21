@@ -159,6 +159,14 @@ p {
 .content.shifted {
   margin-right: 320px;
 }
+
+.content-cms {
+  position: relative;
+  transition: margin-right 0.3s ease;
+  margin-left: 280px;
+  padding: 20px;
+}
+
 /* End of Content */
 
 /* Sidebaar Left */
@@ -194,13 +202,13 @@ p {
   }
 }
 
-.region-list {
+.region-list, .side-list {
   list-style-type: none;
   padding-left: 0;
   margin: 0 5px 15px 0;
 }
 
-.region {
+.region, .side {
   position: relative;
   padding: 5px 0 5px 0;
   margin-bottom: 10px;
@@ -208,18 +216,20 @@ p {
 
 
 /* Efek hover untuk ikon dan link di dalam .region */
-.region:hover i,
-.region:hover a {
-  color: #ffffff;
+.region:hover i, .side:hover i,
+.region:hover a, .side:hover a {
+  color: #f0f0f0;
 }
 
-.region i {
-  margin: 0 10px 0 10px;
+.region i, .side i {
+  color: black; /* Icon color */
+  margin: 0 10px;
+  max-width: 25px;
 }
 
-.region a {
-  color: black; /* Pastikan warna ikon sesuai dengan latar belakang */
-  font-size: 18px; /* Atur ukuran ikon jika perlu */
+.region a, .side a {
+  color: black; /* Link color */
+  font-size: 18px; /* Font size for link */
   margin-right: 2px;
   font-weight: 550;
 }
@@ -779,8 +789,6 @@ p {
 }
 /* End Filter Show */
 
-
-
 /* Card Search */
 .card-wrapper {
   position: relative; /* Membuat posisi relatif untuk card-wrapper */
@@ -894,6 +902,16 @@ p {
 /* End Card Search */
 
 /* Detail Page */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Transparansi abu-abu */
+  z-index: 1040; /* Di bawah modal (modal memiliki z-index 1050) */
+}
+
 .film-detail-container {
   display: flex;
   flex-wrap: wrap;
@@ -1364,3 +1382,188 @@ p {
   }
 }
 /* End Comment Drama */
+
+/* CMS */
+
+/* Sidebar CMS */
+#dramasSubmenu {
+  display: none;
+  /* Optionally add transition for a smooth effect */
+  padding-left: 5px;
+  transition: all 0.2s ease;
+  list-style-type: none; /* Ensure no bullets for submenu */
+}
+
+/* Default warna hitam untuk submenu link */
+#dramasSubmenu .side-link {
+  color: black; /* Warna default hitam */
+  text-decoration: none; /* Menghapus underline */
+}
+
+/* Saat di-hover, warna berubah menjadi putih */
+#dramasSubmenu .side-link:hover {
+  color: white; /* Ubah warna menjadi putih saat di-hover */
+  text-decoration: none; /* Tetap tidak ada underline */
+}
+
+/* Show the submenu when hovering over the parent item */
+.side:hover #dramasSubmenu {
+  display: block;
+  padding-top: 10px;
+}
+
+.side-link {
+  text-align: left;
+  color: #f0f0f0;
+  text-decoration: none;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.side-link:hover, .side-link:active {
+  color: #f0f0f0;
+}
+
+/* Change background on hover for side links */
+.side-pills li a:hover {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+/* Ensure active link is always white */
+.side-link.active {
+  color: #f0f0f0 !important;
+}  
+
+.sidebar-left-cms {
+  width: 280px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  padding: 20px;
+  justify-content: space-between; /* justify-content-between */
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  border-left: 2px solid black;
+}
+
+.side .side-link {
+  color: black; /* Link color */
+  font-size: 18px; /* Font size for link */
+  margin-right: 2px;
+  font-weight: 550;
+}
+
+.sidebar-left .name-web {
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid black;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sidebar-left-cms .name-web {
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid black;
+  text-align: center;
+  margin-bottom: 20px;
+}
+/* End SideBar CMS */
+
+/* Naia */
+.frame-img{
+  display: none; 
+  margin-top: 20px;
+  width: 100%;
+  max-height: 400px; 
+  object-fit: contain;
+}
+
+.no-column {
+  white-space: nowrap;
+  width: 7%;
+  text-align: center;
+}
+
+.country-column, .genre-column, .year-column, .award-column, .actorName-column, 
+.birthDate-column, .picture-column, .username-column, .email-column, .username-column, .rate-column {
+  white-space: nowrap;
+  width: auto;
+  text-align: left;
+}
+
+.actions-column {
+  white-space: nowrap;
+  width: 10%;
+  text-align: center;
+}
+
+.drama-column {
+  white-space: nowrap;
+  width: 10%;
+  text-align: left;
+}
+
+.comments-column, .synopsis-column {
+  max-width: 250px;
+  overflow: hidden;
+  word-wrap: break-word; /* Atau gunakan word-break: break-all; */
+}
+
+.card-list-actor .card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.card-list-actor .card-img-left {
+  width: 75px;
+  height: 75px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.card-list-actor .card-body {
+  position: relative;
+}
+
+.card-list-actor .card-body .btn-warning {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
+
+.card-list-actor .card-body .card-title {
+  position: left;
+  font-size: 18px;
+}
+
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+  .vertical-navbar {
+    width: 100%;
+    height: auto;
+    position: static;
+  }
+
+  .vertical-menu {
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 0;
+  }
+
+  .nav-link {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .vertical-menu {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+
+/* End Naia */
+/* End CMS */

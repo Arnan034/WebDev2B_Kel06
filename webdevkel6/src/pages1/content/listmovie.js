@@ -9,7 +9,7 @@ class ListMovie extends React.Component {
 
     render() {
         const movies = [
-            { title: "Movie Title 1", year: 2024, genre: "Action", imgSrc: "./assets/img/350x233.png", badge: "On Going", rating: "★★★★☆", views: "2K" },
+            { title: "Movie Title 1", year: 2024, genre: "Action", imgSrc: "./assets/img/350x233.png", badge: "On Going", rating: "★★★★☆", views: "2K", region: "Indonesia" },
             { title: "Movie Title 2", year: 2024, genre: "Comedy", imgSrc: "./assets/img/350x233.png", badge: "Completed", rating: "★★★☆☆", views: "1M" },
             { title: "Movie Title 3", year: 2024, genre: "Drama", imgSrc: "./assets/img/350x233.png", badge: "On Going", rating: "★★★☆☆", views: "3.4K" },
             { title: "Movie Title 4", year: 2024, genre: "Thriller", imgSrc: "./assets/img/350x233.png", badge: "Completed", rating: "★★★★☆", views: "20K" },

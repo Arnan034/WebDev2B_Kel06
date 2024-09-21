@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dramaku - Genres</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    
+    <!-- <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.css"> -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preload" href="../script/script.js" as="script">
+
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar left -->
+    <div class="sidebar-left-cms" id="sidebar-left">
+        <div class="container-fluid">
+            <h2 class="name-web">
+                <a href="Home.html" class="title">DramaKu</a>    
+            </h2>
+            <ul class="side-list">
+                <li class="side">
+                  <a class="side-link">
+                    <i class="fas fa-film fa-lg"></i>
+                    <span>Dramas</span>
+                    <i class="fas fa-caret-down ms-2 fa-lg"></i> <!-- Icon untuk menandakan dropdown -->
+                  </a>              
+                  <ul class="side flex-column ms-3" id="dramasSubmenu">
+                      <li class="side">
+                            <i class="fas fa-circle-check side-link"></i>
+                            <a href="CMSValidate.html" class="side-link">
+                                <span class="fs-6">Validate</span>
+                            </a>
+                      </li>
+                      <li class="side">
+                            <i class="fas fa-pen-to-square side-link"></i>
+                            <a href="CMSInputNewDrama.html" class="side-link">
+                                <span class="fs-6">Input New Drama</span>
+                            </a>
+                      </li>
+                  </ul>
+                </li>  
+                <li class="side">
+                    <i class="fas fa-globe fa-lg"></i>
+                    <a href="CMSCountries.html">
+                      <span>Countries</span>
+                    </a>
+                </li>
+                <li class="side">
+                    <i class="fas fa-award fa-lg"></i>
+                    <a href="CMSAwards.html">
+                      <span>Awards</span>
+                    </a>
+                </li>
+                <li class="side">
+                    <i class="fas fa-masks-theater fa-lg side-link active"></i>
+                    <a href="CMSGenres.html" class="side-link active">
+                      <span>Genres</span>
+                    </a>
+                </li>
+                <li class="side">
+                    <i class="fas fa-user fa-lg"></i>
+                    <a href="CMSActors.html">
+                      <span>Actors</span>
+                    </a>
+                </li>
+                <li class="side">
+                    <i class="fas fa-comments fa-lg"></i>
+                    <a href="CMSComments.html">
+                      <span>Comments</span>
+                    </a>
+                </li>
+                <li class="side">
+                    <i class="fas fa-users fa-lg"></i>
+                    <a href="CMSUsers.html">
+                      <span>Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                  <div class="dropdown">
+                    <button
+                      class="btn border-none dropdown-toggle text-black"
+                      type="button"
+                      id="dropdownMenuButton1"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <i class="fas fa-user fa-lg"></i>
+                      <span class="fs-5 ms-2 d-none d-sm-inline">Naia</span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                      <li>
+                        <a class="dropdown-item" href="#">
+                          <i class="fas fa-sign-out-alt me-2"></i>
+                          Logout
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- End Sidebar Left -->
+
+    <!-- Content -->
+    <div class="content-cms">
+        <div class="col p-4">
+            <h3>Add Genre</h3>
+            <hr class="text-black my-2"><br>
+            <form id="genreForm" class="mb-4">
+              <div class="mb-3 row align-items-center">
+                <label for="genre" class="form-label col-sm-3">Genre</label>
+                <div class="col-sm-9"> 
+                  <input type="text" class="form-control" placeholder="Type genre here..." id="genre" name="genre" required>
+                </div>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-success">Submit</button>
+              </div>
+            </form>
+            <br>
+
+            <h3>List of Genres</h3>
+            <table class="table table-striped table-hover" id="genresTable">
+              <thead>
+                <tr>
+                  <th class="text-center no-column table-warning">No</th>
+                  <th class="text-center genre-column table-warning">Genres</th>
+                  <th class="text-center action-column table-warning">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const form = document.getElementById("genreForm");
+          const tableBody = document.querySelector("#genresTable tbody");
+          const notificationContainer = document.createElement("div");
+          form.insertAdjacentElement("afterend", notificationContainer);
+        
+          let genres = [
+            { no: 1, genre: "Action" },
+            { no: 2, genre: "Thriller" },
+            { no: 3, genre: "Romance" }
+          ];
+        
+          function renderTable() {
+            tableBody.innerHTML = "";
+            genres.forEach((item, index) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td class="text-center no-column">${item.no}</td>
+                <td class="genre-column">${item.genre}</td>
+                <td class="text-center actions-column">
+                  <button class="btn btn-edit" data-index="${index}">Edit</button>
+                  <button class="btn btn-delete" data-index="${index}">Delete</button>
+                </td>
+              `;
+              tableBody.appendChild(row);
+            });
+          }
+        
+          function showAlert(message, type) {
+            const alertDiv = document.createElement("div");
+            alertDiv.className = `alert alert-${type} mt-3`;
+            alertDiv.textContent = message;
+            notificationContainer.innerHTML = ''; // Clear previous notifications
+            notificationContainer.appendChild(alertDiv);
+        
+            setTimeout(() => {
+              alertDiv.remove();
+            }, 3000);
+          }
+        
+          function handleAddGenre(event) {
+            event.preventDefault();
+            const genreInput = document.getElementById("genre");
+            const newGenre = {
+              no: genres.length ? genres[genres.length - 1].no + 1 : 1,
+              genre: genreInput.value
+            };
+            genres.push(newGenre);
+            genreInput.value = "";
+            renderTable();
+            showAlert("Genre added successfully!", "success");
+          }
+        
+          function handleEditGenre(index) {
+            const newGenreName = prompt("Enter new genre name:", genres[index].genre);
+            if (newGenreName) {
+              genres[index].genre = newGenreName;
+              renderTable();
+              showAlert("Genre updated successfully!", "success");
+            }
+          }
+        
+          function handleDeleteGenre(index) {
+            const confirmed = confirm("Are you sure you want to delete this genre?");
+            if (confirmed) {
+              genres = genres.filter((_, idx) => idx !== parseInt(index, 10))
+                                   .map((item, idx) => ({ ...item, no: idx + 1 }));
+              renderTable();
+              showAlert("Genre deleted successfully!", "danger");
+            }
+          }
+        
+          form.addEventListener("submit", handleAddGenre);
+        
+          tableBody.addEventListener("click", (event) => {
+            const target = event.target;
+            if (target.classList.contains("btn-edit")) {
+              const index = target.dataset.index;
+              handleEditGenre(index);
+            } else if (target.classList.contains("btn-delete")) {
+              const index = target.dataset.index;
+              handleDeleteGenre(index);
+            }
+          });
+        
+          renderTable();
+        });
+    </script>    
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../script/script.js"></script>
+</body>
+</html>
