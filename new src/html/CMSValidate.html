@@ -152,6 +152,7 @@
                   <th class="text-center table-warning">Genres</th>
                   <th class="text-center table-warning">Synopsis</th>
                   <th class="text-center table-warning">Status</th>
+                  <th class="text-center table-warning">Posted by</th>
                   <th class="text-center action-column table-warning">Actions</th>
                 </tr>
               </thead>
@@ -189,11 +190,11 @@
             form.insertAdjacentElement("afterend", notificationContainer);
         
             let dramas = [
-                { no: 1, drama: 'Drama A', actors: 'Actor 1', genres: 'Genre 1', synopsis: 'Amazing storyline and great acting!', status: 'Approved' },
-                { no: 2, drama: 'Drama B', actors: 'Actor 2', genres: 'Genre 2', synopsis: 'Good drama but a bit slow in the middle.', status: 'Unapproved' },
-                { no: 3, drama: 'Drama C', actors: 'Actor 3', genres: 'Genre 3', synopsis: "One of the best dramas I've ever watched!", status: 'Approved' },
-                { no: 4, drama: 'Drama D', actors: 'Actor 4', genres: 'Genre 4', synopsis: "Not up to the mark, expected better.", status: 'Unapproved' },
-                { no: 5, drama: 'Drama E', actors: 'Actor 5', genres: 'Genre 5', synopsis: "Good overall but had some predictable moments.", status: 'Approved' }
+                { no: 1, drama: 'Love Next Door', actors: 'Jung Hae In, Jung Somin', genres: 'Genre 1', synopsis: 'Amazing storyline and great acting!', status: 'Approved', posted_by: 'NaiaSiaz' },
+                { no: 2, drama: 'Drama B', actors: 'Actor 2', genres: 'Genre 2', synopsis: 'Good drama but a bit slow in the middle.', status: 'Unapproved', posted_by: 'ArnandaPrasatya' },
+                { no: 3, drama: 'Drama C', actors: 'Actor 3', genres: 'Genre 3', synopsis: "One of the best dramas I've ever watched!", status: 'Approved', posted_by: 'ArnandaPrasatya' },
+                { no: 4, drama: 'Drama D', actors: 'Actor 4', genres: 'Genre 4', synopsis: "Not up to the mark, expected better.", status: 'Unapproved', posted_by: 'NaiaSiaz' },
+                { no: 5, drama: 'Drama E', actors: 'Actor 5', genres: 'Genre 5', synopsis: "Good overall but had some predictable moments.", status: 'Approved', posted_by: 'fufufafa' }
             ];
         
             function renderTable(filteredDramas = dramas) {
@@ -207,6 +208,7 @@
                         <td>${item.genres}</td>
                         <td class="synopsis-column">${item.synopsis}</td>
                         <td>${item.status}</td>
+                        <td>${item.posted_by}</td>
                         <td class="text-center actions-column">
                             <button class="btn btn-edit" data-index="${index}">Edit</button>
                             <button class="btn btn-delete" data-index="${index}">Delete</button>
