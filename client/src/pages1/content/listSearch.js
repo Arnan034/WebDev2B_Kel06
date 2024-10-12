@@ -2,15 +2,20 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Link} from "react-router-dom";
 import axios from "axios";
 
-const ListSearch = ({ filterCountry, searchQuery }) => {
+const ListSearch = ({ filterCountry, searchQuery, filterMovie }) => {
     const [movies, setMovies] = useState([]);
 
     const fetchMovies = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:5000/api/film/search', { 
                 params: { 
-                  country: filterCountry ? parseInt(filterCountry) : undefined, // Pastikan ini adalah integer
-                  search: searchQuery 
+                    search: searchQuery,
+                    country: filterCountry ? parseInt(filterCountry) : undefined, // Pastikan ini adalah integer
+                    year: filterMovie.year,
+                    availability: filterMovie.availability,
+                    genre: filterMovie.genre,
+                    award: filterMovie.award,
+                    status: filterMovie.status
                 } 
             });
 
@@ -28,7 +33,7 @@ const ListSearch = ({ filterCountry, searchQuery }) => {
         } catch (error) {
             console.error('Error fetching movie data:', error);
         }
-    }, [filterCountry, searchQuery]); // Dependency on filterCountry only
+    }, [filterCountry, searchQuery, filterMovie]); // Dependency on filterCountry only
 
     useEffect(() => {
         fetchMovies();

@@ -129,7 +129,7 @@ class Film {
         };
     }
 
-    static async getBySearch(country, search) {
+    static async getBySearch(search, country, year, availability, genre, award, status) {
         let query = `
             SELECT f.id_film AS id, f.title, f.picture, f.year, f.status, f.rate, f.views, f.date_upload AS date, ARRAY_AGG(g.genre) AS genres, 'Film' AS type
             FROM film_show f
@@ -138,34 +138,69 @@ class Film {
         `;
     
         const params = [];
+        const conditions = [];
     
-        if (country || search) {
-            query += ` WHERE `;
+        // Menambahkan kondisi untuk pencarian berdasarkan judul atau nama aktor
+        if (search) {
+            conditions.push(`(LOWER(f.title) LIKE '%' || $1 || '%' OR f.id_film IN (
+                SELECT af.id_film
+                FROM actor_film af
+                JOIN actor a ON af.id_actor = a.id_actor
+                WHERE LOWER(a.name) LIKE '%' || $1 || '%'
+            ))`);
+            params.push(search.toLowerCase());
+        }
     
-            if (country && search) {
-                query += `f.id_country = $1 AND (LOWER(f.title) LIKE '%' || $2 || '%' OR f.id_film IN (
-                    SELECT af.id_film
-                    FROM actor_film af
-                    JOIN actor a ON af.id_actor = a.id_actor
-                    WHERE LOWER(a.name) LIKE '%' || $3 || '%'
-                ))`;
-                params.push(country, search.toLowerCase(), search.toLowerCase());
-            } else if (country) {
-                query += `f.id_country = $1`;
-                params.push(country);
-            } else if (search) {
-                query += `(LOWER(f.title) LIKE '%' || $1 || '%' OR f.id_film IN (
-                    SELECT af.id_film
-                    FROM actor_film af
-                    JOIN actor a ON af.id_actor = a.id_actor
-                    WHERE LOWER(a.name) LIKE '%' || $1 || '%'
-                ))`;
-                params.push(search.toLowerCase());
-            }
+        // Menambahkan kondisi untuk negara
+        if (country) {
+            conditions.push(`f.id_country = $${params.length + 1}`);
+            params.push(country);
+        }
+    
+        // Menambahkan kondisi untuk genre
+        if (genre) {
+            conditions.push(`f.id_film IN (
+                SELECT f2.id_film 
+                FROM film_show AS f2
+                LEFT JOIN genre_film gf2 ON f2.id_film = gf2.id_film
+                LEFT JOIN genre g2 ON gf2.id_genre = g2.id_genre
+                WHERE g2.id_genre = $${params.length + 1}
+            )`);
+            params.push(genre);
+        }
+    
+        // Menambahkan kondisi untuk tahun
+        if (year) {
+            conditions.push(`f.year = $${params.length + 1}`);
+            params.push(parseInt(year, 10));  // Convert year to integer
+        }
+    
+        // Menambahkan kondisi untuk ketersediaan
+        if (availability) {
+            conditions.push(`f.availability = $${params.length + 1}`);
+            params.push(availability);
+        }
+    
+        // Menambahkan kondisi untuk penghargaan
+        if (award) {
+            conditions.push(`aw.name = $${params.length + 1}`);
+            params.push(award);
+        }
+    
+        // Menambahkan kondisi untuk status
+        if (status) {
+            conditions.push(`f.status = $${params.length + 1}`);
+            params.push(status);
+        }
+    
+        // Gabungkan jika ada kondisi
+        if (conditions.length > 0) {
+            query += ' WHERE ' + conditions.join(' AND ');
         }
     
         query += ` GROUP BY f.id_film, f.title, f.picture, f.year, f.status, f.rate, f.views, f.date_upload ORDER BY date DESC;`;
     
+        // Menjalankan query dengan parameter
         const result = await pool.query(query, params);
     
         return result.rows.map(movie => ({

@@ -24,9 +24,9 @@ const filmController = {
     },
     
     getFilmSearch: async (req, res) => {
-        let { country, search } = req.query;
+        const { search, country, year, availability, genre, award, status } = req.query;
         try {
-            const films = await Film.getBySearch(country, search);
+            const films = await Film.getBySearch(search, country, year, availability, genre, award, status);
             res.json(films);
         } catch (err) {
             console.error('Error fetching search:', err.message);

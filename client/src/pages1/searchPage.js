@@ -12,6 +12,18 @@ const SearchPage = ({isAuthenticated, handleLogout}) => {
     const location = useLocation();
     const query = new URLSearchParams(location.search).get("query");
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(false); // State untuk sidebar
+    const [filters, setFilters] = useState({
+        year: null,
+        availability: null,
+        genre: null,
+        award: null,
+        status: null
+    });
+
+    const handleFiltersChange = (newFilters) => {
+        setFilters(newFilters);
+        console.log('Updated Filters in Parent:', newFilters);
+    };
 
     const toggleSidebar = () => {
         setIsSidebarOpen(prev => !prev);
@@ -29,13 +41,13 @@ const SearchPage = ({isAuthenticated, handleLogout}) => {
                 handleLogout={handleLogout}
             />
             <LeftSidebar onCountryChange={updateCountry}/>
-            <RightSidebar isSidebarOpen={isSidebarOpen}/>
+            <RightSidebar isSidebarOpen={isSidebarOpen} onFiltersChange={handleFiltersChange}/>
             <div className={`content ${isSidebarOpen ? 'shifted' : ''}`}>
                 <div class="d-flex justify-content-center h-100 mt-2">
                     <h5>Search / Tagging With <strong>{query}</strong></h5>
                 </div>
                 {/* <Genre /> */}
-                <ListSearch filterCountry={filterCountry} searchQuery={query}/>
+                <ListSearch filterCountry={filterCountry} searchQuery={query} filterMovie={filters}/>
             </div>
             <div 
                 className={`toggle-btn bg-selective-yellow-color ${isSidebarOpen ? 'active' : ''}`} 
