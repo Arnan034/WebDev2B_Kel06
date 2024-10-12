@@ -9,6 +9,9 @@ const Navbar = ({ isAuthenticated, handleLogout }) => {
         event.preventDefault(); // Mencegah refresh halaman
         navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
     };
+    const logout = () => {
+        handleLogout();
+    };
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-selective-yellow-color">
@@ -39,19 +42,39 @@ const Navbar = ({ isAuthenticated, handleLogout }) => {
                     <ul className="navbar-nav ms-auto">
                         {isAuthenticated ? (
                             <>
-                            <li className="nav-item d-none d-lg-block mx-1">
-                                <button className="btn btn-outline-primary" onClick={handleLogout}>Log Out</button>
+                            <li className="nav-item">1
+                            <div className="dropdown">
+                                
+                                <button
+                                    className="btn border-none dropdown-toggle-user black-color"
+                                    type="button"
+                                    id="dropdownMenuButton1"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    <i className="fas fa-user fa-lg"></i>
+                                    <span className="fs-5 ms-2 d-none d-sm-inline">{localStorage.getItem('role')}</span>
+                                </button>
+                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li>
+                                        <a className="dropdown-item" href="/" onClick={logout}>
+                                            <i className="fas fa-sign-out-alt me-2"></i>
+                                            Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                             </li>
-                            <li className="nav-item d-none d-lg-block mx-1">
+                            <li className="nav-item d-none d-lg-block m-1">
                                  <Link className="btn btn-outline-primary" to="/cms">CMS</Link>
                             </li>
                             </>
                         ) : (
                             <>
-                                <li className="nav-item d-none d-lg-block mx-1">
+                                <li className="nav-item d-none d-lg-block m-1">
                                     <Link className="btn btn-outline-primary" to="/signin">Sign In</Link>
                                 </li>
-                                <li className="nav-item d-none d-lg-block mx-1">
+                                <li className="nav-item d-none d-lg-block m-1">
                                     <Link className="btn btn-primary" to="/signup">Sign Up</Link>
                                 </li>
                             </>

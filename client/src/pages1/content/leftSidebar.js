@@ -3,27 +3,30 @@ import axios from 'axios';
 
 const LeftSidebar = ({ onCountryChange }) => {
     const [countries, setCountries] = useState([]);
-    const [error, setError] = useState(null); // State to handle errors
-    const [loading, setLoading] = useState(true); // State to handle loading
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [activeCountry, setActiveCountry] = useState(''); // State untuk melacak negara aktif
 
     useEffect(() => {
         const fetchCountries = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/country');
-                setCountries(response.data || []); // Set to empty array if no data
+                const response = await axios.get('http://localhost:5000/api/countries/');
+                setCountries(response.data || []);
             } catch (error) {
                 console.error(error);
-                setError("Failed to fetch countries"); // Set error message
+                setError("Failed to fetch countries");
             } finally {
-                setLoading(false); // Stop loading
+                setLoading(false);
             }
         };
 
         fetchCountries();
     }, []);
 
-    const handleChangeCountry = (value) => {
-        onCountryChange(value);
+    const handleChangeCountry = (country) => {
+        // Toggle active country
+        setActiveCountry((prev) => (prev === country ? '' : country)); // Set to '' if already active
+        onCountryChange(activeCountry === country ? '' : country); // Pass empty string to parent if deactivated
     };
 
     return (
@@ -36,41 +39,20 @@ const LeftSidebar = ({ onCountryChange }) => {
                 ) : (
                     <ul className="region-list">
                         {countries.map((country) => (
-                            <li className="region" key={country.id}> {/* Use unique country.id */}
+                            <li className="region" key={country.id}>
                                 <i className="far fa-flag fa-lg black-color"></i>
                                 <a 
                                     href={`#${encodeURIComponent(country.country_name)}`}
                                     onClick={(e) => {
-                                        e.preventDefault(); // Prevent default anchor behavior
+                                        e.preventDefault(); 
                                         handleChangeCountry(country.id_country);
                                     }}
+                                    className={activeCountry === country.id_country ? 'active' : ''} // Add active class
                                 >
                                     <span>{country.country_name}</span>
                                 </a>
                             </li>
                         ))}
-                        <li className="nav-item">
-                            <div className="dropdown">
-                                <button
-                                    className="btn border-none dropdown-toggle black-color"
-                                    type="button"
-                                    id="dropdownMenuButton1"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <i className="fas fa-user fa-lg"></i>
-                                    <span className="fs-5 ms-2 d-none d-sm-inline">Naia</span>
-                                </button>
-                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li>
-                                        <a className="dropdown-item" href="/">
-                                            <i className="fas fa-sign-out-alt me-2"></i>
-                                            Logout
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
                     </ul>
                 )}
             </div>

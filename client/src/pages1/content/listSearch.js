@@ -7,10 +7,10 @@ const ListSearch = ({ filterCountry, searchQuery }) => {
 
     const fetchMovies = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:5000/search', { 
+            const response = await axios.get('http://localhost:5000/api/film/search', { 
                 params: { 
-                    country: filterCountry, 
-                    search: searchQuery 
+                  country: filterCountry ? parseInt(filterCountry) : undefined, // Pastikan ini adalah integer
+                  search: searchQuery 
                 } 
             });
 
@@ -34,6 +34,14 @@ const ListSearch = ({ filterCountry, searchQuery }) => {
         fetchMovies();
     }, [fetchMovies]);
 
+    const updateView = async (id) => {
+        try {
+            await axios.post(`http://localhost:5000/api/film/increment-view/${id}`);
+        } catch (error) {
+            console.error('Error incrementing view:', error);
+        }
+    }
+
     const renderStars = (rating) => {
         const stars = [];
         for (let i = 1; i <= 5; i++) {
@@ -46,9 +54,9 @@ const ListSearch = ({ filterCountry, searchQuery }) => {
         <div className="row">
             {movies.length > 0 ? (
                 movies.map((movie, index) => (
-                    <div className="col-md-12" key={index}>
+                    <div className="col-md-6" key={index}>
                         <div className="card-wrapper">
-                            <Link to={`/detail/${movie.id}`}> 
+                            <Link to={`/detail/${movie.id}`} onClick={() => updateView(movie.id)}> 
                                 <div className="card-link">
                                     <div className="card card-search-horizontal bg-transparent">
                                         <img src={movie.imgSrc} className="card-search-img-left" alt="Movie" />

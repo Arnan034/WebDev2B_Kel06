@@ -1,5 +1,4 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route} from "react-router-dom";
 import CMSSidebar from "./content/cmsSideBar"; // Import Sidebar
 import CMSNewDrama from "./content/cmsNewDrama";
 import CMSAward from "./content/cmsAward"; // Contoh halaman Awards
@@ -10,27 +9,26 @@ import CMSActors from "./content/cmsActors"; // Contoh halaman
 import CMSComments from "./content/cmsComments"; // Contoh halaman
 import CMSUsers from "./content/cmsUsers"; // Contoh halaman
 
-const CMSLayout = () => (
-  <div>
-    <CMSSidebar /> {/* Menampilkan sidebar di layout */}
-    <div className="content-cms">
-      <Routes>
-        
-        <Route path="validate" element={<CMSValidate />} />
-        <Route path="" element={<CMSNewDrama />} />
-        <Route path="awards" element={<CMSAward />} />
-        <Route path="countries" element={<CMSCountries />} />
-        <Route path="genres" element={<CMSGenres />} />
-        <Route path="actors" element={<CMSActors />} />
-        <Route path="comments" element={<CMSComments />} />
-        <Route path="users" element={<CMSUsers />} />
-
-
-        {/* Tambahkan rute lain sesuai kebutuhan */}
-      </Routes>
+const CMSLayout = () => {
+  return (
+    <div>
+      <CMSSidebar /> {/* Menampilkan sidebar di layout */}
+      <div className="content-cms">
+        <Routes>
+          
+          <Route path="validate" element={<CMSValidate />} />
+          <Route path="" element={<CMSNewDrama />} />
+          <Route path="awards" element={<CMSAward />} />
+          <Route path="countries" element={<CMSCountries />} />
+          <Route path="genres" element={<CMSGenres />} />
+          <Route path="actors" element={<CMSActors />} />
+          <Route path="comments" element={<CMSComments />} />
+          <Route path="users" element={<CMSUsers />} />
+        </Routes>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const CMS = () => (
   <Routes>

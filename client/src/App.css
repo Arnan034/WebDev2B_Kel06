@@ -16,6 +16,7 @@ p {
 }
 
 /* Color Pallete */
+/* Color Pallete */
 .bg-black-color{
   background-color: #202020;
 }
@@ -131,6 +132,7 @@ p {
 .dropdown-menu {
   background-color: #f8f9fa; /* Warna background dropdown */
   border-radius: 0.25rem; /* Rounded di sudut */
+  margin-top: 0;
 }
 
 .dropdown-item {
@@ -142,6 +144,23 @@ p {
 .dropdown-item:hover {
   background-color: #e2e6ea;
   color: #007bff;
+}
+
+.dropdown-menu-user {
+  min-width: 160px; /* Menentukan lebar minimum untuk dropdown */
+  z-index: 1000; /* Memastikan dropdown berada di atas elemen lain */
+}
+
+.dropdown-item-user {
+  padding: 10px 15px; /* Memberikan padding yang lebih nyaman */
+}
+
+.dropdown-item-user:hover {
+  background-color: rgba(0, 123, 255, 0.1); /* Menambahkan efek hover */
+}
+
+.dropdown-toggle-user::after {
+  display: none; /* Menghilangkan tanda panah dropdown default */
 }
 /* End Navbar */
 
@@ -232,7 +251,6 @@ p {
   margin-right: 2px;
   font-weight: 550;
 }
-.region 
 
 /* End Sidebar Left */
 
@@ -321,6 +339,11 @@ p {
 .btn-secondary {
     background-color: #238b45;
     color: white;
+}
+
+.dropdown-container select {
+  max-height: 150px;
+  overflow-y: auto;
 }
 
 .btn.active {
@@ -640,7 +663,7 @@ p {
 }
 
 .card-img-top {
-  max-width: 350px;
+  /* max-width: 350px; */
   width: 100%;
   height: auto;
   aspect-ratio: 2 / 3; /* Set aspect ratio to 3:2 */
@@ -795,7 +818,7 @@ p {
 .card-wrapper {
   position: relative; /* Membuat posisi relatif untuk card-wrapper */
   width: 100%;
-  max-width: 70%;
+  max-width: 90%;
   margin: 10px auto;
   cursor: pointer;
 }
@@ -923,9 +946,9 @@ p {
 
 .film-image {
   flex: 1;
-  max-width: 300px;
-  height: auto;
-  aspect-ratio: 3 / 4;
+  width: 300px;
+  /* height: auto; */
+  /* aspect-ratio: 3 / 4; */
   object-fit: cover;
   border-radius: 10px;
   margin-right: 30px;
@@ -934,11 +957,6 @@ p {
 .film-info {
   flex: 2;
   padding: 15px;
-}
-
-.film-sysnopsis {
-  max-height: 190px;
-  overflow: hidden;
 }
 
 .film-info h1 {
@@ -957,6 +975,12 @@ p {
   margin: 5px 0;
   font-size: 1.1rem;
   font-weight: 500;
+}
+
+.film-sysnopsis{
+  max-height: 185px;
+  overflow-y: hidden;
+  text-align: justify;
 }
 
 .film-info .genre-list {
@@ -1025,7 +1049,7 @@ p {
   text-align: start;
   background-color: #f8f9fa;
   box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
-  max-height: 100px;
+  max-height: 90px;
   max-width: 250px;
   margin: 0 auto;
   display: flex;
@@ -1129,8 +1153,8 @@ p {
   margin-bottom: 15px;
 }
 .review-image {
-  min-width: 50px;
-  min-height: 50px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background-color: #ddd;
   margin-right: 15px;

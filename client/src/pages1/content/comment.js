@@ -14,7 +14,7 @@ const Comment = ({ id }) => {
     useEffect(() => {
         const fetchComment = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/comment/${id}`);
+                const response = await axios.get(`http://localhost:5000/api/comments/${id}`);
                 setReviews(response.data);
                 setLoading(false);
             } catch (error) {
@@ -74,7 +74,11 @@ const Comment = ({ id }) => {
             {/* Display comments, initially show only 'visibleComments' */}
             {filteredReviews.slice(0, visibleComments).map((review, index) => (
                 <div className="review-item" key={index}>
-                    <div className="review-image"></div>
+                    <img
+                        src={`data:image/jpeg;base64,${review.picture}`} 
+                        alt={review.name}
+                        className="review-image"
+                    />
                     <div className="review-content">
                         <p>
                             <span className="review-name">{review.user}: </span> 
@@ -82,7 +86,7 @@ const Comment = ({ id }) => {
                             said: {review.comment}
                         </p>
                     </div>
-                    <div className="review-stars">{renderStars(review.rate)}</div>
+                    <div className="review-stars">{renderStars(review.rating)}</div>
                 </div>
             ))}
 

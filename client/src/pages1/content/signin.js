@@ -13,7 +13,7 @@ const Signin = ({ onLogin }) => {
     // Dummy login check (bisa diganti dengan validasi dari backend)
     if (username === 'admin' && password === 'password') {
       onLogin(); // Panggil fungsi dari App.js untuk update login status
-      navigate('/cms'); // Arahkan ke halaman CMS
+      navigate('/'); // Arahkan ke halaman CMS
     } else {
       setError('Username atau password salah');
     }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Navbar from "./content/navbar";
 import Detail from "./content/detail";
 import ListAward from "./content/listAward";
@@ -9,9 +9,8 @@ import Comment from "./content/comment";
 import CommentInput from "./content/commentInput";
 import axios from "axios";
 
-const DetailFilm = ({isAuthenticated}) => {
+const DetailFilm = ({isAuthenticated, handleLogout}) => {
     const { id } = useParams(); // Mengambil id dari URL
-    const navigate = useNavigate();
     const [movieData, setMovieData] = useState(null); // State untuk menyimpan data film
     const [loading, setLoading] = useState(true); // State untuk status loading
 
@@ -19,7 +18,7 @@ const DetailFilm = ({isAuthenticated}) => {
     useEffect(() => {
         const fetchMovieData = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/movie/${id}`);
+                const response = await axios.get(`http://localhost:5000/api/film/${id}`);
                 setMovieData(response.data); // Set data film ke state
                 setLoading(false); // Set loading menjadi false setelah data diambil
             } catch (error) {
@@ -35,10 +34,6 @@ const DetailFilm = ({isAuthenticated}) => {
         window.history.back(); // Kembali ke halaman sebelumnya
     };
 
-    const handleSearch = (query) => {
-        navigate(`/search?query=${query}`); // Alihkan ke halaman search
-    };
-
     if (loading) {
         return <div>Loading...</div>; // Menampilkan loading jika data belum selesai diambil
     }
@@ -49,7 +44,10 @@ const DetailFilm = ({isAuthenticated}) => {
 
     return (
         <div>
-            <Navbar onSearch={handleSearch} />
+            <Navbar
+                isAuthenticated={isAuthenticated}
+                handleLogout={handleLogout}
+            />
             <div className="back-button-detail-page" onClick={handleBackClick}>
                 <i className="fa fa-arrow-left"></i>
             </div>

@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./content/navbar";
 import LeftSidebar from "./content/leftSidebar";
-import RightSidebar from "./content/rightSidebar";
-import Genre from "./content/genre";
+import RightSidebar from "./content/rightSidebar"; 
+// import MultiOptions from './content/multiopstion';
+// import Genre from "./content/genre";
 import ListMovie from "./content/listmovie";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
-import { faFilter } from '@fortawesome/free-solid-svg-icons'; 
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
+
 
 const Home = ({isAuthenticated, handleLogout}) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State untuk sidebar
-    const [searchQuery, setSearchQuery] = useState(''); // State untuk query pencarian
     const [filterCountry, setFilterCountry] = useState('');
 
     const toggleSidebar = () => {
@@ -28,15 +29,13 @@ const Home = ({isAuthenticated, handleLogout}) => {
     return (
         <div>
             <Navbar
-                searchQuery={searchQuery} 
-                setSearchQuery={setSearchQuery} 
                 isAuthenticated={isAuthenticated}
                 handleLogout={handleLogout}
             />
             <LeftSidebar onCountryChange={updateCountry}/>
             <RightSidebar isSidebarOpen={isSidebarOpen} />
             <div className={`content ${isSidebarOpen ? 'shifted' : ''}`}>
-                <Genre />
+                {/* <Genre /> */}
                 <ListMovie filterCountry={filterCountry}/>
             </div>
             <div 

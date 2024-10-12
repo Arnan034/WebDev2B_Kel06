@@ -7,7 +7,7 @@ import CMS from './pages1/cms';
 import Signin from './pages1/signin';
 import Signup from './pages1/signup';
 import ProtectedRoute from './pages1/protectedRoute';
-import MultiOptions from './pages1/content/testmultiopstion';
+import NotFound from './pages1/content/notFound';
 
 import './App.css';
 
@@ -27,8 +27,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home isAuthenticated={isAuthenticated} handleLogout={handleLogout}/>} />
-        <Route path="/detail/:id" element={<DetailFilm isAuthenticated={isAuthenticated}/>} />
-        <Route path="/search" element={<SearchPage isAuthenticated={isAuthenticated}/>} />
+        <Route path="/detail/:id" element={<DetailFilm isAuthenticated={isAuthenticated} handleLogout={handleLogout}/>} />
+        <Route path="/search" element={<SearchPage isAuthenticated={isAuthenticated} handleLogout={handleLogout}/>} />
         
         <Route 
           path="/cms/*" 
@@ -40,7 +40,8 @@ function App() {
         />
         <Route path="/signin" element={<Signin setIsAuthenticated={setIsAuthenticated} handleLogin={handleLogin}/>} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/multioption" element={<MultiOptions />} />
+        <Route path="/*" element={<NotFound />} />
+        
       </Routes>
     </Router>
   );

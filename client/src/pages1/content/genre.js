@@ -1,77 +1,94 @@
-import React from "react";
+// import React, { useState, useRef, useEffect } from "react";
 
-class Genre extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            currentIndex: 0,
-            visibleButtons: 5,
-        };
-        this.buttonWidth = 100;
-        this.categoryInnerRef = React.createRef(); // Referensi untuk category-inner
-    }
+// const Genre = () => {
+//     const [currentIndex, setCurrentIndex] = useState(0);
+//     const [buttonWidths, setButtonWidths] = useState([]);
+//     const categoryInnerRef = useRef(null);
 
-    showSlide = (index) => {
-        const totalButtons = this.getTotalButtons();
-        const maxIndex = totalButtons - this.state.visibleButtons;
+//     // Mengambil lebar setiap tombol secara dinamis
+//     const calculateButtonWidths = () => {
+//         const buttons = document.querySelectorAll('.category-button');
+//         const widths = Array.from(buttons).map(button => button.getBoundingClientRect().width);
+//         setButtonWidths(widths);
+//     };
 
-        let newIndex = index;
+//     const showSlide = (index) => {
+//         const totalButtons = buttonWidths.length;
+//         const maxIndex = totalButtons - visibleButtons();
 
-        if (index > maxIndex) {
-            newIndex = 0;
-        } else if (index < 0) {
-            newIndex = maxIndex;
-        }
+//         let newIndex = index;
 
-        this.setState({ currentIndex: newIndex }, () => {
-            this.updateSlidePosition();
-        });
-    };
+//         if (index > maxIndex) {
+//             newIndex = 0;
+//         } else if (index < 0) {
+//             newIndex = maxIndex;
+//         }
 
-    getTotalButtons = () => {
-        return document.querySelectorAll('.category-button').length;
-    };
+//         setCurrentIndex(newIndex);
+//     };
 
-    updateSlidePosition = () => {
-        const offset = -this.state.currentIndex * (this.buttonWidth + 10);
-        if (this.categoryInnerRef.current) {
-            this.categoryInnerRef.current.style.transform = `translateX(${offset}px)`;
-        }
-    };
+//     const visibleButtons = () => {
+//         let totalWidth = 0;
+//         let count = 0;
 
-    nextSlide = () => {
-        this.showSlide(this.state.currentIndex + 1);
-    };
+//         // Hitung berapa banyak tombol yang bisa muat dalam container berdasarkan lebar
+//         for (let width of buttonWidths) {
+//             totalWidth += width;
+//             if (totalWidth <= 500) { // Asumsikan lebar container adalah 500px
+//                 count++;
+//             } else {
+//                 break;
+//             }
+//         }
+//         return count;
+//     };
 
-    prevSlide = () => {
-        this.showSlide(this.state.currentIndex - 1);
-    };
+//     const updateSlidePosition = () => {
+//         const offset = buttonWidths.slice(0, currentIndex).reduce((acc, width) => acc + width + 10, 0);
+//         if (categoryInnerRef.current) {
+//             categoryInnerRef.current.style.transform = `translateX(-${offset}px)`;
+//         }
+//     };
 
-    render() {
-        return (
-            <div>
-                <div className="category-container">
-                    <button className="category-control-prev" onClick={this.prevSlide}>
-                        <i className="fa-solid fa-angle-left"></i>
-                    </button>
-                    <div className="category-wrapper">
-                        <div className="button-category">
-                            <div className="category-inner" ref={this.categoryInnerRef}>
-                                {Array.from({ length: 20 }, (_, index) => (
-                                    <button key={index} className="category-button">
-                                        category {index + 1}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                    <button className="category-control-next" onClick={this.nextSlide}>
-                        <i className="fa-solid fa-angle-right"></i>
-                    </button>
-                </div>
-            </div>
-        );
-    }
-}
+//     const nextSlide = () => {
+//         showSlide(currentIndex + 1);
+//     };
 
-export default Genre;
+//     const prevSlide = () => {
+//         showSlide(currentIndex - 1);
+//     };
+
+//     useEffect(() => {
+//         calculateButtonWidths();
+//     }, []);
+
+//     useEffect(() => {
+//         updateSlidePosition();
+//     }, [currentIndex, buttonWidths]);
+
+//     return (
+//         <div>
+//             <div className="category-container">
+//                 <button className="category-control-prev" onClick={prevSlide}>
+//                     <i className="fa-solid fa-angle-left"></i>
+//                 </button>
+//                 <div className="category-wrapper">
+//                     <div className="button-category">
+//                         <div className="category-inner" ref={categoryInnerRef}>
+//                             {Array.from({ length: 20 }, (_, index) => (
+//                                 <button key={index} className="category-button">
+//                                     Genre {index + 1}
+//                                 </button>
+//                             ))}
+//                         </div>
+//                     </div>
+//                 </div>
+//                 <button className="category-control-next" onClick={nextSlide}>
+//                     <i className="fa-solid fa-angle-right"></i>
+//                 </button>
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default Genre;
