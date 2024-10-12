@@ -265,7 +265,7 @@ p {
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
     border-left: 2px solid gold;
     transition: right 0.3s ease;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 .sidebar-right.open {

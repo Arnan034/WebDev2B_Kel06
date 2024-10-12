@@ -2,9 +2,9 @@ const Film = require('../models/filmModel'); // Sesuaikan dengan model yang digu
 
 const filmController = {
     getAllFilms: async (req, res) => {
-        const { country } = req.query;
+        const { country, year, availability, genre, award, status } = req.query;
         try {
-            const film = await Film.getAll(country);
+            const film = await Film.getAll(country, year, availability, genre, award, status);
             res.json(film);
         } catch (err) {
             console.error('Error fetching movies:', err.message);

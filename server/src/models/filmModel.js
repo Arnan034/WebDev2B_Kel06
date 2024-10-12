@@ -1,26 +1,63 @@
 const pool = require('../config/db');
 
 class Film {
-    static async getAll (country) {
+    static async getAll(country, year, availability, genre, award, status) {
         let query = `
-            SELECT f.id_film AS id, f.title, f.picture, f.year, f.status, f.rate, f.views, f.date_upload AS date, ARRAY_AGG(g.genre) AS genres
+            SELECT f.id_film AS id, f.title, f.picture, f.year, f.status, f.rate, f.views, f.date_upload AS date, ARRAY_AGG(DISTINCT g.genre) AS genres
             FROM film_show as f
             LEFT JOIN genre_film gf ON f.id_film = gf.id_film
             LEFT JOIN genre g ON gf.id_genre = g.id_genre
+            LEFT JOIN award aw ON aw.id_film = f.id_film
         `;
+    
         const params = [];
+        const conditions = [];
+    
         if (country) {
-            query += ` WHERE f.id_country = $1`;
-        params.push(country);
+            conditions.push(`f.id_country = $${params.length + 1}`);
+            params.push(country);
         }
+        if (genre) {
+            conditions.push(`
+                f.id_film IN (
+                    SELECT f2.id_film 
+                    FROM film_show AS f2
+                    LEFT JOIN genre_film gf2 ON f2.id_film = gf2.id_film
+                    LEFT JOIN genre g2 ON gf2.id_genre = g2.id_genre
+                    WHERE g2.id_genre = $${params.length + 1}
+                )`);
+            params.push(genre);
+        }
+        if (year) {
+            conditions.push(`f.year = $${params.length + 1}`);
+            params.push(parseInt(year, 10));  // Convert year to integer
+        }
+        if (availability) {
+            conditions.push(`f.availability = $${params.length + 1}`);
+            params.push(availability);
+        }
+        if (award) {
+            conditions.push(`aw.name = $${params.length + 1}`);
+            params.push(award);
+        }
+        if (status) {
+            conditions.push(`f.status = $${params.length + 1}`);
+            params.push(status);
+        }
+    
+        // Gabungkan jika ada kondisi
+        if (conditions.length > 0) {
+            query += ' WHERE ' + conditions.join(' AND ');
+        }
+    
         query += ` GROUP BY f.id_film, f.title, f.picture, f.year, f.status, f.rate, f.views, date ORDER BY f.date_upload DESC;`;
-
+    
         const temp = await pool.query(query, params);
-
+    
         return temp.rows.map(movie => ({
             id: movie.id,
             title: movie.title,
-            picture: movie.picture ? movie.picture.toString('base64') : null, // Check for null/undefined
+            picture: movie.picture ? movie.picture.toString('base64') : null,
             year: movie.year,
             status: movie.status,
             rate: movie.rate,
@@ -28,7 +65,7 @@ class Film {
             genres: movie.genres,
             date: movie.date_upload
         }));
-    }
+    }    
 
     static async getById( id ){
         const query = `

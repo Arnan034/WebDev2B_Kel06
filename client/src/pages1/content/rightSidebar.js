@@ -2,15 +2,21 @@ import React, { useState, useEffect } from "react";
 import Select from 'react-select';
 import axios from 'axios';
 
-const RightSidebar = ({ isSidebarOpen }) => {
+const RightSidebar = ({ isSidebarOpen, onFiltersChange }) => {
     const [sortOrder, setSortOrder] = useState(null);
     const [activeFilters, setActiveFilters] = useState(new Set());
     const [yearFilter, setYearFilter] = useState([]);
-    const [selectedYear, setSelectedYear] = useState(null);
     const [availabilityFilter, setAvailabilityFilter] = useState([]);
-    const [selectedAvaiability, setSelectedAvailability] = useState(null);
     const [genreFilter, setGenreFilter] = useState([]);
-    const [selectedGenre, setSelectedGenre] = useState({ id: null, year: null });;
+    const [awardFilter, setAwardFilter] = useState([]);
+
+    const [filters, setFilters] = useState({
+        year: null,
+        availability: null,
+        genre: null,
+        award: null,
+        status: null
+    });
 
     useEffect(() => {
         const fetchYear = async () => {
@@ -54,24 +60,19 @@ const RightSidebar = ({ isSidebarOpen }) => {
         fetchGenre();
     }, []);
 
-    const handleYearChange = (selectedOption) => {
-        setSelectedYear(selectedOption);
-        console.log('Selected Year:', selectedOption);
-    };
+    useEffect(() => {
+        const fetchAward = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/awards/name');
+                const options = response.data.map(award => ({ value: award.name, label: award.name }));
+                setAwardFilter(options);
+            } catch (error) {
+                console.error(error);
+            }
+        };
 
-    const handleAvailabilityChange = (selectedOption) => {
-        setSelectedAvailability(selectedOption);
-        console.log('Selected Availability', selectedOption);
-    };
-
-
-    const handleGenreChange = (selectedOption) => {
-        setSelectedGenre(prevState => ({
-            ...prevState,
-            id: selectedOption,
-        }));;
-        console.log('Selected Genre', selectedOption);
-    };
+        fetchAward();
+    }, []);
 
     const handleSortAsc = () => {
         setSortOrder(prevOrder => prevOrder === 'asc' ? '' : 'asc');
@@ -86,11 +87,41 @@ const RightSidebar = ({ isSidebarOpen }) => {
             const newFilters = new Set(prevFilters);
             if (newFilters.has(filter)) {
                 newFilters.delete(filter);
+                updateFilter('status', null);
             } else {
                 newFilters.add(filter);
+                updateFilter('status', filter);
             }
             return newFilters;
         });
+    };
+
+    const updateFilter = (field, value) => {
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            [field]: value,
+        }));
+    };
+
+    const handleSubmit = () => {
+        console.log('Selected Filters before reset:', filters);
+
+        // Kirim filters ke parent component
+        onFiltersChange(filters);
+
+        // Reset all filters to default
+        setFilters({
+            year: null,
+            availability: null,
+            genre: null,
+            award: null,
+            status: null
+        });
+
+        // Optionally reset active filters
+        setActiveFilters(new Set());
+
+        console.log('Filters have been reset to default.');
     };
 
     const buttonClass = (filter) => `btn btn-primary w-100 ${activeFilters.has(filter) ? 'active' : ''}`;
@@ -129,13 +160,12 @@ const RightSidebar = ({ isSidebarOpen }) => {
                             options={yearFilter}
                             placeholder="Tahun"
                             isSearchable
-                            styles={{
-                                menu: (provided) => ({
-                                    ...provided,
-                                }),
+                            isClearable
+                            onChange={(selected) => {
+                                const yearValue = selected ? parseInt(selected.value, 10) : null;
+                                updateFilter('year', yearValue);
                             }}
-                            onChange={handleYearChange}
-                            value={selectedYear}
+                            value={filters.year ? yearFilter.find(option => option.value === filters.year) : null} 
                         />
                         </div>
                     </div>
@@ -147,13 +177,9 @@ const RightSidebar = ({ isSidebarOpen }) => {
                                 options={genreFilter}
                                 placeholder="Genre"
                                 isSearchable
-                                styles={{
-                                    menu: (provided) => ({
-                                        ...provided,
-                                    }),
-                                }}
-                                onChange={handleGenreChange}
-                                value={selectedGenre.id}
+                                isClearable
+                                onChange={(selected) => updateFilter('genre', selected ? selected.value : null)} 
+                                value={filters.genre ? genreFilter.find(option => option.value === filters.genre) : null} 
                             />
                         </div>
                     </div>
@@ -165,13 +191,9 @@ const RightSidebar = ({ isSidebarOpen }) => {
                                 options={availabilityFilter}
                                 placeholder="Availability"
                                 isSearchable
-                                styles={{
-                                    menu: (provided) => ({
-                                        ...provided,
-                                    }),
-                                }}
-                                onChange={handleAvailabilityChange} // Menambahkan handler untuk perubahan
-                                value={selectedAvaiability} // Mengatur nilai terpilih
+                                isClearable
+                                onChange={(selected) => updateFilter('availability', selected ? selected.value : null)} 
+                                value={filters.availability ? availabilityFilter.find(option => option.value === filters.availability) : null} 
                             />
                         </div>
                     </div>
@@ -179,10 +201,14 @@ const RightSidebar = ({ isSidebarOpen }) => {
                     <div className="mb-3">
                         <label className="form-label jet-color">Award</label>
                         <div className="row mb-2">
-                            <select className="form-select px-2" id="awardDropdown">
-                                <option selected>Award</option>
-                                <option>Netflix</option>
-                            </select>
+                            <Select 
+                                options={awardFilter}
+                                placeholder="Award"
+                                isSearchable
+                                isClearable
+                                onChange={(selected) => updateFilter('award', selected ? selected.value : null)} 
+                                value={filters.award ? awardFilter.find(option => option.value === filters.award) : null} 
+                            />
                         </div>
                     </div>
 
@@ -211,7 +237,7 @@ const RightSidebar = ({ isSidebarOpen }) => {
                     <div className="mt-4">
                         <div className="row mt-2">
                             <div className="col">
-                                <button type="submit" className="btn btn-secondary w-100">
+                                <button type="submit" className="btn btn-secondary w-100" onClick={handleSubmit}>
                                     Terapkan
                                 </button>
                             </div>

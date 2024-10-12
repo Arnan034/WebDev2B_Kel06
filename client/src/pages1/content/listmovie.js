@@ -2,17 +2,26 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const ListMovie = ({ filterCountry }) => {
+const ListMovie = ({ filterCountry, filterMovie }) => {
     const [movies, setMovies] = useState([]);
-    const [loadedMovies, setLoadedMovies] = useState(12); // Awal dengan 12 film
+    const [loadedMovies, setLoadedMovies] = useState(12);
     const [hasMore, setHasMore] = useState(true);
-    const [isLoading, setIsLoading] = useState(false); // State loading
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchMovies = useCallback(async () => {
-        console.log("Fetching movies for country:", filterCountry);
+        console.log("Fetching movies with filters:", filterMovie);
         try {
-            const response = await axios.get('http://localhost:5000/api/film/', { params: { country: filterCountry } });
-
+            const response = await axios.get('http://localhost:5000/api/film/', {
+                params: { 
+                    country: filterCountry,
+                    year: filterMovie.year,
+                    availability: filterMovie.availability,
+                    genre: filterMovie.genre,
+                    award: filterMovie.award,
+                    status: filterMovie.status
+                }
+            });
+    
             const formattedMovies = response.data.map(movie => ({
                 id: movie.id,
                 title: movie.title,
@@ -23,14 +32,14 @@ const ListMovie = ({ filterCountry }) => {
                 views: movie.views,
                 genres: movie.genres.join(', ')
             }));
-
+    
             setMovies(formattedMovies);
-            setLoadedMovies(12); // Reset to initial loaded amount
-            setHasMore(formattedMovies.length > 12); // Update hasMore state
+            setLoadedMovies(12);
+            setHasMore(formattedMovies.length > 12);
         } catch (error) {
             console.error('Error fetching movie data:', error);
         }
-    }, [filterCountry]);
+    }, [filterCountry, filterMovie]);    
 
     useEffect(() => {
         fetchMovies();
@@ -38,12 +47,12 @@ const ListMovie = ({ filterCountry }) => {
 
     const loadMoreMovies = useCallback(async () => {
         if (loadedMovies >= movies.length) {
-            setHasMore(false); // Tidak ada lagi film yang dapat dimuat
+            setHasMore(false);
             console.log("No more movies to load.");
             return;
         }
 
-        setIsLoading(true); // Set loading state to true
+        setIsLoading(true);
 
         // Simulasi delay 3 detik
         await new Promise(resolve => setTimeout(resolve, 2000));
