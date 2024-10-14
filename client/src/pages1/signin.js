@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+
+const ClientId = "711680613423-2lcio8vv32jsj3fgb6ohbvg2v9k72oqv.apps.googleusercontent.com";
 
 const Sign = ({ handleLogin }) => {
     const [username, setUsername] = useState('');
@@ -38,6 +41,33 @@ const Sign = ({ handleLogin }) => {
             setLoading(false); // Reset loading state
         }
     };
+
+    const handleGoogleLoginSuccess = async (credentialResponse) => {
+        try {
+            console.log("Google login response:", credentialResponse);
+            const token_google = credentialResponse.credential;
+            const response = await axios.post("http://localhost:5000/api/auth/googleSignin", { token_google });
+            
+            sessionStorage.setItem('token', response.data.token);
+            sessionStorage.setItem('id_user', response.data.id_user);
+            sessionStorage.setItem('role', response.data.role);
+            sessionStorage.setItem('user', response.data.username);
+            sessionStorage.setItem('picture', response.data.picture);
+    
+            navigate('/cms');
+            handleLogin();
+        } catch (error) {
+            // Menampilkan pesan error yang lebih spesifik
+            console.error("Google login failed:", error.response?.data || error.message || error);
+            setError(`Google login failed: ${error.response?.data?.message || error.message}`);
+        }
+    };
+
+    const handleGoogleLoginError = (error) => {
+        console.error("Google login error:", error);
+        setError("Google login failed. Please try again.");
+    };
+    
 
     return (
         <div className="login-content bg-selective-yellow-color">
@@ -83,9 +113,14 @@ const Sign = ({ handleLogin }) => {
                     <hr className="my-4" />
 
                     <div className="d-flex justify-content-center">
-                        <button type="button" className="btn btn-light">
-                            <i className="bi bi-google me-2"></i> Login dengan Google
-                        </button>
+                    <GoogleOAuthProvider clientId={ClientId}>
+                        <GoogleLogin
+                            onSuccess={handleGoogleLoginSuccess}
+                            onError={handleGoogleLoginError}
+                            buttonText="Login with Google"
+                            className="google-login-button"
+                        />
+                    </GoogleOAuthProvider>
                     </div>
                 </div>
             </div>

@@ -2,8 +2,15 @@
 const Auth = require('../models/authModel'); 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
+const axios = require('axios');
 
+// Ambil client ID dari environment variable
 const SECRET_KEY = process.env.SECRET_KEY;
+const CLIENT_ID = process.env.CLIENT_ID;
+
+// Inisialisasi Google OAuth2Client di luar authController
+const client = new OAuth2Client(CLIENT_ID);
 
 const authController = {
     signin: async (req, res) => {
@@ -54,46 +61,65 @@ const authController = {
             console.error('Error during signup:', error.message);
             res.status(500).json({ error: 'Server Error' });
         }
-    }, 
+    },
 
     signGoogle: async (req, res) => {
         try {
-            const googleToken = req.body.token; // Ubah nama variabel agar tidak ada konflik
-        
-            const googleUser = await verifyGoogleToken(googleToken);
-        
-            let user = await pool.query("SELECT * FROM users WHERE google_id = $1", [googleUser.sub]);
-        
-            if (user.rows.length === 0) {
-              await pool.query(
-                "INSERT INTO users (username, email, google_id, role_id) VALUES ($1, $2, $3, 'Writer')",
-                [googleUser.name, googleUser.email, googleUser.sub]
-              );
-        
-              user = await pool.query("SELECT * FROM users WHERE google_id = $1", [googleUser.sub]);
+            const googleToken = req.body.token_google; // Pastikan token dari frontend diterima
+            if (!googleToken) {
+                return res.status(400).send("Google token is missing");
             }
-        
-            const jwtToken = jwt.sign(
-              { username: user.rows[0].username, role: user.rows[0].role_id },
-              "your_jwt_secret",
-              { expiresIn: "1h" }
-            );
-        
-            res.json({ token: jwtToken, role: user.rows[0].role_id });
-          } catch (error) {
-            console.error("Error during Google login:", error);
-            res.status(500).send("Server error during Google login");
-        }
-    }
+    
+            const googleUser = await authController.verifyGoogleToken(googleToken); 
+            console.log("Google user data:", googleUser); // Tambahkan log untuk cek data Google user
+            
+            let user = await Auth.getUserIdGoogle(googleUser.sub);
+    
+            // Jika user tidak ditemukan, buat akun baru dari Google data
+            if (user.rows.length === 0) {
+                const pictureUrl = googleUser.picture;
+                const pictureResponse = await axios.get(pictureUrl, { responseType: 'arraybuffer' }); // Ambil data gambar
+                const pictureBuffer = Buffer.from(pictureResponse.data, 'binary');
 
-    // Fungsi untuk verifikasi token Google
-// async function verifyGoogleToken(token) {
-//     const ticket = await client.verifyIdToken({
-//       idToken: token,
-//       audience: "193966095713-ooq3r03aaanmf67tudroa67ccctfqvk6.apps.googleusercontent.com", // Ganti dengan client ID milikmu
-//     });
-//     return ticket.getPayload(); // Payload akan berisi informasi pengguna
-//   }
+                await Auth.createGoogleAuth(googleUser.name, googleUser.email, googleUser.sub, pictureBuffer);
+                user = await Auth.getUserIdGoogle(googleUser.sub);
+            }
+    
+            // Buat JWT token
+            const jwtToken = jwt.sign(
+                { id_user: user.rows[0].id_user, username: user.rows[0].username },
+                SECRET_KEY,
+                { expiresIn: "1h" }
+            );
+    
+            // Return token dan data user
+            res.json({
+                token: jwtToken, 
+                id_user: user.rows[0].id_user, 
+                username: user.rows[0].username, 
+                role: user.rows[0].role_id, 
+                picture: user.rows[0].picture.toString('base64')
+            });
+    
+        } catch (error) {
+            console.error("Error during Google login:", error);
+            res.status(500).send(`Server error during Google login: ${error.message}`);
+        }
+    },
+    
+    verifyGoogleToken: async (token) => {
+        try {
+            // Verifikasi token dengan Google OAuth2Client
+            const ticket = await client.verifyIdToken({
+                idToken: token,
+                audience: CLIENT_ID, // Pastikan CLIENT_ID sesuai dengan di Google Developer Console
+            });
+            return ticket.getPayload(); // Return payload setelah verifikasi sukses
+        } catch (error) {
+            console.error("Error verifying Google token:", error); // Tambahkan log untuk error verifikasi
+            throw new Error("Invalid Google token");
+        }
+    }    
 };
 
 module.exports = authController;

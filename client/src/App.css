@@ -146,7 +146,9 @@ p {
 }
 
 .title{
+  padding-top: 5px;
   text-decoration: none;
+  font-size: xx-large;
   font-weight: 700;
 }
 
@@ -1663,6 +1665,10 @@ p {
   }
 }
 
+.google-login-button{
+  display: block;
+  margin-top: 10px;
+}
 
 /* End Naia */
 /* End CMS */

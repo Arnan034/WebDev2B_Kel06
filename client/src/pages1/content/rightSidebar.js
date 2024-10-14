@@ -138,7 +138,7 @@ const RightSidebar = ({ isSidebarOpen, onFiltersChange, handleSortChange }) => {
                                 className={`btn btn-primary w-100 ${sortOrder === 'asc' ? 'active' : ''}`} 
                                 onClick={handleSortAsc}
                             >
-                                ASC
+                                [A-Z]
                             </button>
                         </div>
                         <div className="col">
@@ -147,7 +147,7 @@ const RightSidebar = ({ isSidebarOpen, onFiltersChange, handleSortChange }) => {
                                 className={`btn btn-primary w-100 ${sortOrder === 'desc' ? 'active' : ''}`} 
                                 onClick={handleSortDesc}
                             >
-                                DESC
+                                [Z-A]
                             </button>
                         </div>
                     </div>

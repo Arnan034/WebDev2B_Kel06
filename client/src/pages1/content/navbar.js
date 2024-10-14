@@ -31,7 +31,7 @@ const Navbar = ({ isAuthenticated, handleLogout }) => {
         <nav className="navbar navbar-expand-lg navbar-light bg-selective-yellow-color">
             <div className="container-fluid navbar-container d-flex justify-content-between align-items-center">
                 <h2 className="name-web">
-                    <Link to="/" className="title black-color">DramaKu</Link>
+                    <Link to="/" className="title black-color">CINELUX</Link>
                 </h2>
                 <div className="d-flex">
                     <form onSubmit={handleSearch}>
