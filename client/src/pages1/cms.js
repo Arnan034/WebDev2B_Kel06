@@ -1,13 +1,14 @@
 import { Routes, Route} from "react-router-dom";
-import CMSSidebar from "./content/cmsSideBar"; // Import Sidebar
+import CMSSidebar from "./content/cmsSideBar";
 import CMSNewDrama from "./content/cmsNewDrama";
-import CMSAward from "./content/cmsAward"; // Contoh halaman Awards
-import CMSCountries from "./content/cmsCountries"; // Contoh halaman Countries
+import CMSAward from "./content/cmsAward";
+import CMSCountries from "./content/cmsCountries";
 import CMSValidate from "./content/cmsValidates";
-import CMSGenres from "./content/cmsGenres"; // Contoh halaman
-import CMSActors from "./content/cmsActors"; // Contoh halaman
-import CMSComments from "./content/cmsComments"; // Contoh halaman
-import CMSUsers from "./content/cmsUsers"; // Contoh halaman
+import CMSGenres from "./content/cmsGenres";
+import CMSActors from "./content/cmsActors";
+import CMSComments from "./content/cmsComments";
+import CMSUsers from "./content/cmsUsers";
+import CMSBookmark from "./content/cmsBookmark";
 
 const CMSLayout = () => {
   return (
@@ -24,6 +25,7 @@ const CMSLayout = () => {
           <Route path="actors" element={<CMSActors />} />
           <Route path="comments" element={<CMSComments />} />
           <Route path="users" element={<CMSUsers />} />
+          <Route path="bookmark" element={<CMSBookmark />} />
         </Routes>
       </div>
     </div>

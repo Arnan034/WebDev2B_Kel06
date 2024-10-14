@@ -9,6 +9,7 @@ import { faFilter } from '@fortawesome/free-solid-svg-icons';
 
 const SearchPage = ({isAuthenticated, handleLogout}) => {
     const [filterCountry, setFilterCountry] = useState('');
+    const [SortFilm, setSortFilm] = useState('');
     const location = useLocation();
     const query = new URLSearchParams(location.search).get("query");
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(false); // State untuk sidebar
@@ -23,6 +24,10 @@ const SearchPage = ({isAuthenticated, handleLogout}) => {
     const handleFiltersChange = (newFilters) => {
         setFilters(newFilters);
         console.log('Updated Filters in Parent:', newFilters);
+    };
+
+    const handleSortChange = (newFilters) => {
+        setSortFilm(newFilters);
     };
 
     const toggleSidebar = () => {
@@ -41,13 +46,13 @@ const SearchPage = ({isAuthenticated, handleLogout}) => {
                 handleLogout={handleLogout}
             />
             <LeftSidebar onCountryChange={updateCountry}/>
-            <RightSidebar isSidebarOpen={isSidebarOpen} onFiltersChange={handleFiltersChange}/>
+            <RightSidebar isSidebarOpen={isSidebarOpen} onFiltersChange={handleFiltersChange} handleSortChange={handleSortChange}/>
             <div className={`content ${isSidebarOpen ? 'shifted' : ''}`}>
                 <div class="d-flex justify-content-center h-100 mt-2">
                     <h5>Search / Tagging With <strong>{query}</strong></h5>
                 </div>
                 {/* <Genre /> */}
-                <ListSearch filterCountry={filterCountry} searchQuery={query} filterMovie={filters}/>
+                <ListSearch filterCountry={filterCountry} searchQuery={query} filterMovie={filters} SortFilm={SortFilm}/>
             </div>
             <div 
                 className={`toggle-btn bg-selective-yellow-color ${isSidebarOpen ? 'active' : ''}`} 

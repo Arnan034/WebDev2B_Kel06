@@ -12,6 +12,7 @@ const commentRoutes = require('./routes/commentRoutes');
 const actorRoutes = require('./routes/actorRoutes');
 const authRoutes = require('./routes/authRoutes');
 const filterRoutes = require('./routes/filterRoutes');
+const bookmarkRoutes = require('./routes/bookmarkRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -31,6 +32,7 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/actors', actorRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/filters', filterRoutes);
+app.use('/api/bookmark', bookmarkRoutes);
 
 // Jalankan server
 pool.connect()

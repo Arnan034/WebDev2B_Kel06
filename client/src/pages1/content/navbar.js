@@ -1,16 +1,30 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
+import { Dropdown, Button } from 'semantic-ui-react'; 
+import 'semantic-ui-css/semantic.min.css';
 
 const Navbar = ({ isAuthenticated, handleLogout }) => {
     const [searchQuery, setSearchQuery] = useState("");
+    const [loading, setLoading] = useState(false); // State untuk loading
+    const user = sessionStorage.getItem('user');
+    const pictureUser = sessionStorage.getItem('picture');
+
     const navigate = useNavigate();
 
     const handleSearch = (event) => {
-        event.preventDefault(); // Mencegah refresh halaman
+        event.preventDefault();
         navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
     };
+
     const logout = () => {
+        setLoading(true); // Set loading ke true
         handleLogout();
+
+        // Tunggu 1 detik sebelum navigasi
+        setTimeout(() => {
+            setLoading(false); // Reset loading
+            navigate('/'); // Navigasi ke halaman utama
+        }, 1000);
     };
 
     return (
@@ -19,11 +33,8 @@ const Navbar = ({ isAuthenticated, handleLogout }) => {
                 <h2 className="name-web">
                     <Link to="/" className="title black-color">DramaKu</Link>
                 </h2>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
                 <div className="d-flex">
-                    <form onSubmit={handleSearch} > {/* Wrap input in a form */}
+                    <form onSubmit={handleSearch}>
                         <div className="search">
                             <input
                                 className="search_input"
@@ -38,48 +49,74 @@ const Navbar = ({ isAuthenticated, handleLogout }) => {
                         </div>
                     </form>
                 </div>
-                <div className="collapse navbar-collapse justify-content-end collapse-width" id="navbarNav">
-                    <ul className="navbar-nav ms-auto">
+                <div className="collapse navbar-collapse justify-content-start collapse-width" id="navbarNav">
+                    <div className="navbar-nav">
                         {isAuthenticated ? (
-                            <>
-                            <li className="nav-item">1
-                            <div className="dropdown">
-                                
-                                <button
-                                    className="btn border-none dropdown-toggle-user black-color"
-                                    type="button"
-                                    id="dropdownMenuButton1"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <i className="fas fa-user fa-lg"></i>
-                                    <span className="fs-5 ms-2 d-none d-sm-inline">{localStorage.getItem('role')}</span>
-                                </button>
-                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li>
-                                        <a className="dropdown-item" href="/" onClick={logout}>
-                                            <i className="fas fa-sign-out-alt me-2"></i>
-                                            Logout
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            </li>
-                            <li className="nav-item d-none d-lg-block m-1">
-                                 <Link className="btn btn-outline-primary" to="/cms">CMS</Link>
-                            </li>
+                            <>  
+                                <div className="nav-item">
+                                    <Link to="/cms">
+                                        <Button color='blue'>C M S</Button>
+                                    </Link>
+                                </div>
+                                <div className="nav-item">
+                                    <div className="custom-dropdown-menu">
+                                    <Dropdown
+                                        text={
+                                            <span style={{ color: 'black'}}>
+                                                {user }
+                                                {pictureUser && (
+                                                    <img 
+                                                        src={`data:image/jpeg;base64,${pictureUser}`} 
+                                                        alt="" 
+                                                        style={{ 
+                                                            width: '30px', 
+                                                            height: '30px', 
+                                                            marginLeft: '8px', 
+                                                            borderRadius: '50%' 
+                                                        }} 
+                                                    />
+                                                )}
+                                            </span>
+                                        }
+                                        floating
+                                        labeled
+                                        button
+                                        className="icon"
+                                        style={{ backgroundColor: 'red', color: 'white', fontSize: '14px' }}
+                                    >
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item  
+                                                text='Logout'
+                                                icon='logout'
+                                                onClick={logout} 
+                                            />
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                    </div>
+                                </div>
                             </>
                         ) : (
                             <>
-                                <li className="nav-item d-none d-lg-block m-1">
-                                    <Link className="btn btn-outline-primary" to="/signin">Sign In</Link>
-                                </li>
-                                <li className="nav-item d-none d-lg-block m-1">
-                                    <Link className="btn btn-primary" to="/signup">Sign Up</Link>
-                                </li>
+                                {loading ? (
+                                    <>
+                                        <div className="loading-indicator">Logging out...</div>
+                                    </>) : (
+                                    <>
+                                        <div className="nav-item d-none d-lg-block m-1">
+                                            <Link to="/signin">
+                                                <Button color='red'>Sign In</Button>
+                                            </Link>
+                                        </div>
+                                        <div className="nav-item d-none d-lg-block m-1">
+                                            <Link to="/signup">
+                                                <Button color='blue'>Sign Up</Button>
+                                            </Link>
+                                        </div>
+                                    </>
+                                )} 
                             </>
                         )}
-                    </ul>
+                    </div>
                 </div>
             </div>
         </nav>

@@ -5,7 +5,7 @@ const { getAllFilms, getFilmById, getFilmSearch, createFilm, updatePlusView, upd
 // Rute untuk Film
 router.get('/', getAllFilms);
 router.get('/search', getFilmSearch);
-router.get('/:id', getFilmById);
+router.get('/get/:id', getFilmById);
 router.post('/', createFilm);
 router.post('/increment-view/:id', updatePlusView)
 router.put('/:id', updateFilm);

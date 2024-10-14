@@ -1,7 +1,7 @@
 const pool = require('../config/db');
 
 class Film {
-    static async getAll(country, year, availability, genre, award, status) {
+    static async getAll(country, sort, year, availability, genre, award, status) {
         let query = `
             SELECT f.id_film AS id, f.title, f.picture, f.year, f.status, f.rate, f.views, f.date_upload AS date, ARRAY_AGG(DISTINCT g.genre) AS genres
             FROM film_show as f
@@ -50,8 +50,18 @@ class Film {
             query += ' WHERE ' + conditions.join(' AND ');
         }
     
-        query += ` GROUP BY f.id_film, f.title, f.picture, f.year, f.status, f.rate, f.views, date ORDER BY f.date_upload DESC;`;
+        query += ` GROUP BY f.id_film, f.title, f.picture, f.year, f.status, f.rate, f.views, date `;
     
+        if (sort) {
+            if (sort.toLowerCase() === 'asc' || sort.toLowerCase() === 'desc') {
+                query += ` ORDER BY f.title ${sort};`; // Sisipkan 'ASC' atau 'DESC' langsung ke query
+            } else {
+                throw new Error('Sort parameter must be either "asc" or "desc".');
+            }
+        } else {
+            query += ` ORDER BY date DESC;`;  // Default sorting jika sort tidak ada
+        }
+
         const temp = await pool.query(query, params);
     
         return temp.rows.map(movie => ({
@@ -76,6 +86,7 @@ class Film {
             f.alternative_title, 
             f.year, 
             f.sysnopsis, 
+            f.rate,
             f.link_trailer AS trailer, 
             f.availability, 
             f.status, 
@@ -103,7 +114,7 @@ class Film {
         WHERE 
         f.id_film = $1
         GROUP BY 
-        f.id_film, f.title, f.picture, f.alternative_title, f.year, f.sysnopsis, trailer, f.availability, f.status;
+        f.id_film, f.title, f.picture, f.alternative_title, f.year, f.rate, f.sysnopsis, trailer, f.availability, f.status;
         `;
 
         const result = await pool.query(query, [id]); // Menggunakan id dari URL params
@@ -122,6 +133,7 @@ class Film {
             year: film.year,
             sysnopsis: film.sysnopsis,
             trailer: film.trailer,
+            rating: film.rate,
             availability: film.availability,
             genres: film.genres,
             status: film.status,
@@ -129,7 +141,7 @@ class Film {
         };
     }
 
-    static async getBySearch(search, country, year, availability, genre, award, status) {
+    static async getBySearch(search, sort, country, year, availability, genre, award, status) {
         let query = `
             SELECT f.id_film AS id, f.title, f.picture, f.year, f.status, f.rate, f.views, f.date_upload AS date, ARRAY_AGG(g.genre) AS genres, 'Film' AS type
             FROM film_show f
@@ -198,8 +210,18 @@ class Film {
             query += ' WHERE ' + conditions.join(' AND ');
         }
     
-        query += ` GROUP BY f.id_film, f.title, f.picture, f.year, f.status, f.rate, f.views, f.date_upload ORDER BY date DESC;`;
-    
+        query += ` GROUP BY f.id_film, f.title, f.picture, f.year, f.status, f.rate, f.views, f.date_upload `;
+        
+        if (sort) {
+            if (sort.toLowerCase() === 'asc' || sort.toLowerCase() === 'desc') {
+                query += ` ORDER BY f.title ${sort};`; // Sisipkan 'ASC' atau 'DESC' langsung ke query
+            } else {
+                throw new Error('Sort parameter must be either "asc" or "desc".');
+            }
+        } else {
+            query += ` ORDER BY date DESC;`;  // Default sorting jika sort tidak ada
+        }
+        
         // Menjalankan query dengan parameter
         const result = await pool.query(query, params);
     

@@ -7,11 +7,10 @@ const CmsSidebar = () => {
 
     // Inisialisasi nilai dari localStorage
     useEffect(() => {
-        const storedRole = localStorage.getItem('role'); // Ambil nilai role dari localStorage
+        const storedRole = sessionStorage.getItem('role'); // Ambil nilai role dari localStorage
         if (storedRole) {
             setRole(storedRole);
         } else {
-            // Jika tidak ada role di localStorage, bisa redirect ke halaman login
             navigate('/login');
         }
     }, [navigate]);
@@ -54,7 +53,7 @@ const CmsSidebar = () => {
                     </li>
 
                     {/* Hanya admin yang bisa mengakses menu berikut */}
-                    {role === 'admin' && (
+                    {role === 'admin' ? (
                         <>
                             <li className="side">
                                 <i className="fas fa-globe fa-lg"></i>
@@ -93,7 +92,12 @@ const CmsSidebar = () => {
                                 </Link>
                             </li>
                         </>
-                    )}
+                    ) : (<li className="side">
+                        <i className="fa-solid fa-bookmark"></i>
+                        <Link to="/cms/bookmark">
+                            <span>Bookmark</span>
+                        </Link>
+                    </li>)}
                 </ul>
             </div>
         </div>

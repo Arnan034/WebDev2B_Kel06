@@ -79,7 +79,7 @@ p {
 .back-button-detail-page {
   position: absolute;
   left: 15%;
-  top: 10%;
+  top: 12%;
   text-decoration: none;
   color: #ffb700;
   font-size: 2rem;
@@ -89,6 +89,31 @@ p {
 .back-button-detail-page:hover {
   text-decoration: underline;
   color: #202020;
+}
+/* End back button */
+
+/* Back Button */
+.bookmark-button-detail-page {
+  position: absolute;
+  right: 20%;
+  top: 12%;
+  text-decoration: none;
+  color: #ffb700;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.bookmark-button-detail-page:hover {
+  text-decoration: underline;
+  color: #202020;
+}
+
+.no-film-bookmark{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
 }
 /* End back button */
 
@@ -129,39 +154,27 @@ p {
   color: #ffffff;
 }
 
-.dropdown-menu {
-  background-color: #f8f9fa; /* Warna background dropdown */
-  border-radius: 0.25rem; /* Rounded di sudut */
-  margin-top: 0;
+.custom-dropdown-menu {
+  position: absolute; /* Atur posisi dropdown menjadi absolut */
 }
 
-.dropdown-item {
-  padding: 10px 20px;
-  font-size: 16px;
-  color: #333;
+.ui.dropdown {
+  margin: 0; /* Atur margin jika diperlukan */
 }
 
-.dropdown-item:hover {
-  background-color: #e2e6ea;
-  color: #007bff;
+.ui.dropdown .menu {
+  z-index: 1000; /* Memastikan dropdown di atas elemen lain */
 }
 
-.dropdown-menu-user {
-  min-width: 160px; /* Menentukan lebar minimum untuk dropdown */
-  z-index: 1000; /* Memastikan dropdown berada di atas elemen lain */
+/* Optional: styling untuk dropdown */
+.ui.dropdown .item {
+  padding: 10px 15px; /* Mengatur padding item dalam dropdown */
 }
 
-.dropdown-item-user {
-  padding: 10px 15px; /* Memberikan padding yang lebih nyaman */
+.ui.dropdown .item:hover {
+  background-color: #f1f1f1; /* Warna latar belakang saat hover */
 }
 
-.dropdown-item-user:hover {
-  background-color: rgba(0, 123, 255, 0.1); /* Menambahkan efek hover */
-}
-
-.dropdown-toggle-user::after {
-  display: none; /* Menghilangkan tanda panah dropdown default */
-}
 /* End Navbar */
 
 /* Content */

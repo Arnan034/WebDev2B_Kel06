@@ -3,8 +3,6 @@ import { useLocation } from "react-router-dom";
 import Navbar from "./content/navbar";
 import LeftSidebar from "./content/leftSidebar";
 import RightSidebar from "./content/rightSidebar"; 
-// import MultiOptions from './content/multiopstion';
-// import Genre from "./content/genre";
 import ListMovie from "./content/listmovie";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -12,7 +10,7 @@ import { faFilter } from '@fortawesome/free-solid-svg-icons';
 
 const Home = ({isAuthenticated, handleLogout}) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State untuk sidebar
-    // const [SortFilm, setSortFilm] = useState('');
+    const [SortFilm, setSortFilm] = useState('');
     const [filterCountry, setFilterCountry] = useState('');
     const [filters, setFilters] = useState({
         year: null,
@@ -43,6 +41,10 @@ const Home = ({isAuthenticated, handleLogout}) => {
         setFilters(newFilters);
         console.log('Updated Filters in Parent:', newFilters);
     };
+
+    const handleSortChange = (newFilters) => {
+        setSortFilm(newFilters);
+    };
     
     const toggleSidebar = () => {
         setIsSidebarOpen(prev => !prev);
@@ -64,10 +66,10 @@ const Home = ({isAuthenticated, handleLogout}) => {
                 handleLogout={handleLogout}
             />
             <LeftSidebar onCountryChange={updateCountry}/>
-            <RightSidebar isSidebarOpen={isSidebarOpen} onFiltersChange={handleFiltersChange}/>
+            <RightSidebar isSidebarOpen={isSidebarOpen} onFiltersChange={handleFiltersChange} handleSortChange={handleSortChange}/>
             <div className={`content ${isSidebarOpen ? 'shifted' : ''}`}>
                 {/* <Genre /> */}
-                <ListMovie filterCountry={filterCountry} filterMovie={filters}/>
+                <ListMovie filterCountry={filterCountry} filterMovie={filters} SortFilm={SortFilm}/>
             </div>
             <div 
                 className={`toggle-btn bg-selective-yellow-color ${isSidebarOpen ? 'active' : ''}`} 

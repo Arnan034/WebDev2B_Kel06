@@ -5,11 +5,10 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 class AuthModel {
-    static async createUser(name, email, password) {
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+    static async createUser(username, email, hashedPassword, pictureBuffer) {
         const result = await pool.query(
-            'INSERT INTO "user" (name, email, password) VALUES ($1, $2, $3) RETURNING *', // Ubah dari users menjadi user
-            [name, email, hashedPassword]
+            'INSERT INTO "user" (username, password, email, role, picture) VALUES ($1, $2, $3, $4, $5) RETURNING *', // Ubah dari users menjadi user
+            [username, hashedPassword, email, "user", pictureBuffer]
         );
         return result.rows[0];
     }

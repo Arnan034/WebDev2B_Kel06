@@ -38,6 +38,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
         <Route path="/signin" element={<Signin setIsAuthenticated={setIsAuthenticated} handleLogin={handleLogin}/>} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/*" element={<NotFound />} />

@@ -13,12 +13,15 @@ const DetailFilm = ({isAuthenticated, handleLogout}) => {
     const { id } = useParams(); // Mengambil id dari URL
     const [movieData, setMovieData] = useState(null); // State untuk menyimpan data film
     const [loading, setLoading] = useState(true); // State untuk status loading
+    const [isBookmarked, setIsBookmarked] = useState(false);
+
+    const user_id = sessionStorage.getItem('id_user')
 
     // Fetch data dari API saat komponen dimuat
     useEffect(() => {
         const fetchMovieData = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/film/${id}`);
+                const response = await axios.get(`http://localhost:5000/api/film/get/${id}`);
                 setMovieData(response.data); // Set data film ke state
                 setLoading(false); // Set loading menjadi false setelah data diambil
             } catch (error) {
@@ -28,10 +31,45 @@ const DetailFilm = ({isAuthenticated, handleLogout}) => {
         };
 
         fetchMovieData();
-    }, [id]);
+    }, [id,]);
+
+    useEffect(() => {
+        const checkBookmarkStatus = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/bookmark/get/${user_id}/${id}`);
+                setIsBookmarked(response.data.isBookmarked);
+            } catch (error) {
+                console.error('Error checking bookmark status:', error);
+                setIsBookmarked(false);
+            }
+        };
+    
+        checkBookmarkStatus();
+    }, [user_id, id]);
+
+
+    const handleBookmarkClick = async () => {
+        try {
+            console.log(`Sending request: isBookmarked=${isBookmarked}, userId=${user_id}, filmId=${id}`);
+            if (isBookmarked) {
+                await axios.delete(`http://localhost:5000/api/bookmark/del/${user_id}/${id}`);
+                console.log('Bookmark removed');
+            } else {
+                await axios.post('http://localhost:5000/api/bookmark/post/', {
+                    userId: user_id,
+                    filmId: id
+                });
+                console.log('Bookmark added');
+            }
+            
+            setIsBookmarked(prevState => !prevState);
+        } catch (error) {
+            console.error('Error updating bookmark:', error);
+        }
+    };
 
     const handleBackClick = () => {
-        window.history.back(); // Kembali ke halaman sebelumnya
+        window.history.back();
     };
 
     if (loading) {
@@ -52,6 +90,18 @@ const DetailFilm = ({isAuthenticated, handleLogout}) => {
                 <i className="fa fa-arrow-left"></i>
             </div>
 
+            {isAuthenticated ? (
+                <div
+                    className="bookmark-button-detail-page"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="bottom"
+                    title={isBookmarked ? "Remove Bookmark" : "Bookmark Film"}
+                    onClick={handleBookmarkClick}
+                >
+                    <i className={isBookmarked ? "fa-solid fa-bookmark" : "fa-regular fa-bookmark"}></i>
+                </div>
+            ) : (null)}
+            
             <div className="container h-100 mb-2 mt-5 pt-5">
                 {/* Mengirim data film sebagai props ke komponen Detail */}
                 <Detail movie={movieData} />

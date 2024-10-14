@@ -2,9 +2,9 @@ const Film = require('../models/filmModel'); // Sesuaikan dengan model yang digu
 
 const filmController = {
     getAllFilms: async (req, res) => {
-        const { country, year, availability, genre, award, status } = req.query;
+        const { country, sort, year, availability, genre, award, status } = req.query;
         try {
-            const film = await Film.getAll(country, year, availability, genre, award, status);
+            const film = await Film.getAll(country, sort, year, availability, genre, award, status);
             res.json(film);
         } catch (err) {
             console.error('Error fetching movies:', err.message);
@@ -24,9 +24,9 @@ const filmController = {
     },
     
     getFilmSearch: async (req, res) => {
-        const { search, country, year, availability, genre, award, status } = req.query;
+        const { search, sort, country, year, availability, genre, award, status } = req.query;
         try {
-            const films = await Film.getBySearch(search, country, year, availability, genre, award, status);
+            const films = await Film.getBySearch(search, sort, country, year, availability, genre, award, status);
             res.json(films);
         } catch (err) {
             console.error('Error fetching search:', err.message);
@@ -35,7 +35,7 @@ const filmController = {
     }, 
 
     createFilm: async (req, res) => {
-    
+        
     },
 
     updatePlusView: async (req, res) => {
@@ -47,7 +47,18 @@ const filmController = {
             console.error('Error fetching search:', err.message);
             res.status(500).json({ message: 'Server error' });
         }
-    },  
+    },
+
+    createBookmark: async (req, res) => {
+        const { userId, filmId } = req.body;
+        try {
+            await Film.addBookmark(userId, filmId);
+            res.status(200).json({ message: 'View incremented successfully' });
+        } catch (err) {
+            console.error('Error fetching search:', err.message);
+            res.status(500).json({ message: 'Server error' });
+        }
+    },
 
     updateFilm: async (req, res) => {
     

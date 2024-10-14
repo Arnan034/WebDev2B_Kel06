@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Select from 'react-select';
 import axios from 'axios';
 
-const RightSidebar = ({ isSidebarOpen, onFiltersChange }) => {
+const RightSidebar = ({ isSidebarOpen, onFiltersChange, handleSortChange }) => {
     const [sortOrder, setSortOrder] = useState(null);
     const [activeFilters, setActiveFilters] = useState(new Set());
     const [yearFilter, setYearFilter] = useState([]);
@@ -108,7 +108,7 @@ const RightSidebar = ({ isSidebarOpen, onFiltersChange }) => {
 
         // Kirim filters ke parent component
         onFiltersChange(filters);
-
+        handleSortChange(sortOrder);
         // Reset all filters to default
         setFilters({
             year: null,

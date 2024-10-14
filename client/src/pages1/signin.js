@@ -20,10 +20,11 @@ const Sign = ({ handleLogin }) => {
             });
 
             if (response.data.token && response.data.id_user) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('id_user', response.data.id_user);
-                localStorage.setItem('role', response.data.role);
-                localStorage.setItem('picture', response.data.picture);
+                sessionStorage.setItem('token', response.data.token);
+                sessionStorage.setItem('id_user', response.data.id_user);
+                sessionStorage.setItem('role', response.data.role);
+                sessionStorage.setItem('user', response.data.username);
+                sessionStorage.setItem('picture', response.data.picture);
 
                 navigate('/cms');
                 handleLogin();

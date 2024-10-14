@@ -2,26 +2,17 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const ListMovie = ({ filterCountry, filterMovie, SortFilm }) => {
+const ListMovie = () => {
     const [movies, setMovies] = useState([]);
     const [loadedMovies, setLoadedMovies] = useState(12);
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
 
+    const user_id = sessionStorage.getItem('id_user')
+
     const fetchMovies = useCallback(async () => {
-        console.log("Fetching movies with filters:", filterMovie);
         try {
-            const response = await axios.get('http://localhost:5000/api/film/', {
-                params: { 
-                    country: filterCountry,
-                    sort: SortFilm,
-                    year: filterMovie.year,
-                    availability: filterMovie.availability,
-                    genre: filterMovie.genre,
-                    award: filterMovie.award,
-                    status: filterMovie.status
-                }
-            });
+            const response = await axios.get(`http://localhost:5000/api/bookmark/film/${user_id}`);
     
             const formattedMovies = response.data.map(movie => ({
                 id: movie.id,
@@ -30,7 +21,6 @@ const ListMovie = ({ filterCountry, filterMovie, SortFilm }) => {
                 year: movie.year,
                 badge: movie.status === "On Going" ? "On Going" : "Completed",
                 rating: movie.rate,
-                views: movie.views,
                 genres: movie.genres.join(', ')
             }));
     
@@ -40,7 +30,7 @@ const ListMovie = ({ filterCountry, filterMovie, SortFilm }) => {
         } catch (error) {
             console.error('Error fetching movie data:', error);
         }
-    }, [filterCountry, filterMovie, SortFilm]);    
+    }, [user_id]);    
 
     useEffect(() => {
         fetchMovies();
@@ -55,7 +45,6 @@ const ListMovie = ({ filterCountry, filterMovie, SortFilm }) => {
 
         setIsLoading(true);
 
-        // Simulasi delay 3 detik
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         setLoadedMovies((prevLoadedMovies) => prevLoadedMovies + 12); // Tambahkan 12 film lagi
@@ -73,14 +62,6 @@ const ListMovie = ({ filterCountry, filterMovie, SortFilm }) => {
 
         return () => window.removeEventListener("scroll", handleScroll);
     }, [loadMoreMovies, hasMore, isLoading]);
-
-    const updateView = async (id) => {
-        try {
-            await axios.post(`http://localhost:5000/api/film/increment-view/${id}`);
-        } catch (error) {
-            console.error('Error incrementing view:', error);
-        }
-    }
     
     const renderStars = (rating) => {
         const stars = [];
@@ -92,36 +73,45 @@ const ListMovie = ({ filterCountry, filterMovie, SortFilm }) => {
 
     return (
         <div className="row">
-            {movies.slice(0, loadedMovies).map((movie, index) => (
-                <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={index}>
-                    <Link to={`/detail/${movie.id}`} onClick={() => updateView(movie.id)}>
-                        <div className="card bg-transparent">
-                            <img src={movie.imgSrc} className="card-img-top" alt="Movie Img" />
-                            <span className={`badge ${movie.badge === "On Going" ? "On Going" : "completed"}`}>
-                                {movie.badge}
-                            </span>
-                            <div className="card-body">
-                                <h5 className="card-title">{movie.title}</h5>
-                                <p className="card-text">{movie.year}</p>
-                                <p className="card-text">{movie.genres}</p>
-                                <div className="rating-container">
-                                    <p className="card-text mb-0 rating">{renderStars(movie.rating)}</p>
-                                    {movie.views && <p className="card-text mb-0">views {movie.views}</p>}
+            {movies.length === 0 ? (
+                <div className="no-film-bookmark">
+                    <h3>Tidak ada film yang kamu simpan</h3>
+                </div>
+            
+            ) : (
+                movies.slice(0, loadedMovies).map((movie, index) => (
+                    <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={index}>
+                        <Link to={`/detail/${movie.id}`}>
+                            <div className="card bg-transparent">
+                                <img src={movie.imgSrc} className="card-img-top" alt="Movie Img" />
+                                <span className={`badge ${movie.badge === "On Going" ? "On Going" : "completed"}`}>
+                                    {movie.badge}
+                                </span>
+                                <div className="card-body">
+                                    <h5 className="card-title">{movie.title}</h5>
+                                    <p className="card-text">{movie.year}</p>
+                                    <p className="card-text">{movie.genres}</p>
+                                    <div className="rating-container">
+                                        <p className="card-text mb-0 rating">{renderStars(movie.rating)}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </Link>
-                </div>
-            ))}
+                        </Link>
+                    </div>
+                ))
+            )}
+            
             {isLoading && (
                 <div className="d-flex justify-content-center loading-spinner">
-                    {/* Gambar Spinner */}
                     <div className="spinner-border" role="status">
                         <span className="visually-hidden">Loading...</span>
                     </div>
                 </div>
             )}
-            {!hasMore && !isLoading && <p>No more movies to load.</p>} {/* Optional message when there are no more movies */}
+            
+            {!hasMore && !isLoading && movies.length > 0 && (
+                <p>No more movies to load.</p>
+            )}
         </div>
     );
 };

@@ -7,7 +7,7 @@ const validateLogin = [
         .withMessage('Username is required and must be a string.'),
     body('password')
         .isLength({ min: 3 })
-        .withMessage('Password must be at least 6 characters long.'),
+        .withMessage('Password must be at least 3 characters long.'),
     
     (req, res, next) => {
         const errors = validationResult(req);

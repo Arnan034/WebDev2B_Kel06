@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Link} from "react-router-dom";
 import axios from "axios";
 
-const ListSearch = ({ filterCountry, searchQuery, filterMovie }) => {
+const ListSearch = ({ filterCountry, searchQuery, filterMovie, SortFilm }) => {
     const [movies, setMovies] = useState([]);
 
     const fetchMovies = useCallback(async () => {
@@ -11,6 +11,7 @@ const ListSearch = ({ filterCountry, searchQuery, filterMovie }) => {
                 params: { 
                     search: searchQuery,
                     country: filterCountry ? parseInt(filterCountry) : undefined, // Pastikan ini adalah integer
+                    sort: SortFilm,
                     year: filterMovie.year,
                     availability: filterMovie.availability,
                     genre: filterMovie.genre,
@@ -33,7 +34,7 @@ const ListSearch = ({ filterCountry, searchQuery, filterMovie }) => {
         } catch (error) {
             console.error('Error fetching movie data:', error);
         }
-    }, [filterCountry, searchQuery, filterMovie]); // Dependency on filterCountry only
+    }, [filterCountry, searchQuery, filterMovie, SortFilm]); // Dependency on filterCountry only
 
     useEffect(() => {
         fetchMovies();
