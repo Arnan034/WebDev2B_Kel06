@@ -1,25 +1,117 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Select from 'react-select';
+import { Search } from 'semantic-ui-react';
+import _ from 'lodash';
+
 
 const NewDrama = () => {
+  const [country, setCountry] = useState([]);
+  const [award, setAward] = useState([]);
+  const [genre, setGenres] = useState([]);
+  const [actor, setActor] = useState([]);
+
+  const [results, setResults] = useState([]);
+  const [valueActor, setValueActor] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState(null);
   const [selectedAward, setSelectedAward] = useState([]);
-  const [actors, setActors] = useState([
-    { id: 1, name: 'Leonardo DiCaprio', img: '../img/leo.jpg' },
-    { id: 2, name: 'Benedict C.', img: '../img/benedict.jpg' },
-    { id: 3, name: 'Ryan Reynolds', img: '../img/ryan.jpg' },
-  ]);
+  const [selectedActors, setSelectedActors] = useState([]);
+  
+  useEffect(() => {
+    const fetchCountries = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/countries/');
+            setCountry(response.data || []);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
-  const MAX_SELECTION = 5;
+    fetchCountries();
+  }, []);
 
-  const award = [
-    { value: "1", label: "2022 - Indonesia - Festival Film Indonesia - Film Terbaik" },
-    { value: "2", label: "2021 - Amerika Serikat - Academy Awards (Oscars) - Best Picture" },
-    { value: "3", label: "2020 - Prancis Cannes Film Festival - Palme d'Or" },
-    { value: "4", label: "2012 - Jepang - Tokyo International Film Festival - Best Director" },
-    { value: "5", label: "2019 - Jepang - Tokyo International Film Festival - Best Director" },
-    { value: "6", label: "2003 - England - Best Fantasy" },
-  ];
+  useEffect(() => {
+    const fetchAward = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/awards/name');
+            const options = response.data.map(award => ({ value: award.name, label: award.name }));
+            setAward(options);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    fetchAward();
+  }, []);
+
+  useEffect(() => {
+    const fetchGenre = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/genres');
+            const options = response.data.map(genre => ({ value: genre.id_genre, label: genre.genre }));
+            setGenres(options);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    fetchGenre();
+  }, []);
+
+  useEffect(() => {
+    const fetchActor = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/actors/all');
+        const options = response.data.map(actor => ({
+          key: actor.id,
+          title: actor.name,
+          image: `data:image/jpeg;base64,${actor.picture}`,
+          country: actor.country,
+          birthdate: actor.birthdate,
+        }));
+        setActor(options);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchActor();
+  }, []);
+
+  // const MAX_SELECTION_ACTOR = 9;
+  const MAX_SELECTION_AWARD = 3;
+
+  const handleResultSelect = (e, { result }) => {
+    // Cek apakah aktor sudah dipilih
+    const isActorSelected = selectedActors.some(actor => actor.key === result.key);
+
+    // Hanya tambahkan jika belum dipilih dan jumlah kurang dari 9
+    if (!isActorSelected && selectedActors.length < 9) {
+      setValueActor(''); // Reset value pencarian
+      setSelectedActors(prevActors => [...prevActors, result]); // Tambahkan aktor yang dipilih ke array
+    }
+  };
+
+  const handleSearchChange = (e, { value }) => {
+    setValueActor(value);
+    setIsLoading(true);
+
+    setTimeout(() => {
+      // Hanya cari jika panjang input lebih dari 1
+      if (value.length < 1) {
+        setIsLoading(false);
+        setResults([]);
+        return;
+      }
+
+      const re = new RegExp(_.escapeRegExp(value), 'i');
+      const isMatch = (actor) => re.test(actor.title);
+
+      setResults(_.filter(actor, isMatch));
+      setIsLoading(false);
+    }, 300);
+  };
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -28,22 +120,12 @@ const NewDrama = () => {
     }
   };
 
-  const handleDeleteActor = (id) => {
-    setActors(actors.filter(actor => actor.id !== id));
-  };
-
   const handleSelectAward = (selected) => {
-    if (selected.length <= MAX_SELECTION) {
+    if (selected.length <= MAX_SELECTION_AWARD) {
       setSelectedAward(selected);
     } else {
-      alert(`You can only select up to ${MAX_SELECTION} options.`);
+      alert(`You can only select up to ${MAX_SELECTION_AWARD} options.`);
     }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Redirect to cmsvalidate.html
-    window.location.href = "CMSValidate.html";
   };
 
   useEffect(() => {
@@ -67,6 +149,22 @@ const NewDrama = () => {
       }
     };
   }, []);
+
+  const resultRenderer = ({ title, image }) => (
+    <div className='auto-cmplt-actor-search-cms'>
+      <img src={image} alt={title}/>
+      <span>{title}</span>
+    </div>
+  );
+
+  const handleCloseCard = (actorToRemove) => {
+    setSelectedActors(prevActors => prevActors.filter(actor => actor.key !== actorToRemove.key)); // Hapus aktor dari array
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    window.location.href = "CMSValidate.html";
+  };
 
   return (
     <div className="col p-4">
@@ -95,20 +193,30 @@ const NewDrama = () => {
 
           <div className="col-md-8 mb-3">
             <div className="row">
+
               <div className="col-md-6 mb-3">
                 <h6 htmlFor="title" className="form-label">Title</h6>
                 <input type="text" className="form-control" placeholder="Type title here..." id="title" name="title" required />
+                
                 <h6 htmlFor="year" className="form-label">Year</h6>
                 <input type="number" className="form-control" placeholder="Type year here..." id="year" name="year" required />
+                
                 <h6 htmlFor="availability" className="form-label">Availability</h6>
-                <input type="text" className="form-control" placeholder="Fansub: @aoihub on X" id="availability" name="availability" required />
+                <input type="text" className="form-control" placeholder="Netflix" id="availability" name="availability" required />
               </div>
 
               <div className="col-md-6 mb-3">
                 <h6 htmlFor="alterTitle" className="form-label">Alternative Title</h6>
                 <input type="text" className="form-control" placeholder="Type alternative title here..." id="alterTitle" name="alterTitle" required />
+
                 <h6 htmlFor="country" className="form-label">Country</h6>
-                <input type="text" className="form-control" placeholder="Type country here..." id="country" name="country" required />
+                <select className="form-select" id="country" name="country" required>
+                  <option disabled selected value="">Select country</option>
+                  {country.map((countries) => (
+                    <option key={countries.id_country} value={countries.id_country}>{countries.country_name} </option>
+                  ))}
+                </select>
+                
                 <h6 htmlFor="status" className="form-label">Status</h6>
                 <select className="form-select" id="status" name="status" required>
                   <option disabled selected value="">Status</option>
@@ -119,7 +227,7 @@ const NewDrama = () => {
 
               <div className="col-md-12 mb-3">
                 <h6 htmlFor="award" className="form-label">Award:</h6>
-                <span>Max 5 Award</span>
+                <span>Max 3 Award</span>
                 <Select
                   isMulti
                   value={selectedAward}
@@ -143,44 +251,52 @@ const NewDrama = () => {
                 <div className="col-12">
                   <h6 className="form-label">Add Genres</h6>
                 </div>
-                {['Action', 'Adventure', 'Sci-Fi', 'Comedy', 'Drama', 'Fantasy', 'Horror', 'Mystery'].map(genre => (
+                {genre.map(genre => (
                   <div className="col-md-3 mb-3" key={genre}>
                     <div className="form-check">
-                      <input className="form-check-input" type="checkbox" value={genre} id={`genre${genre}`} name="genres[]" />
-                      <label className="form-check-label" htmlFor={`genre${genre}`}>{genre}</label>
+                      <input className="form-check-input" type="checkbox" value={genre.value} id={genre.value} name="genres[]" />
+                      <label className="form-check-label" htmlFor={genre.genre}>{genre.label}</label>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="card-list-actor row mt-4">
-                <div className="col-12">
+              <div className="row mt-4">
                   <h6 htmlFor="actors" className="form-label">Add Actors (Up to 9)</h6>
-                  <div className="input-group mb-3">
-                    <input type="text" className="form-control" placeholder="Search Actor Name..." aria-label="Search Actor" aria-describedby="button-addon2" />
-                    <button className="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
-                  </div>
-                </div>
-
-                {actors.map(actor => (
-                  <div className="col-md-4 mb-3" key={actor.id}>
-                    <div className="card d-flex flex-row">
-                      <img src={actor.img} className="card-img-left" alt={actor.name} />
-                      <div className="card-body">
-                        <h6 className="card-title">{actor.name}</h6>
-                        <button 
-                          type="button" 
-                          className="btn btn-warning btn-sm float-end delete-btn" 
-                          aria-label="Delete"
-                          onClick={() => handleDeleteActor(actor.id)}
-                        >
-                          X
+                  <div className="col-12 d-flex flex-wrap justify-content-center">
+                    <Search
+                      fluid
+                      input={{ icon: 'search', iconPosition: 'right', style: { width: '80%'} }}
+                      loading={isLoading}
+                      onResultSelect={handleResultSelect}
+                      onSearchChange={_.debounce(handleSearchChange, 500, {
+                        leading: true,
+                      })}
+                      results={results.slice(0, 5)}
+                      value={valueActor}
+                      resultRenderer={resultRenderer}
+                      placeholder='Search Actor Here'
+                    />
+                    {selectedActors.map((actor) => (
+                      <div key={actor.key} className="card-actor-cms">
+                        <button className="close-btn" onClick={() => handleCloseCard(actor)}>
+                          &times;
                         </button>
+                        <img src={actor.image} alt={`${actor.title}`} />
+                        <h4>{actor.title}</h4>
+                        <div className="info-actor-cms">
+                          <p><span>{actor.country}, {actor.birthdate}</span></p>
+                          <div className="input-actor-cms-group">
+                            <label htmlFor={`cast-${actor.key}`}>Cast:</label>
+                            <input type="text" id={`cast-${actor.key}`} placeholder="Enter cast name..." required />
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    ))}
+                    {selectedActors.length >= 9 && <p>You can only select up to 9 actors.</p>}
                   </div>
-                ))}
               </div>
+
             </div>
           </div>
         </div>

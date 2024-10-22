@@ -20,9 +20,6 @@ const Home = ({isAuthenticated, handleLogout}) => {
         status: null
     });
 
-    
-    const pictureUser = sessionStorage.getItem('picture');
-
     const location = useLocation(); // Get current location
 
     // Reset filters when navigating to "/"

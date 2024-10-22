@@ -6,6 +6,7 @@ const CMSAward = () => {
     { no: 2, country: "UK", year: 2021, award: "Best Director" },
     { no: 3, country: "Canada", year: 2022, award: "Best Actor" }
   ]);
+
   const [formData, setFormData] = useState({ country: '', year: '', award: '' });
   const [notification, setNotification] = useState('');
 

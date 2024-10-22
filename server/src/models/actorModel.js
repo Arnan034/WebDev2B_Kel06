@@ -1,6 +1,28 @@
 const pool = require('../config/db');
 
 class Actor {
+    static async getAll () {
+        const result = await pool.query('SELECT * FROM actor');
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June", 
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        return result.rows.map(actor => {
+            const birthDate = new Date(actor.birth_date);
+    
+            const formattedBirthDate = `${String(birthDate.getDate()).padStart(2, '0')} ${monthNames[birthDate.getMonth()]} ${birthDate.getFullYear()}`;
+    
+            return {
+                id: actor.id_actor,
+                name: actor.name,
+                country: actor.country,
+                birthdate: formattedBirthDate, // Menggunakan format yang baru
+                picture: actor.picture.toString('base64'),
+            };
+        });
+    }
+
     static async getByIdFilm(id){
         const query = `
             SELECT a.name, a.picture, af.cast_as

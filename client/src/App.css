@@ -1638,6 +1638,74 @@ p {
   font-size: 18px;
 }
 
+.auto-cmplt-actor-search-cms {
+  display: 'flex';
+  align-items: 'center';
+}
+
+.auto-cmplt-actor-search-cms img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.card-actor-cms {
+  width: 80%;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 15px;
+  margin-top: 20px;
+  position: relative;
+}
+.card-actor-cms img {
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
+  margin-right: 15px;
+  float: left;
+}
+.card-actor-cms h4 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.card-actor-cms p {
+  margin-top: 15px;
+  font-size: 1em;
+  font-weight: 300;
+}
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: large;
+}
+
+.close-btn:hover {
+  color: red;
+  scale: 1.2;
+}
+
+.info-actor-cms {
+  margin-left: 120px; /* Adjust margin to avoid overlap with image */
+}
+.input-actor-cms-group {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+.input-actor-cms-group input {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-left: 10px;
+}
 
 /* Responsive Styles */
 @media (max-width: 992px) {

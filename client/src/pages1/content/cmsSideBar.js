@@ -7,7 +7,7 @@ const CmsSidebar = () => {
 
     // Inisialisasi nilai dari localStorage
     useEffect(() => {
-        const storedRole = sessionStorage.getItem('role'); // Ambil nilai role dari localStorage
+        const storedRole = 'admin';//localStorage.getItem('role');
         if (storedRole) {
             setRole(storedRole);
         } else {

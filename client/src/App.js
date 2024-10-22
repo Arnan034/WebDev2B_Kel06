@@ -7,6 +7,7 @@ import CMS from './pages1/cms';
 import Signin from './pages1/signin';
 import Signup from './pages1/signup';
 import ProtectedRoute from './pages1/protectedRoute';
+import TestMultiSelect from './pages1/testMultiSelectImage';
 import NotFound from './pages1/content/notFound';
 
 import './App.css';
@@ -29,7 +30,7 @@ function App() {
         <Route path="/" element={<Home isAuthenticated={isAuthenticated} handleLogout={handleLogout}/>} />
         <Route path="/detail/:id" element={<DetailFilm isAuthenticated={isAuthenticated} handleLogout={handleLogout}/>} />
         <Route path="/search" element={<SearchPage isAuthenticated={isAuthenticated} handleLogout={handleLogout}/>} />
-        
+        {/* <Route path="/cms" element={<CMS />} /> */}
         <Route 
           path="/cms/*" 
           element={
@@ -38,10 +39,9 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        
+        <Route path="/multiimg" element={<TestMultiSelect />} />
         <Route path="/signin" element={<Signin setIsAuthenticated={setIsAuthenticated} handleLogin={handleLogin}/>} />
         <Route path="/signup" element={<Signup />} />
-        
         <Route path="/*" element={<NotFound />} />
         
       </Routes>

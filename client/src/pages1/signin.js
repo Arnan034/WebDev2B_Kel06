@@ -23,11 +23,11 @@ const Sign = ({ handleLogin }) => {
             });
 
             if (response.data.token && response.data.id_user) {
-                sessionStorage.setItem('token', response.data.token);
-                sessionStorage.setItem('id_user', response.data.id_user);
-                sessionStorage.setItem('role', response.data.role);
-                sessionStorage.setItem('user', response.data.username);
-                sessionStorage.setItem('picture', response.data.picture);
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('id_user', response.data.id_user);
+                localStorage.setItem('role', response.data.role);
+                localStorage.setItem('user', response.data.username);
+                localStorage.setItem('picture', response.data.picture);
 
                 navigate('/cms');
                 handleLogin();
@@ -48,11 +48,11 @@ const Sign = ({ handleLogin }) => {
             const token_google = credentialResponse.credential;
             const response = await axios.post("http://localhost:5000/api/auth/googleSignin", { token_google });
             
-            sessionStorage.setItem('token', response.data.token);
-            sessionStorage.setItem('id_user', response.data.id_user);
-            sessionStorage.setItem('role', response.data.role);
-            sessionStorage.setItem('user', response.data.username);
-            sessionStorage.setItem('picture', response.data.picture);
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('id_user', response.data.id_user);
+            localStorage.setItem('role', response.data.role);
+            localStorage.setItem('user', response.data.username);
+            localStorage.setItem('picture', response.data.picture);
     
             navigate('/cms');
             handleLogin();

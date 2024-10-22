@@ -3,38 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navbar with Dropdown</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <title>Actor Card</title>
     <style>
-        /* Optional: Add some custom styling */
-        .dropdown-menu {
-            margin-top: 0; /* Remove margin at the top */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .card-actor-cms {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .card-actor-cms img {
+            width: 100px;
+            height: 100px;
+            border-radius: 5px;
+            margin-right: 15px;
+            float: left;
+        }
+        .card-actor-cms h4 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .info-actor-cms {
+            margin-left: 120px; /* Adjust margin to avoid overlap with image */
+        }
+        .input-actor-cms-group {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .input-actor-cms-group input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-left: 10px;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid d-flex justify-content-between">
-            <a class="navbar-brand" href="#">MyWebsite</a>
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    User
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li><a class="dropdown-item" href="#">Logout</a></li>
-                </ul>
+
+    <div class="card-actor-cms">
+        <button class="close-btn">&times;</button>
+        <img src="https://via.placeholder.com/100" alt="Actor Image">
+        <h4>Another Actor</h4>
+        <div class="info-actor-cms">
+            <p>Location: <span>Another Country, February 2, 1990</span></p>
+            <div class="input-actor-cms-group">
+                <label for="cast2">Cast:</label>
+                <input type="text" id="cast2" placeholder="Enter cast name..." required>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <!-- Include Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

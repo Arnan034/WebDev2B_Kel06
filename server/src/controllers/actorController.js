@@ -1,6 +1,16 @@
 const Actor = require('../models/actorModel'); // Sesuaikan dengan model yang digunakan
 
 const actor = {
+    getAllActor: async (req, res) => {
+        try {
+            const actor = await Actor.getAll();
+            res.json(actor);
+        } catch (err) {
+            console.error('Error fetching movies:', err.message);
+            res.status(500).json({ message: 'Server error' });
+        }
+    },
+
     getActorByIdFilm: async (req, res) => {
         const { id } = req.params;
         try {
