@@ -5,7 +5,7 @@ const { getAllActor, getActorByIdFilm, getActorById, createActor, updateActor, d
 // Rute untuk aktor
 router.get('/all', getAllActor);
 router.get('/list/:id', getActorByIdFilm);
-// router.get('/:id', getActorById);
+router.get('/:id', getActorById);
 router.post('/', createActor);
 router.put('/:id', updateActor);
 router.delete('/:id', deleteActor);

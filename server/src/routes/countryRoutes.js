@@ -6,6 +6,6 @@ const { getAllCountries, createCountry, updateCountry, deleteCountry } = require
 router.get('/', getAllCountries);
 router.post('/', createCountry);
 router.put('/:id', updateCountry);
-router.delete('/:id', deleteCountry);
+router.delete('/:id_country', deleteCountry);
 
 module.exports = router;

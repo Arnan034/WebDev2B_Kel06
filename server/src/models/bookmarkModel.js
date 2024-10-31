@@ -45,8 +45,6 @@ class Bookmark {
             throw new Error('Bookmark not found or could not be deleted');
         }
     }
-    
-    
 }
 
 module.exports = Bookmark;

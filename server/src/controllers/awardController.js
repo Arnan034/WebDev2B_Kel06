@@ -22,50 +22,55 @@ const awardController = {
     },
 
     createAward: async (req, res) => {
-        const { name } = req.query;
+        const { institution, year, name } = req.body;
         try {
-            if (!Award.check(name)) {
-                const award = await Award.create(name);
-                res.json(award);
+            const existingAward = await Award.check(institution, year, name);
+    
+            if (!existingAward) {
+                const newAward = await Award.create(institution, year, name);
+                res.json(newAward);
             } else {
-                console.log('Country Already exists');
+                console.log('Award already exists');
+                res.status(400).json({ message: 'Award already exists' });
             }
         } catch (err) {
-            console.error('Error fetching movies:', err.message);
+            console.error('Error creating award:', err.message);
             res.status(500).json({ message: 'Server error' });
         }
     },
 
     updateAward: async (req, res) => {
         const { id } = req.params;
-        const { name } = req.query;
+        const { institution, year, name } = req.body;
+      
+        if (!institution || !year || !name) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+      
         try {
-            if (Award.check(id)) {
-                const award = await Award.update(id, name);
-                res.json(award);
-            } else {
-                console.log('Country ID Not exists');
+            const updatedAward = await Award.update(id, institution, year, name);
+            if (!updatedAward) {
+                return res.status(404).json({ message: 'Award not found' });
             }
-        } catch (err) {
-            console.error('Error fetching movies:', err.message);
-            res.status(500).json({ message: 'Server error' });
+            res.json({ message: 'Award berhasil diperbarui', award: updatedAward });
+        } catch (error) {
+            res.status(500).json({ message: 'Server error', error: error.message });
         }
     },
 
     deleteAward: async (req, res) => {
         const { id } = req.params;
+      
         try {
-            if (Award.check(id)) {
-                const award = await Award.delete(id);
-                res.json(award);
-            } else {
-                console.log('Award Not exists');
+            const deletedAward = await Award.delete(id);
+            if (!deletedAward) {
+                return res.status(404).json({ message: 'Award not found' });
             }
-        } catch (err) {
-            console.error('Error fetching movies:', err.message);
-            res.status(500).json({ message: 'Server error' });
+            res.json({ message: 'Award deleted successfully', award: deletedAward });
+        } catch (error) {
+            res.status(500).json({ message: 'Server error', error: error.message });
         }
-    }
+    },     
 }
 
 module.exports = awardController;

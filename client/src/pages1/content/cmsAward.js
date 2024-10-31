@@ -1,83 +1,141 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Button } from 'semantic-ui-react';
+import PaginationComponent from './paginationComponent';
 
 const CMSAward = () => {
-  const [awards, setAwards] = useState([
-    { no: 1, country: "USA", year: 2020, award: "Best Film" },
-    { no: 2, country: "UK", year: 2021, award: "Best Director" },
-    { no: 3, country: "Canada", year: 2022, award: "Best Actor" }
-  ]);
+  const [awards, setAwards] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [newInstitution, setNewInstitution] = useState('');
+  const [newYear, setNewYear] = useState('');
+  const [newAward, setNewAward] = useState('');
+  const [editingId, setEditingId] = useState(null);
+  const [editedAwards, setEditedAwards] = useState({});
+  const [message, setMessage] = useState("");
 
-  const [formData, setFormData] = useState({ country: '', year: '', award: '' });
-  const [notification, setNotification] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(awards.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = awards.slice(startIndex, endIndex);
+  
+  useEffect(() => {
+    fetchAwards();
+  }, []);
 
-  const showAlert = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(''), 3000);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleAddAward = (event) => {
-    event.preventDefault();
-    const newAward = {
-      no: awards.length ? awards[awards.length - 1].no + 1 : 1,
-      country: formData.country,
-      year: parseInt(formData.year, 10),
-      award: formData.award
-    };
-
-    setAwards([...awards, newAward]);
-    setFormData({ country: '', year: '', award: '' });
-    showAlert("Award added successfully!", "success");
-  };
-
-  const handleEditAward = (index) => {
-    const award = awards[index];
-    const newCountry = prompt("Enter new country:", award.country);
-    const newYear = prompt("Enter new year:", award.year);
-    const newAward = prompt("Enter new award name:", award.award);
-    
-    if (newCountry !== null && newYear !== null && newAward !== null) {
-      awards[index] = {
-        ...awards[index],
-        country: newCountry || award.country,
-        year: newYear || award.year,
-        award: newAward || award.award
-      };
-      setAwards([...awards]); // Trigger re-render
-      showAlert("Award updated successfully!", "success");
+  const fetchAwards = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/awards');
+      setAwards(response.data || []);
+    } catch (error) {
+      console.error("Fetch Error: ", error);
+      setError("Failed to fetch awards");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDeleteAward = (index) => {
-    const confirmed = window.confirm("Are you sure you want to delete this award?");
-    if (confirmed) {
-      const updatedAwards = awards.filter((_, idx) => idx !== index)
-                                   .map((award, idx) => ({ ...award, no: idx + 1 }));
-      setAwards(updatedAwards);
-      showAlert("Award deleted successfully!", "danger");
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleInstitutionChange = (e) => {
+    setNewInstitution(e.target.value);
+  };
+
+  const handleYearChange = (e) => {
+    setNewYear(e.target.value);
+  };
+
+  const handleAwardChange = (e) => {
+    setNewAward(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:5000/api/awards', {
+        institution: newInstitution,
+        year: newYear,
+        name: newAward
+      });
+      setAwards([response.data, ...awards]);
+      setNewInstitution('');
+      setNewYear('');
+      setNewAward('');
+      setMessage(`Award "${response.data.institution}", tahun "${response.data.year}", kategori "${response.data.name}" berhasil ditambahkan!`);
+      fetchAwards();
+    } catch (error) {
+      console.error("Error adding award:", error);
+      setError("Failed to add award");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (id, institution, year, name) => {
+    setEditingId(id);
+    setEditedAwards({ institution, year, name });
+  };
+
+  const handleEditedChange = (e) => {
+    const { name, value } = e.target;
+    setEditedAwards((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleUpdate = async () => {
+    try {
+      await axios.put(`http://localhost:5000/api/awards/${editingId}`, editedAwards);
+      setAwards(awards.map((award) => 
+        award.id_award === editingId ? { ...award, ...editedAwards } : award
+      ));
+      setEditingId(null);
+      setMessage(`Award berhasil diperbarui!`);
+      fetchAwards();
+    } catch (error) {
+      console.error("Error updating award:", error);
+      setError("Failed to update award");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const awardToDelete = awards.find(award => award.id_award === id);
+    console.log("ID yang akan dihapus:", id);
+    if (!awardToDelete) return;
+
+    const confirmDelete = window.confirm(`Are you sure you want to delete "${awardToDelete.institution}"?`);
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`http://localhost:5000/api/awards/${id}`);
+      setAwards(awards.filter((award) => award.id_award !== id));
+      setMessage(`Award "${awardToDelete.institution}" berhasil dihapus.`);
+      fetchAwards();
+    } catch (error) {
+      console.error("Error deleting award:", error);
+      setError("Failed to delete award");
     }
   };
 
   return (
     <div className="col p-4">
       <h3>Add Award</h3>
-      <hr className="text-black my-2" /><br />
-      <form id="awardForm" className="mb-4" onSubmit={handleAddAward}>
+      <hr className="text-black my-2" />
+      <br />
+      <form id="awardForm" className="mb-4" onSubmit={handleSubmit}>
         <div className="mb-3 row align-items-center">
-          <label htmlFor="country" className="form-label col-sm-3">Country</label>
+          <label htmlFor="institution" className="form-label col-sm-3">Institution</label>
           <div className="col-sm-9">
             <input 
               type="text" 
               className="form-control" 
-              placeholder="Type country here..." 
-              id="country" 
-              name="country" 
-              value={formData.country}
-              onChange={handleChange}
+              placeholder="Type institution here..." 
+              id="institution" 
+              name="institution"
+              value={newInstitution}
+              onChange={handleInstitutionChange}
               required 
             />
           </div>
@@ -91,8 +149,8 @@ const CMSAward = () => {
               placeholder="Type year here..." 
               id="year" 
               name="year" 
-              value={formData.year}
-              onChange={handleChange}
+              value={newYear}
+              onChange={handleYearChange}
               required 
             />
           </div>
@@ -105,9 +163,9 @@ const CMSAward = () => {
               className="form-control" 
               placeholder="Type award here..." 
               id="award" 
-              name="award" 
-              value={formData.award}
-              onChange={handleChange}
+              name="name" 
+              value={newAward}
+              onChange={handleAwardChange}
               required 
             />
           </div>
@@ -116,40 +174,91 @@ const CMSAward = () => {
           <button type="submit" className="btn btn-success">Submit</button>
         </div>
       </form>
-      {notification && (
-        <div className={`alert alert-${notification.type} alert-dismissible fade show`} role="alert">
-          {notification.message}
-          <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      )}
-      <br />
+      {message && <p className="text-success">{message}</p>}
+      {error && <p className="text-danger">{error}</p>}
 
       <h3>List of Awards</h3>
       <table className="table table-striped table-hover" id="awardsTable">
         <thead>
           <tr>
             <th className="text-center no-column table-warning">No</th>
-            <th className="text-center country-column table-warning">Country</th>
+            <th className="text-center institution-column table-warning">Institution</th>
             <th className="text-center year-column table-warning">Year</th>
             <th className="text-center award-column table-warning">Award</th>
             <th className="text-center action-column table-warning">Actions</th>
           </tr>
         </thead>
-        <tbody>
-          {awards.map((item, index) => (
-            <tr key={item.no}>
-              <td className="text-center no-column">{item.no}</td>
-              <td className="country-column">{item.country}</td>
-              <td className="year-column">{item.year}</td>
-              <td className="award-column">{item.award}</td>
-              <td className="text-center actions-column">
-                <button className="btn btn-primary" onClick={() => handleEditAward(index)}>Edit</button>
-                <button className="btn btn-warning" onClick={() => handleDeleteAward(index)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+        { loading ? (
+          <p>Loading awards...</p>
+        ) : error ? (
+          <p className="text-danger">{error}</p>
+        ) : (
+          <tbody>
+            {currentItems.map((award, index) => (
+              <tr key={award.id_award}>
+                <td className="text-center no-column">{startIndex + index + 1}</td>
+                <td className="institution-column">
+                  {editingId === award.id_award ? (
+                    <input
+                      type="text"
+                      name="institution"
+                      value={editedAwards.institution}
+                      onChange={handleEditedChange}
+                      className="form-control"
+                    />
+                  ) : (
+                    award.institution
+                  )}
+                </td>
+                <td className="year-column">
+                  {editingId === award.id_award ? (
+                    <input
+                      type="number"
+                      name="year"
+                      value={editedAwards.year}
+                      onChange={handleEditedChange}
+                      className="form-control"
+                    />
+                  ) : (
+                    award.year
+                  )}
+                </td>
+                <td className="award-column">
+                  {editingId === award.id_award ? (
+                    <input
+                      type="text"
+                      name="name"
+                      value={editedAwards.name}
+                      onChange={handleEditedChange}
+                      className="form-control"
+                    />
+                  ) : (
+                    award.name
+                  )}
+                </td>
+                <td className="text-center actions-column">
+                  {editingId === award.id_award ? (
+                    <>
+                      <Button color='green' size='tiny' onClick={() => handleUpdate(award.id_award)}>Save</Button>
+                      <Button color='red' size='tiny' onClick={() => setEditingId(null)}>Cancel</Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button color='blue' size='tiny' onClick={() => handleEdit(award.id_award, award.institution, award.year, award.name)}>Edit</Button>
+                      <Button color='red' size='tiny' onClick={() => handleDelete(award.id_award)}>Delete</Button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        )}
       </table>
+      <PaginationComponent
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

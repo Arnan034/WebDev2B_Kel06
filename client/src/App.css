@@ -247,7 +247,6 @@ p {
   margin-bottom: 10px;
 }
 
-
 /* Efek hover untuk ikon dan link di dalam .region */
 .region:hover i, .side:hover i,
 .region:hover a, .side:hover a {
@@ -266,6 +265,21 @@ p {
   margin-right: 2px;
   font-weight: 550;
 }
+
+.region a.active, .side a.active {
+  color: #f0f0f0;
+  font-weight: 600; /* Misalnya, untuk memberikan penekanan */
+}
+
+.region.active i {
+  color: white; /* Warna ikon saat negara aktif */
+}
+
+.region.active a {
+  color: white; /* Warna teks tautan saat negara aktif */
+  font-weight: 600; /* Misalnya, untuk penekanan */
+}
+
 
 /* End Sidebar Left */
 

@@ -1,12 +1,14 @@
-const Actor = require('../models/actorModel'); // Sesuaikan dengan model yang digunakan
+const Actor = require('../models/actorModel');
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() }).single('picture');
 
-const actor = {
+const actorController = {
     getAllActor: async (req, res) => {
         try {
-            const actor = await Actor.getAll();
-            res.json(actor);
+            const actors = await Actor.getAll();
+            res.json(actors);
         } catch (err) {
-            console.error('Error fetching movies:', err.message);
+            console.error('Error fetching actors:', err.message);
             res.status(500).json({ message: 'Server error' });
         }
     },
@@ -20,7 +22,7 @@ const actor = {
             }
             res.json(actors);
         } catch (err) {
-            console.error('Error fetching movies:', err.message);
+            console.error('Error fetching actors:', err.message);
             res.status(500).json({ message: 'Server error' });
         }
     },
@@ -28,59 +30,67 @@ const actor = {
     getActorById: async (req, res) => {
         const { id } = req.params;
         try {
-            const actor = await Actor.getByIdFilm(id);
+            const actor = await Actor.getById(id);
+            if (!actor) {
+                return res.status(404).json({ message: 'Actor not found' });
+            }
             res.json(actor);
         } catch (err) {
-            console.error('Error fetching movies:', err.message);
+            console.error('Error fetching actor:', err.message);
             res.status(500).json({ message: 'Server error' });
         }
     },
 
     createActor: async (req, res) => {
-        const { name } = req.query;
+        const { country, name, birth_date, picture } = req.body;
+
         try {
-            if (!Actor.check(name)) {
-                const actor = await Actor.create(name);
-                res.json(actor);
-            } else {
-                console.log('Country Already exists');
+            if (!picture || !picture.includes('base64')) {
+                return res.status(400).json({ error: 'Invalid image format. Please provide a valid base64 image.' });
             }
+
+            const pictureBuffer = Buffer.from(picture.split(',')[1], 'base64');
+
+            const newActor = await Actor.create(country, name, birth_date, pictureBuffer);
+            res.status(201).json({ message: 'Create new actor successfully', actor: newActor });
         } catch (err) {
-            console.error('Error fetching movies:', err.message);
+            console.error('Error creating actor:', err.message);
             res.status(500).json({ message: 'Server error' });
         }
     },
 
     updateActor: async (req, res) => {
         const { id } = req.params;
-        const { name } = req.query;
+        const { country, name, birth_date } = req.body;
+      
+        if (!country || !name || !birth_date) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
         try {
-            if (Actor.check(id)) {
-                const actor = await Actor.update(id, name);
-                res.json(actor);
-            } else {
-                console.log('Country Already exists');
+            const updatedActor = await Actor.update(id, country, name, birth_date);
+            if (!updatedActor) {
+                return res.status(404).json({ message: 'Actor not found' });
             }
-        } catch (err) {
-            console.error('Error fetching movies:', err.message);
-            res.status(500).json({ message: 'Server error' });
+            res.json({ message: 'Actor berhasil diperbarui', actor: updatedActor });
+        } catch (error) {
+            res.status(500).json({ message: 'Error updating actor', error: error.message });
         }
     },
 
     deleteActor: async (req, res) => {
         const { id } = req.params;
+        
         try {
-            if (Actor.check(id)) {
-                const actor = await Actor.delete(id);
-                res.json(actor);
-            } else {
-                console.log('Country Not exists');
+            const deletedActor = await Actor.delete(id);
+            if (!deletedActor) {
+                return res.status(404).json({ message: 'Actor not found' });
             }
-        } catch (err) {
-            console.error('Error fetching movies:', err.message);
-            res.status(500).json({ message: 'Server error' });
+            res.json({ message: 'Actor deleted successfully', actor: deletedActor });
+        } catch (error) {
+            res.status(500).json({ message: 'Error deleting actor', error: error.message });
         }
-    },
-}
+    },    
+};
 
-module.exports = actor;
+module.exports = actorController;

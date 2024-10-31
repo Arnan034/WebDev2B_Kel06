@@ -39,19 +39,18 @@ const LeftSidebar = ({ onCountryChange }) => {
                 ) : (
                     <ul className="region-list">
                         {countries.map((country) => (
-                            <li className="region" key={country.id}>
-                                <i className="far fa-flag fa-lg black-color"></i>
+                            <li className={`region ${activeCountry === country.id_country ? 'active' : ''}`} key={country.id}>
+                                <i className="far fa-flag fa-lg"></i>
                                 <a 
                                     href={`#${encodeURIComponent(country.country_name)}`}
                                     onClick={(e) => {
                                         e.preventDefault(); 
                                         handleChangeCountry(country.id_country);
                                     }}
-                                    className={activeCountry === country.id_country ? 'active' : ''} // Add active class
                                 >
                                     <span>{country.country_name}</span>
                                 </a>
-                            </li>
+                            </li>                        
                         ))}
                     </ul>
                 )}

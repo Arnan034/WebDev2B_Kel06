@@ -1,162 +1,316 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import axios from 'axios';
+import { Button } from 'semantic-ui-react';
+import PaginationComponent from './paginationComponent';
 
 const CMSActor = () => {
-  const [actors, setActors] = useState([
-    { no: 1, country: "USA", actorName: "Leonardo DiCaprio", birthDate: "1974-11-11", picture: "../img/leo.jpg" },
-    { no: 2, country: "UK", actorName: "Benedict Cumberbatch", birthDate: "1976-07-19", picture: "../img/benedict.jpg" },
-    { no: 3, country: "Canada", actorName: "Ryan Reynolds", birthDate: "1976-10-23", picture: "../img/ryan.jpg" }
-  ]);
-  const [notification, setNotification] = useState("");
-  const formRef = useRef();
+  const [actors, setActors] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [newCountry, setNewCountry] = useState('');
+  const [newActorName, setNewActorName] = useState('');
+  const [newBirthDate, setNewBirthDate] = useState('');
+  const [newPicture, setNewPicture] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [editedActors, setEditedActors] = useState({});
+  const [message, setMessage] = useState("");
+  
+  const fileInputRef = useRef(null);
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(actors.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = actors.slice(startIndex, endIndex);
 
   useEffect(() => {
-    renderTable();
-  }, [actors]);
+    fetchActors();
+  }, []);  
 
-  const renderTable = () => {
-    // Rerender table when actors change
+  const fetchActors = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/actors/all');
+      // console.log(response.data);
+      setActors(response.data || []);
+    } catch (error) {
+      console.error("Fetch Error: ", error);
+      setError("Failed to fetch actors");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+  
+  const handleCountryChange = (e) => {
+    setNewCountry(e.target.value);
   };
 
-  const showAlert = (message, type) => {
-    setNotification({ message, type });
-    setTimeout(() => {
-      setNotification("");
-    }, 3000);
+  const handleActorNameChange = (e) => {
+    setNewActorName(e.target.value);
   };
 
-  const handleAddActor = (event) => {
-    event.preventDefault();
-    const formData = new FormData(formRef.current);
-    const country = formData.get("country").trim();
-    const actorName = formData.get("actorName").trim();
-    const birthDate = formData.get("birthDate");
-    const pictureFile = formData.get("picture");
+  const handleBirtdhDateChange = (e) => {
+    setNewBirthDate(e.target.value);
+  };
 
+  const handleNewPicture = (e) => {
+    const file = e.target.files[0];
     const reader = new FileReader();
-    reader.onload = function(e) {
-      const pictureURL = e.target.result;
-      addActorToList(country, actorName, birthDate, pictureURL);
+
+    reader.onloadend = () => {
+        setNewPicture(reader.result);
     };
 
-    if (pictureFile) {
-      reader.readAsDataURL(pictureFile);
-    } else {
-      addActorToList(country, actorName, birthDate, "");
+    if (file) {
+        reader.readAsDataURL(file);
     }
   };
 
-  const addActorToList = (country, actorName, birthDate, picture) => {
-    const newActor = {
-      no: actors.length ? actors[actors.length - 1].no + 1 : 1,
-      country,
-      actorName,
-      birthDate,
-      picture
-    };
-    setActors([...actors, newActor]);
-    formRef.current.reset();
-    showAlert("Actor added successfully!", "success");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/actors', { 
+        country: newCountry,
+        name: newActorName,
+        birth_date: newBirthDate,
+        picture: newPicture
+      // }, {
+      //     headers: { 'Content-Type': 'application/json' }
+      });
+      setActors([response.data, ...actors]);
+      setNewCountry('');
+      setNewActorName('');
+      setNewBirthDate('');
+      setNewPicture('');
+      fileInputRef.current.value = '';
+      setMessage(`Actor "${newActorName}" berhasil ditambahkan!`);
+      fetchActors();
+    } catch (error) {
+      console.error("Error adding actor:", error);
+      setError("Failed to add actor");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleEditActor = (index) => {
-    const actor = actors[index];
-    const newCountry = prompt("Enter new country:", actor.country);
-    if (newCountry === null) return;
+  const handleEdit = (id, country, name, birth_date) => {
+    setEditingId(id);
+    setEditedActors({ country, name, birth_date });
+  };   
 
-    const newActorName = prompt("Enter new actor name:", actor.actorName);
-    if (newActorName === null) return;
+  const handleEditedChange = (e) => {
+    const { name, value } = e.target;
+    setEditedActors((prev) => ({ ...prev, [name]: value }));
+  };    
 
-    const newBirthDate = prompt("Enter new birth date (YYYY-MM-DD):", actor.birthDate);
-    if (newBirthDate === null) return;
+  const handleUpdate = async () => {
+    try {
+        await axios.put(`http://localhost:5000/api/actors/${editingId}`, editedActors);
+        setActors(actors.map((actor) =>
+            actor.id_actor === editingId ? { ...actor, ...editedActors } : actor
+        ));
+        setEditingId(null);
+        setMessage(`Actor berhasil diperbarui!`);
+        fetchActors();
+    } catch (error) {
+        console.error("Error updating actor:", error);
+        setError("Failed to update actor");
+    }
+  }; 
 
-    const updatedActors = actors.map((a, i) => i === index ? { ...a, country: newCountry, actorName: newActorName, birthDate: newBirthDate } : a);
-    setActors(updatedActors);
-    showAlert("Actor updated successfully!", "success");
-  };
+  const handleDelete = async (id) => {
+    const actorToDelete = actors.find(actor => actor.id_actor === id);
+    console.log("ID yang akan dihapus:", id);
+    // console.log("Actors:", actors);
+    if (!actorToDelete) return;
 
-  const handleDeleteActor = (index) => {
-    const confirmed = window.confirm("Are you sure you want to delete this actor?");
-    if (confirmed) {
-      const updatedActors = actors.filter((_, idx) => idx !== index).map((actor, idx) => ({ ...actor, no: idx + 1 }));
-      setActors(updatedActors);
-      showAlert("Actor deleted successfully!", "danger");
+    const confirmDelete = window.confirm(`Are you sure you want to delete "${actorToDelete.name}"?`);
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`http://localhost:5000/api/actors/${id}`);
+      setActors(actors.filter((actor) => actor.id_actor !== id));
+      setMessage(`Actor "${actorToDelete.name}" berhasil dihapus.`);
+      fetchActors();
+    } catch (error) {
+      console.error("Error deleting actor:", error);
+      setError("Failed to delete actor");
     }
   };
 
   return (
-    <div>
-      <div className="col p-4">
-        <h3>Add Actor</h3>
-        <hr className="text-black my-2" />
-        <br />
-        <form ref={formRef} id="actorForm" className="mb-4" onSubmit={handleAddActor}>
-          <div className="mb-3 row align-items-center">
-            <label htmlFor="country" className="form-label col-sm-3">Country</label>
-            <div className="col-sm-9">
-              <input type="text" className="form-control" placeholder="Type country here..." id="country" name="country" required />
-            </div>
+    <div className="col p-4">
+      <h3>Add Actor</h3>
+      <hr className="text-black my-2" />
+      <br />
+      <form id="actorForm" className="mb-4" onSubmit={handleSubmit}>
+        <div className="mb-3 row align-items-center">
+          <label htmlFor="country" className="form-label col-sm-3">Country</label>
+          <div className="col-sm-9">
+            <input 
+              type="text" 
+              className="form-control" 
+              placeholder="Type country here..." 
+              id="country" 
+              name="country" 
+              value={newCountry} 
+              onChange={handleCountryChange}
+              required 
+            />
           </div>
-          <div className="mb-3 row align-items-center">
-            <label htmlFor="actorName" className="form-label col-sm-3">Actor Name</label>
-            <div className="col-sm-9">
-              <input type="text" className="form-control" placeholder="Type actor name here..." id="actorName" name="actorName" required />
-            </div>
+        </div>
+        <div className="mb-3 row align-items-center">
+          <label htmlFor="actorName" className="form-label col-sm-3">Actor Name</label>
+          <div className="col-sm-9">
+            <input 
+              type="text" 
+              className="form-control" 
+              placeholder="Type actor name here..." 
+              id="actorName" 
+              name="actorName" 
+              value={newActorName} 
+              onChange={handleActorNameChange}
+              required 
+            />
           </div>
-          <div className="mb-3 row align-items-center">
-            <label htmlFor="birthDate" className="form-label col-sm-3">Birth Date</label>
-            <div className="col-sm-9">
-              <input type="date" className="form-control" id="birthDate" name="birthDate" required />
-            </div>
+        </div>
+        <div className="mb-3 row align-items-center">
+          <label htmlFor="birthDate" className="form-label col-sm-3">Birth Date</label>
+          <div className="col-sm-9">
+            <input 
+              type="date" 
+              className="form-control" 
+              id="birthDate" 
+              name="birthDate" 
+              value={newBirthDate} 
+              onChange={handleBirtdhDateChange}
+              required 
+            />
           </div>
-          <div className="mb-3 row align-items-center">
-            <label htmlFor="picture" className="form-label col-sm-3">Upload Picture</label>
-            <div className="col-sm-9">
-              <input type="file" className="form-control" id="picture" name="picture" required />
-            </div>
+        </div>
+        <div className="mb-3 row align-items-center">
+          <label htmlFor="picture" className="form-label col-sm-3">Upload Picture</label>
+          <div className="col-sm-9">
+            <input 
+              type="file" 
+              className="form-control" 
+              id="picture" 
+              name="picture" 
+              // value={newPicture}
+              ref={fileInputRef}
+              accept="image/*" 
+              onChange={handleNewPicture}
+              required 
+            />
           </div>
-          <div className="d-flex justify-content-end">
-            <button type="submit" className="btn btn-success">Submit</button>
-          </div>
-        </form>
-        <br />
+        </div>
+        <div className="d-flex justify-content-end">
+          <button type="submit" className="btn btn-success">Submit</button>
+        </div>
+      </form>
+      <br />
+      {message && <p className="text-success">{message}</p>}
+      {error && <p className="text-danger">{error}</p>}
 
-        <h3>List of Actors</h3>
-        {notification && (
-          <div className={`alert alert-${notification.type} alert-dismissible fade show`} role="alert">
-            {notification.message}
-            <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        )}
-        <table className="table table-striped table-hover" id="actorsTable">
-          <thead>
-            <tr>
-              <th className="text-center no-column table-warning">No</th>
-              <th className="text-center country-column table-warning">Country</th>
-              <th className="text-center actorName-column table-warning">Actor Name</th>
-              <th className="text-center birthDate-column table-warning">Birth Date</th>
-              <th className="text-center picture-column table-warning">Picture</th>
-              <th className="text-center action-column table-warning">Actions</th>
-            </tr>
-          </thead>
+      <h3>List of Actors</h3>
+      <table className="table table-striped table-hover" id="actorsTable">
+        <thead>
+          <tr>
+            <th className="text-center no-column table-warning">No</th>
+            <th className="text-center country-column table-warning">Country</th>
+            <th className="text-center actorName-column table-warning">Actor Name</th>
+            <th className="text-center birthDate-column table-warning">Birth Date</th>
+            <th className="text-center picture-column table-warning">Picture</th>
+            <th className="text-center action-column table-warning">Actions</th>
+          </tr>
+        </thead>
+        { loading ? (
+          <p>Loading actors...</p>
+        ) : error ? (
+          <p className="text-danger">{error}</p>
+        ) : (
           <tbody>
-            {actors.map((actor, index) => (
-              <tr key={index}>
-                <td className="text-center no-column">{actor.no}</td>
-                <td className="country-column">{actor.country}</td>
-                <td className="actorName-column">{actor.actorName}</td>
-                <td className="birthDate-column">{actor.birthDate}</td>
+            {currentItems.map((actor, index) => (
+              console.log("ID actor pada baris:", actor.id_actor),
+              <tr key={actor.id_actor}>
+                <td className="text-center no-column">{startIndex + index + 1}</td>
+                <td className="country-column">
+                  {editingId === actor.id_actor ? (
+                    <input
+                      type="text"
+                      name="country"
+                      value={editedActors.country}
+                      onChange={handleEditedChange}
+                      className="form-control"
+                    />
+                  ) : (
+                    actor.country
+                  )}
+                </td>
+                <td className="actorName-column">
+                  {editingId === actor.id_actor ? (
+                    <input
+                      type="text"
+                      name="name"
+                      value={editedActors.name}
+                      onChange={handleEditedChange}
+                      className="form-control"
+                    />
+                  ) : (
+                    actor.name
+                  )}
+                </td>
+                <td className="birthDate-column">
+                  {editingId === actor.id_actor ? (
+                    <input
+                      type="date"
+                      name="birth_date"
+                      value={editedActors.birth_date}
+                      onChange={handleEditedChange}
+                      className="form-control"
+                    />
+                  ) : (
+                    actor.birth_date
+                  )}
+                </td>
                 <td className="text-center picture-column">
-                  {actor.picture ? <img src={actor.picture} alt={actor.actorName} width="100" /> : 'No Image'}
+                  {actor.picture ? (
+                    <img src={`data:image/png;base64,${actor.picture}`} alt={actor.name} width="100" />
+                  ) : (
+                    'No Image'
+                  )}
                 </td>
                 <td className="text-center actions-column">
-                  <button className="btn btn-edit" onClick={() => handleEditActor(index)}>Edit</button>
-                  <button className="btn btn-delete" onClick={() => handleDeleteActor(index)}>Delete</button>
+                  {editingId === actor.id_actor ? (
+                    <>
+                      <Button color='green' size='tiny' onClick={() => handleUpdate(actor.id_actor)}>Save</Button>
+                      <Button color='grey' size='tiny' onClick={() => setEditingId(null)}>Cancel</Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button color='blue' size='tiny' onClick={() => handleEdit(actor.id_actor, actor.country, actor.name, actor.birth_date)}>Edit</Button>
+                      <Button color='red' size='tiny' onClick={() => handleDelete(actor.id_actor)}>Delete</Button>
+                    </>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
-      </div>
+        )}
+      </table>
+      <PaginationComponent
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

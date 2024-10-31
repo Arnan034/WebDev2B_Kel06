@@ -73,23 +73,58 @@ const Sign = () => {
                     <form onSubmit={handleSubmit}>
                         <div className="mb-2">
                             <label htmlFor="username" className="form-label">Username</label>
-                            <input type="text" className="form-control" id="username" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                            <input 
+                            type="text" 
+                            className="form-control" 
+                            id="username" 
+                            placeholder="Enter your username" 
+                            value={username} 
+                            onChange={(e) => setUsername(e.target.value)} 
+                            required />
                         </div>
                         <div className="mb-2">
                             <label htmlFor="email" className="form-label">Email</label>
-                            <input type="email" className="form-control" id="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                            <input 
+                            type="email" 
+                            className="form-control" 
+                            id="email" 
+                            placeholder="Enter your email" 
+                            value={email} 
+                            onChange={(e) => setEmail(e.target.value)} 
+                            required />
                         </div>
                         <div className="mb-2">
                             <label htmlFor="password" className="form-label">Password</label>
-                            <input type="password" className="form-control" id="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                            <input 
+                            type="password" 
+                            className="form-control" 
+                            id="password" 
+                            placeholder="Enter your password" 
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)} 
+                            required />
                         </div>
                         <div className="mb-2">
                             <label htmlFor="confirm-password" className="form-label">Confirm Password</label>
-                            <input type="password" className="form-control" id="confirm-password" placeholder="Confirm Your Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                            <input 
+                            type="password" 
+                            className="form-control" 
+                            id="confirm-password" 
+                            placeholder="Confirm Your Password" 
+                            value={confirmPassword} 
+                            onChange={(e) => setConfirmPassword(e.target.value)} 
+                            required />
                         </div>
                         <div className="mb-4">
                             <label htmlFor="photo-profile" className="form-label">Photo-Profile</label>
-                            <input type="file" className="form-control" id="picture" name="picture" accept="image/*" onChange={handleFileChange} required />
+                            <input 
+                            type="file" 
+                            className="form-control" 
+                            id="picture" 
+                            name="picture" 
+                            accept="image/*" 
+                            onChange={handleFileChange} 
+                            required />
                         </div>
                         <button type="submit" className="btn btn-primary w-100" disabled={loading}>
                             {loading ? 'Loading...' : 'Registrasi'}
