@@ -280,6 +280,36 @@ p {
   font-weight: 600; /* Misalnya, untuk penekanan */
 }
 
+/* Warna putih saat link Dramas atau submenu aktif */
+.side-link.active {
+  color: white; /* Warna teks */
+}
+
+.side-link.active i {
+  color: white; /* Warna ikon */
+}
+
+/* Submenu warna putih saat aktif */
+.side .active {
+  color: white;
+}
+
+.side .active i {
+  color: white;
+}
+
+.side.active {
+  color: white; /* Warna teks dan ikon saat aktif */
+}
+
+.side.active i {
+  color: white; /* Warna ikon saat aktif */
+}
+
+.side.active span {
+  color: white; /* Warna teks saat aktif */
+}
+
 
 /* End Sidebar Left */
 
