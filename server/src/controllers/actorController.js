@@ -1,6 +1,7 @@
 const Actor = require('../models/actorModel');
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() }).single('picture');
+const pool = require('../config/db');
 
 const actorController = {
     getAllActor: async (req, res) => {
@@ -85,15 +86,26 @@ const actorController = {
 
     deleteActor: async (req, res) => {
         const { id } = req.params;
-        
+
+        console.log(id);
+        const client = await pool.connect();
         try {
-            const deletedActor = await Actor.delete(id);
+            await client.query('BEGIN');
+
+            await Actor.deleteActor(client, id);
+
+            const deletedActor = await Actor.delete(client, id);
             if (!deletedActor) {
                 return res.status(404).json({ message: 'Actor not found' });
             }
+            
+            await client.query('COMMIT');
             res.json({ message: 'Actor deleted successfully', actor: deletedActor });
         } catch (error) {
+            await client.query('ROLLBACK');
             res.status(500).json({ message: 'Error deleting actor', error: error.message });
+        } finally {
+            client.release();
         }
     }
 }

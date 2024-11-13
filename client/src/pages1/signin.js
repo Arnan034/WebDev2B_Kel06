@@ -4,7 +4,7 @@ import axios from 'axios';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const ClientId = "711680613423-2lcio8vv32jsj3fgb6ohbvg2v9k72oqv.apps.googleusercontent.com";
+const ClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 const Signin = ({ handleLogin }) => {
     const [username, setUsername] = useState('');
@@ -15,7 +15,12 @@ const Signin = ({ handleLogin }) => {
     const navigate = useNavigate();
     
     const handleSubmit = async (e) => {
+
         e.preventDefault();
+        if (password.length < 4) {
+            setError("Password must be at least 4 characters.");
+            return;
+        }
         setLoading(true);
 
         try {
@@ -31,7 +36,7 @@ const Signin = ({ handleLogin }) => {
                 sessionStorage.setItem('user', response.data.username);
                 sessionStorage.setItem('picture', response.data.picture);
 
-                navigate('/cms');
+                navigate('/');
                 handleLogin();
             } else {
                 setError('Login failed, please check your credentials.');

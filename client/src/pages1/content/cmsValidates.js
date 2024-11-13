@@ -18,6 +18,7 @@ const CMSValidate = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [movieToDelete, setMovieToDelete] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const navigate = useNavigate();
 
@@ -78,10 +79,14 @@ const CMSValidate = () => {
     navigate(`/cms?edit_film=${encodeURIComponent(index)}`);
   }
 
-  const totalPages = Math.ceil(movies.length / itemsPerPage);
+  const filteredMovies = movies.filter(movie => 
+    movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredMovies.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = movies.slice(startIndex, endIndex);
+  const currentItems = filteredMovies.slice(startIndex, endIndex);
 
   return (
     <div>
@@ -105,6 +110,20 @@ const CMSValidate = () => {
               </select>
             </div>
           </div>
+          <div className="row mb-3 align-items-end">
+            <label htmlFor="search-title" className="col-sm-2 col-form-label">Search Title</label>
+            <div className="col-sm-4 d-flex">
+              <input
+                type="text"
+                className="form-control"
+                id="search-title"
+                placeholder="Search by title..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+
         </form>
 
         {loading ? (

@@ -22,8 +22,8 @@ class Genre {
         return updateGenre.rows[0];
     }
 
-    static async delete(id_genre){
-        const deleteGenre = await pool.query(
+    static async delete(client, id_genre){
+        const deleteGenre = await client.query(
             'DELETE FROM genre WHERE id_genre = $1 RETURNING *',
             [id_genre]
         );
@@ -70,6 +70,9 @@ class Genre {
         await client.query('DELETE FROM genre_film WHERE id_film = $1;', [id]);
     }
 
+    static async deleteGenre(client, id){
+        await client.query('DELETE FROM genre_film WHERE id_genre = $1;', [id]);
+    }
 }
 
 module.exports = Genre;

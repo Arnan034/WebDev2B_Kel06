@@ -67,9 +67,9 @@ class Actor {
         }
     }
 
-    static async delete(id) {
+    static async delete(client, id) {
         try {
-            const deleteActor = await pool.query(
+            const deleteActor = await client.query(
                 `DELETE FROM actor WHERE id_actor = $1 RETURNING *`,
                 [id]
             );
@@ -117,6 +117,10 @@ class Actor {
 
         const check = await pool.query(query, values);
         return check.rows[0];
+    }
+
+    static async deleteActor(client, id){
+        await client.query('DELETE FROM actor_film WHERE id_actor = $1;', [id]);
     }
 }
 

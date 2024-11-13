@@ -156,7 +156,7 @@ const InputForm = ({formData, handleInputChange}) => {
       );
 };
 
-const AwardSelection = ({ selectedAward, setSelectedAward, idFilm }) => {
+const AwardSelection = ({ selectedAward, setSelectedAward }) => {
     const MAX_SELECTION_AWARD = 3;
     const [award, setAward] = useState([]);
     
@@ -165,39 +165,54 @@ const AwardSelection = ({ selectedAward, setSelectedAward, idFilm }) => {
             try {
                 const response = await axios.get('http://localhost:5000/api/awards/unselected');
                 const options = response.data.map(award => ({
-                  value: award.id_award, 
-                  label: `${award.year} - ${award.institution} - ${award.name}` 
+                    value: award.id_award, 
+                    label: `${award.year} - ${award.institution} - ${award.name}` 
                 }));
-                setAward(options);
+                
+                const existingSelectedAwards = Array.isArray(selectedAward) ? selectedAward : [];
+                
+                const combinedOptions = [
+                    ...options,
+                    ...existingSelectedAwards.filter(selected => 
+                        !options.some(option => option.value === selected.value)
+                    )
+                ];
+                
+                const uniqueOptions = Array.from(new Map(
+                    combinedOptions.map(item => [item.value, item])
+                ).values());
+                
+                setAward(uniqueOptions);
             } catch (error) {
-                console.error(error);
+                console.error('Error fetching awards:', error);
             }
         };
     
         fetchAward();
-    }, []);
+    }, [selectedAward]);
 
     const handleSelectAward = (selected) => {
-        if (selected.length <= MAX_SELECTION_AWARD) {
-          setSelectedAward(selected);
+        if (selected && selected.length <= MAX_SELECTION_AWARD) {
+            setSelectedAward(selected);
         } else {
-          alert(`You can only select up to ${MAX_SELECTION_AWARD} options.`);
+            alert(`You can only select up to ${MAX_SELECTION_AWARD} options.`);
         }
     };
 
     return (
-      <div className="col-md-12 mb-3">
-        <h6 htmlFor="award" className="form-label">Award:</h6>
-        <span>Max 3 Award</span>
-        <Select
-          isMulti
-          value={selectedAward}
-          onChange={handleSelectAward}
-          options={award}
-          placeholder="Select categories"
-          isDisabled={idFilm}
-        />
-      </div>
+        <div className="col-md-12 mb-3">
+            <h6 htmlFor="award" className="form-label">Award:</h6>
+            <span>Max 3 Award</span>
+            <Select
+                isMulti
+                value={selectedAward || []}
+                onChange={handleSelectAward}
+                options={award}
+                placeholder="Select categories"
+                isSearchable={true}
+                isClearable={true}
+            />
+        </div>
     );
 };
   

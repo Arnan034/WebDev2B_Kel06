@@ -17,6 +17,9 @@ const CMSComments = () => {
   const [modalAction, setModalAction] = useState('');
   const [modalCurrentPage, setModalCurrentPage] = useState(1);
   
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchFilter, setSearchFilter] = useState('');
+
   const fetchCommentData = useCallback(async () => {
     setLoading(true);
     try {
@@ -92,10 +95,23 @@ const CMSComments = () => {
     setCurrentPage(page);
   };
 
-  const totalPages = Math.ceil(comments.length / itemsPerPage);
+  const filteredComments = comments.filter(comment => {
+    if (!searchTerm || !searchFilter) return true;
+    
+    switch (searchFilter) {
+      case 'username':
+        return comment.username.toLowerCase().includes(searchTerm.toLowerCase());
+      case 'drama':
+        return comment.title.toLowerCase().includes(searchTerm.toLowerCase());
+      default:
+        return true;
+    }
+  });
+
+  const totalPages = Math.ceil(filteredComments.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = comments.slice(startIndex, endIndex);
+  const currentItems = filteredComments.slice(startIndex, endIndex);
   const isAnyCheckboxSelected = selectedComments.length > 0;
 
   // Open modal for approving or deleting comments
@@ -155,6 +171,37 @@ const CMSComments = () => {
         </form>
         <br />
         
+
+        <div className="d-flex justify-content-end mb-4">
+          <div className="row align-items-center" style={{ width: 'auto' }}>
+          <label htmlFor="search-country" className="col-auto me-2">Search By:  </label>
+            <div className="col-auto">
+              <select 
+                className="form-select me-2" 
+                value={searchFilter}
+                onChange={(e) => {
+                  setSearchFilter(e.target.value);
+                  setSearchTerm(''); // Reset search term when filter changes
+                }}
+              >
+                <option value="">-</option>
+                <option value="username">Username</option>
+                <option value="drama">Drama</option>
+              </select>
+            </div>
+            <div className="col-auto" style={{ width: '400px' }}>
+              <input
+                type="text"
+                className="form-control"
+                placeholder={`Search ${searchFilter}...`}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                disabled={!searchFilter}
+              />
+            </div>
+          </div>
+        </div>
+
         <h3>List of Comments</h3>
         {loading ? (
           <div className="text-center">

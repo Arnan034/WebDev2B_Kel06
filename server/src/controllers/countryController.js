@@ -4,10 +4,10 @@ const countries = {
     getAllCountries: async (req, res) => {
         try {
             const country = await Country.getAll();
-            res.json(country);
+            res.status(200).json(country);
         } catch (err) {
-            console.error('Error fetching movies:', err.message);
-            res.status(500).json({ message: 'Server error' });
+            console.error('01 Error Fetch All Country:', err.message);
+            res.status(500).json({ message: 'Error Fetch All Country' });
         }
     },
 
@@ -24,8 +24,8 @@ const countries = {
             const newCountry = await Country.create(country_name);
             res.status(201).json(newCountry);
         } catch (err) {
-            console.error('Error creating country:', err.message);
-            res.status(500).json({ message: 'Server error' });
+            console.error('02 Error creating country:', err.message);
+            res.status(500).json({ message: 'Creating country Failed' });
         }
     },
 
@@ -42,13 +42,13 @@ const countries = {
     
             if (await Country.check(id)) {
                 const country = await Country.update(id, name);
-                res.json(country);
+                res.status(200).json(country);
             } else {
                 console.log('Country ID does not exist');
                 res.status(404).json({ message: 'Country ID not found' });
             }
         } catch (err) {
-            console.error('Error updating country:', err.message);
+            console.error('03 Error updating country:', err.message);
             res.status(500).json({ message: 'Server error' });
         }
     },
@@ -61,7 +61,7 @@ const countries = {
             const countryExists = await Country.check(id_country); 
             if (countryExists) {
                 const deletedCountry = await Country.delete(id_country); 
-                res.json({
+                res.status(200).json({
                     success: true,
                     message: `Country "${deletedCountry.country_name}" deleted successfully!`,
                     country: deletedCountry
@@ -70,11 +70,11 @@ const countries = {
                 res.status(404).json({ success: false, message: 'Country not found' });
             }
         } catch (err) {
-            console.error('Error deleting country:', err.message);
+            console.error('04 Error deleting country:', err.message);
             if (err.code === '23503') {
                 res.status(400).json({
                     success: false,
-                    message: 'Cannot delete country as it is still referenced in other tables.'
+                    message: 'Cant delete the country because its still the movie being referenced.'
                 });
             } else {
                 res.status(500).json({ success: false, message: 'Server error' });

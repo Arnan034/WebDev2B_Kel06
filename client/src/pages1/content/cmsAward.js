@@ -19,11 +19,17 @@ const CMSAward = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(awards.length / itemsPerPage);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredAwards = awards.filter(award => 
+    award.institution.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredAwards.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = awards.slice(startIndex, endIndex);
-  
+  const currentItems = filteredAwards.slice(startIndex, endIndex);
+
   useEffect(() => {
     fetchAwards();
   }, []);
@@ -59,19 +65,25 @@ const CMSAward = () => {
 
   const handleSubmit = async () => {
     try {
+      setLoading(true);
       const response = await axios.post('http://localhost:5000/api/awards', {
         institution: newAward.institution,
         year: newAward.year,
         name: newAward.name
       });
-      setAwards([response.data, ...awards]);
+
       setNewAward({
-        institution: null,
-        year: null,
-        award: null
+        institution: '',
+        year: '',
+        name: ''
       });
+
       setMessage(`Award "${response.data.institution}", tahun "${response.data.year}", kategori "${response.data.name}" berhasil ditambahkan!`);
-      fetchAwards();
+
+      setModalOpen(false);
+
+      await fetchAwards();
+
     } catch (error) {
       console.error("Error adding award:", error);
       setError("Failed to add award");
@@ -182,6 +194,22 @@ const CMSAward = () => {
       {message && <p className="text-success">{message}</p>}
       {error && <p className="text-danger">{error}</p>}
 
+
+      <div className="d-flex justify-content-end mb-4">
+        <div className="row align-items-center" style={{ width: 'auto' }}>
+          <label htmlFor="search-award" className="col-auto me-2">Search Institution</label>
+          <div className="col-auto" style={{ width: '400px' }}>
+            <input
+              type="text"
+              className="form-control"
+              id="search-award"
+              placeholder="Search institution..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
       <h3>List of Awards</h3>
       <table className="table table-striped table-hover" id="awardsTable">
         <thead>

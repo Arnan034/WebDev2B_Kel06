@@ -11,6 +11,7 @@ const CMSUser = () => {
   const [filter, setFilter] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchUserData = useCallback(async () => {
     setLoading(true); // Set loading to true before fetching
@@ -34,10 +35,14 @@ const CMSUser = () => {
     setCurrentPage(page);
   };
 
-  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const filteredUsers = users.filter(user => 
+    user.user.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = users.slice(startIndex, endIndex);
+  const currentItems = filteredUsers.slice(startIndex, endIndex);
 
   const handleEditClick = (user) => {
     setSelectedUser(user);
@@ -84,6 +89,22 @@ const CMSUser = () => {
           </div>
         </form>
 
+
+        <div className="d-flex justify-content-end mb-4">
+          <div className="row align-items-center" style={{ width: 'auto' }}>
+            <label htmlFor="search-user" className="col-auto me-2">Search Username</label>
+            <div className="col-auto" style={{ width: '400px' }}>
+              <input
+                type="text"
+                className="form-control"
+                id="search-user"
+                placeholder="Search username..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
         <h3>List of Users</h3>
         {loading ? (
           <div className="text-center">
@@ -135,7 +156,7 @@ const CMSUser = () => {
       <Modal open={modalOpen} className='confirm-film-modal-validate' onClose={() => setModalOpen(false)}>
         <Modal.Header>Confirm Status Change</Modal.Header>
         <Modal.Content>
-          <p>Are you sure you want to change the status of <span style={{ color: 'red', fontWeight: 'bold' }}>{selectedUser?.user}</span> to <span style={{ color: 'red', fontWeight: 'bold' }}>{!selectedUser?.status ? 'Active' : 'BlackList'}</span>?</p>
+          <p>Are you sure you want to change the status of <span style={{ color: 'red', fontWeight: 'bold' }}>{selectedUser?.user}</span> to <span style={{ color: selectedUser?.st ? 'red' : 'green', fontWeight: 'bold' }}>{selectedUser?.st ? 'BlackList' : 'Active'}</span>?</p>
         </Modal.Content>
         <Modal.Actions>
           <Button onClick={() => setModalOpen(false)}>Cancel</Button>

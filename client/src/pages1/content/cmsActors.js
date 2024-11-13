@@ -17,15 +17,19 @@ const CMSActor = () => {
   const [editedActors, setEditedActors] = useState({});
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   
   const fileInputRef = useRef(null);
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(actors.length / itemsPerPage);
+  const filteredActors = actors.filter(actor => 
+    actor.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const totalPages = Math.ceil(filteredActors.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = actors.slice(startIndex, endIndex);
+  const currentItems = filteredActors.slice(startIndex, endIndex);
 
   useEffect(() => {
     fetchActors();
@@ -75,32 +79,33 @@ const CMSActor = () => {
   };
 
   const handleSubmit = async () => {
-    setLoading(true);
-    setError("");
-
     try {
+      setLoading(true);
       const response = await axios.post('http://localhost:5000/api/actors', { 
         country: newActor.country,
         name: newActor.name,
         birth_date: newActor.birth_date,
         picture: newActor.picture
       });
-      setActors([response.data, ...actors]);
+
       setNewActor({
         country: '',
         name: '',
         birth_date: '',
         picture: null 
-      })
+      });
       fileInputRef.current.value = '';
       setMessage(`Actor "${newActor.name}" berhasil ditambahkan!`);
-      fetchActors();
+      
+      setOpen(false);
+      
+      await fetchActors();
+
     } catch (error) {
       console.error("Error adding actor:", error);
       setError("Failed to add actor");
     } finally {
       setLoading(false);
-      setOpen(false)
     }
   };
 
@@ -235,6 +240,21 @@ const CMSActor = () => {
       {message && <p className="text-success">{message}</p>}
       {error && <p className="text-danger">{error}</p>}
 
+      <div className="d-flex justify-content-end mb-4">
+        <div className="row align-items-center" style={{ width: 'auto' }}>
+          <label htmlFor="search-actor" className="col-auto me-2">Search Actor</label>
+          <div className="col-auto" style={{ width: '400px' }}>
+            <input
+              type="text"
+              className="form-control"
+              id="search-actor"
+              placeholder="Search actor name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
       <h3>List of Actors</h3>
       <table className="table table-striped table-hover" id="actorsTable">
         <thead>

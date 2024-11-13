@@ -23,6 +23,11 @@ const ResetPassword = () => {
             return;
         }
 
+        if (password.length < 4) {
+            setError("Password must be at least 4 characters.");
+            return;
+        }
+
         try {
             const response = await axios.put(`http://localhost:5000/api/auth/reset-password`, { token: token, newPassword: password });
             setMessage(response.data.message);

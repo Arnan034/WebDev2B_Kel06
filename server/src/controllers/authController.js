@@ -112,9 +112,18 @@ const authController = {
     signupOTP: async (req, res) => {
         const { username, email, password, picture } = req.body;
         try {
+            const checkUsername = await Auth.checkUsername(username);
+            if (checkUsername){
+                return res.status(422).json({ message: 'Username already registered'});
+            }
+
             const checkEmail = await Auth.checkEmail(email);
             if (checkEmail){
-                return res.status(422).json({ message: 'Email already registered'});
+                if (!checkEmail.is_verified){
+                    await Auth.deleteUnverifiedUser(email);
+                } else {
+                    return res.status(422).json({ message: 'Email already registered'});
+                }
             }
 
             if (!picture || !picture.includes('base64')) {

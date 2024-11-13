@@ -51,13 +51,16 @@ const NewDrama = () => {
             linkTrailer: film.linkTrailer,
             synopsis: film.synopsis,
             status: film.status,
+            validate: film.validate,
             posted_by: parseInt(film.postedBy, 10)
           });
   
-          setSelectedAward(film.awards.map(award => ({
-            value: award.id_award,
-            label: `${award.year} - ${award.institution} - ${award.name}`
-          })));
+          if (film.awards && Array.isArray(film.awards)) {
+            setSelectedAward(film.awards.map(award => ({
+              value: award.id_award,
+              label: `${award.year} - ${award.institution} - ${award.name}`
+            })));
+          }
   
           const toSelectGenre = film.genres.map((genre) => ({
             id: genre.id_genre,
@@ -224,6 +227,8 @@ const NewDrama = () => {
     formDataToSubmit.append('synopsis', formData.synopsis);
     formDataToSubmit.append('status', formData.status);
 
+    formDataToSubmit.append('award', JSON.stringify(selectedAward));
+
     // Ensure selectedGenre is defined and not undefined
     if (selectedGenre) {
         formDataToSubmit.append('genre', JSON.stringify(selectedGenre));
@@ -269,16 +274,17 @@ const NewDrama = () => {
   };
 
   const confirmVerifiedMovie = async () => {
+    saveEdit();
     try {
         const response = await axios.put(`http://localhost:5000/api/film/validate/${id_film}`);
         if (response.status === 200) {
-            alert('Film Already Verified'); // Beri tahu pengguna
+            alert('Film Already Verified');
         }
         setConfirmVerified(false);
         navigate('/cms/validate');
     } catch (error) {
-        console.error('Error deleting movie:', error);
-        alert('Failed to delete movie. Please try again.'); // Beri tahu pengguna jika ada kesalahan
+        console.error('Error Editing movie:', error);
+        alert('Failed to delete movie. Please try again.');
     }
   };
 
@@ -294,20 +300,21 @@ const NewDrama = () => {
               <div className="d-flex justify-content-center">
                 {id_film ? (
                   <div>
-                    <button type="button" className="btn btn-dark mx-2" id="backButton" onClick={saveEdit}>Back</button>
-                    <button type="button" className="btn btn-success mx-2" id="confirmButton" onClick={handleVerifiedDrama}>Verified</button>
+                    <button type="button" className="btn btn-dark mx-2" id="backButton" onClick={saveEdit}>Save</button>
+                    {!formData.validate && (
+                      <button type="button" className="btn btn-success mx-2" id="confirmButton" onClick={handleVerifiedDrama}>Verify</button>
+                    )}
                   </div>
                 ) : (
                   <button type="submit" className="btn btn-success" id="submitButton">Submit</button>
                 )}
               </div>
-              <p>{url_film.current}</p>
             </div>
 
             <div className="col-md-8 mb-3">
               <div className="row">
                 <InputForm formData={formData} handleInputChange={handleInputChange}/>
-                <AwardSelection selectedAward={selectedAward} setSelectedAward={changeSelectedAward} idFilm={id_film}/>
+                <AwardSelection selectedAward={selectedAward} setSelectedAward={changeSelectedAward}/>
                 <TrailerAndSynopsis formData={formData} handleInputChange={handleInputChange}/>
                 <GenreSelection handleCheckboxChange={handleCheckboxChange} resetCheckboxes={resetCheckboxes} selectedGenres={selectedGenresRef.current} />
                 <ActorSelection selectedActors={selectedActors} chandleSearchChange={chandleSearchChange} handleCloseCard={handleCloseCard} handleCastChange={handleCastChange} />

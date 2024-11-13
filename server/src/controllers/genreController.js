@@ -1,4 +1,5 @@
 const Genre = require('../models/genreModel'); // Sesuaikan dengan model yang digunakan
+const pool = require('../config/db');
 
 const genreController = {
     getAllGenres: async (req, res) => {
@@ -68,12 +69,17 @@ const genreController = {
 
     deleteGenre: async (req, res) => {
         const { id_genre } = req.params; 
-        console.log("ID received for deletion:", id_genre);
-    
+
+        const client = await pool.connect();
         try {
+            await client.query('BEGIN');
+            console.log(id_genre);
             const genreExists = await Genre.check(id_genre); 
+            // console.log(genreExists);
             if (genreExists) {
-                const deletedGenre = await Genre.delete(id_genre);
+                await Genre.deleteGenre(client, id_genre);
+
+                const deletedGenre = await Genre.delete(client, id_genre);
                 res.json({
                     success: true,
                     message: `Genre ${deletedGenre.genre} deleted successfully!`,
@@ -82,7 +88,9 @@ const genreController = {
             } else {
                 res.status(404).json({ success: false, message: 'Genre not found' });
             }
+            await client.query('COMMIT');
         } catch (err) {
+            await client.query('ROLLBACK');
             console.error('Error deleting genre:', err.message);
             if (err.code === '23503') {
                 res.status(400).json({
@@ -92,6 +100,8 @@ const genreController = {
             } else {
                 res.status(500).json({ success: false, message: 'Server error' });
             }
+        } finally {
+            client.release();
         }
     }
 }

@@ -49,6 +49,16 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (username.length < 4 || username.length > 25) {
+            setMessage("Username must be at least 4 characters and password must be less than 25 characters.");
+            return;
+        }
+
+        if (password.length < 4) {
+            setMessage("Password must be at least 4 characters.");
+            return;
+        }
         
         const DEFAULT_IMAGE_URL = "https://tse2.mm.bing.net/th?id=OIP.1yoSL-WO0YU5mQKROudvswHaHa&pid=Api&P=0&h=180";
 

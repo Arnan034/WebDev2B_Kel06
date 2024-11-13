@@ -3,6 +3,7 @@ const Film = require('../models/filmModel');
 const Award = require('../models/awardModel');
 const Genre = require('../models/genreModel');
 const Actor = require('../models/actorModel');
+const Comment = require('../models/commentModel');
 
 const filmController = {
     getAllFilms: async (req, res) => {
@@ -190,6 +191,7 @@ const filmController = {
             link_trailer,
             availability,
             status,
+            award,
             genre,
             actor,
         } = req.body;
@@ -198,9 +200,11 @@ const filmController = {
         if (!title || !year || !country) {
             return res.status(400).send({ message: 'Title, year, and country are required.' });
         }
-    
+
+        const parsedAward = JSON.parse(award);
         const parsedGenre = JSON.parse(genre || '[]');
         const parsedActor = actor ? actor.map(actorStr => JSON.parse(actorStr)) : [];
+
 
         let pictureBuffer;
         if (picture.startsWith('data:image')) {
@@ -216,10 +220,16 @@ const filmController = {
             await Actor.deleteActorFilm(client, id_film);
     
             await Genre.deleteGenreFilm(client, id_film);
-    
-            // Update film details
+
             await Film.updateEditFilm(client, id_film, title, pictureBuffer, alt_title, year, country, synopsis, link_trailer, availability, status);
     
+            // Simpan penghargaan
+            if (parsedAward.length > 0) {
+                for (const award of parsedAward) {
+                    await Award.updatefilm(client, award.value, id_film);
+                }
+            }
+
             // Insert new genres
             if (parsedGenre.length > 0) {
                 for (const id_genre of parsedGenre) {
@@ -239,7 +249,7 @@ const filmController = {
             res.status(201).send({ message: 'Film berhasil Save' });
         } catch (error) {
             await client.query('ROLLBACK');
-            console.error('Error during transaction:', error);
+            console.error('08 Error during transaction:', error);
             res.status(500).send({ message: 'Terjadi kesalahan saat membuat film', error: error.message });
         } finally {
             client.release();
@@ -258,7 +268,10 @@ const filmController = {
 
             await Genre.deleteGenreFilm(client, id);
 
+            await Comment.deleteCommentFilm(client, id);
+
             await Film.delete(client, id);
+            
             await client.query('COMMIT');
             res.status(200).json({ message: 'Film deleted successfully' });
         } catch (err) {
@@ -273,18 +286,25 @@ const filmController = {
 
     getEditFilm: async (req, res) => {
         const { id } = req.params;
-        console.log('masuk sini id 1x: ', id);
+        const client = await pool.connect();
         try {
-            const filmDetails = await Film.getFilmEdit(id);
+            const filmDetails = await Film.getFilmEdit(client, id);
         
             if (!filmDetails) {
                 return res.status(404).json({ message: 'Film not found' });
             }
+
+            await Award.updateAwardFilm( client , id);
         
+            await client.query('COMMIT');
             res.status(200).json(filmDetails);
         } catch (error) {
+            await client.query('ROLLBACK');
             console.error('10 Error Fetch Edit Film:', err.message);
             res.status(500).json({ message: 'Server error' });
+        } finally {
+            client.release();
+            console.log('Done Fetch Edit film');
         }
     }
 

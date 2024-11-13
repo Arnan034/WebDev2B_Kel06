@@ -321,8 +321,8 @@ class Film {
         await client.query(`DELETE FROM film WHERE id_film = $1;`, [id]);
     }
 
-    static async getFilmEdit(id){
-        const result = await pool.query(`
+    static async getFilmEdit(client, id){
+        const result = await client.query(`
             SELECT 
                 f.id_film,
                 f.title,

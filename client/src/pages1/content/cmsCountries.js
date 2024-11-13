@@ -15,10 +15,17 @@ const CMSCountries = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(countries.length / itemsPerPage);
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredCountries = countries.filter(country => 
+    country.country_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredCountries.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = countries.slice(startIndex, endIndex);
+  const currentItems = filteredCountries.slice(startIndex, endIndex);
 
   useEffect(() => {
     fetchCountries();
@@ -159,6 +166,22 @@ const CMSCountries = () => {
           <button type="submit" className="btn btn-success">Submit</button>
         </div>
       </form>
+
+      <div className="d-flex justify-content-end mb-4">
+        <div className="row align-items-center" style={{ width: 'auto' }}>
+          <label htmlFor="search-country" className="col-auto me-2">Search Country</label>
+          <div className="col-auto" style={{ width: '400px' }}>
+            <input
+              type="text"
+              className="form-control"
+              id="search-country"
+              placeholder="Search country..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
       {message && <p className="text-success">{message}</p>}
       {error && <p className="text-danger">{error}</p>}
 

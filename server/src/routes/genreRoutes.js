@@ -7,6 +7,6 @@ router.get('/', getAllGenres);
 router.get('/:id', getGenreById);
 router.post('/', createGenre);
 router.put('/:id', updateGenre);
-router.delete('/:id', deleteGenre);
+router.delete('/:id_genre', deleteGenre);
 
 module.exports = router;

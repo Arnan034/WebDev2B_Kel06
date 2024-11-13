@@ -26,7 +26,7 @@ class AuthModel {
     }
 
     static async createGoogleAuth(username, email, id, picture){
-        const result = await pool.query(`INSERT INTO "user" (username, email, id_google, role, picture) VALUES ($1, $2, $3, 'user', $4)`, [username, email, id, picture]);
+        const result = await pool.query(`INSERT INTO "user" (username, email, id_google, role, picture, status, is_verified) VALUES ($1, $2, $3, 'user', $4, 'true', 'true')`, [username, email, id, picture]);
         return result.rows[0]
     }
 
@@ -48,13 +48,22 @@ class AuthModel {
     }
 
     static async checkEmail(email) {
-        const result = await pool.query(`SELECT email FROM "user" WHERE email = $1;`, [email]);
+        const result = await pool.query(`SELECT email, is_verified FROM "user" WHERE email = $1;`, [email]);
+        return result.rows[0];
+    }
+
+    static async checkUsername(username) {
+        const result = await pool.query(`SELECT username FROM "user" WHERE username = $1 AND is_verified = true;`, [username]);
         return result.rows[0];
     }
 
     static async changePassword(email, newPassword) {
         const result = await pool.query(`UPDATE "user" SET password = $2 WHERE email = $1;`, [email, newPassword]);
         return result.rows[0];
+    }
+
+    static async deleteUnverifiedUser(email) {
+        await pool.query(`DELETE FROM "user" WHERE email = $1;`, [email]);
     }
 }
 

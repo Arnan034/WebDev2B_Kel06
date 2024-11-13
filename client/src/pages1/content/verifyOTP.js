@@ -45,7 +45,9 @@ const OtpVerification = () => {
         const response = await axios.post('http://localhost:5000/api/auth/verifyOTP', { id, token, otpJoin });
         if (response.data.message === 'OTP verified successfully!') {
             setMessage(response.data.message);
-            navigate('/signin');
+            setTimeout(() => {
+                navigate('/signin');
+            }, 2000);
         } else {
             setMessage('Invalid or expired OTP.');
         }

@@ -15,10 +15,16 @@ const CMSGenre = () => {
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(genres.length / itemsPerPage);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredGenres = genres.filter(genre => 
+    genre.genre.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredGenres.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = genres.slice(startIndex, endIndex);
+  const currentItems = filteredGenres.slice(startIndex, endIndex);
 
   useEffect(() => {
     fetchGenres();
@@ -57,6 +63,7 @@ const CMSGenre = () => {
       setGenres([response.data, ...genres]);
       setNewGenre('');
       setMessage(`Genre "${response.data.genre}" berhasil ditambahkan!`);
+      setModalOpen(false)
     } catch (error) {
       console.error("Error adding genre:", error);
       setError("Failed to add genre");
@@ -160,6 +167,21 @@ const CMSGenre = () => {
       {message && <p className="text-success">{message}</p>}
       {error && <p className="text-danger">{error}</p>}
 
+      <div className="d-flex justify-content-end mb-4">
+        <div className="row align-items-center" style={{ width: 'auto' }}>
+          <label htmlFor="search-genre" className="col-auto me-2">Search Genre</label>
+          <div className="col-auto" style={{ width: '400px' }}>
+            <input
+              type="text"
+              className="form-control"
+              id="search-genre"
+              placeholder="Search genre..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
       <h3>List of Genres</h3>
       <table className="table table-striped table-hover" id="genresTable">
         <thead>

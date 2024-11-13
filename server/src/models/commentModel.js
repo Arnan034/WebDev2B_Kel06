@@ -59,6 +59,10 @@ class Comment {
     static async deleteComment(id){
         await pool.query(`DELETE FROM comment WHERE id_comment = $1;`, [id]);
     }
+
+    static async deleteCommentFilm(client, id){
+        await client.query(`DELETE FROM comment WHERE id_film = $1;`, [id]);
+    }
 }
 
 module.exports = Comment;

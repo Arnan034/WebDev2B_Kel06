@@ -42,7 +42,7 @@ const SearchPage = ({ isAuthenticated, handleLogout }) => {
 
     // Effect to redirect if query is empty
     useEffect(() => {
-        if (query) {
+        if (!query) {
             navigate('/');
         }
     }, [query, navigate]);

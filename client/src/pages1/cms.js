@@ -1,4 +1,5 @@
 import { Routes, Route} from "react-router-dom";
+import ProtectedRouteCMS from "./protectedRouteCMS";
 import CMSSidebar from "./content/cmsSideBar";
 import CMSNewDrama from "./content/cmsNewDrama";
 import CMSAward from "./content/cmsAward";
@@ -17,14 +18,14 @@ const CMSLayout = () => {
       <div className="content-cms">
         <Routes>
           
-          <Route path="validate" element={<CMSValidate />} />
           <Route path="" element={<CMSNewDrama />} />
-          <Route path="awards" element={<CMSAward />} />
-          <Route path="countries" element={<CMSCountries />} />
-          <Route path="genres" element={<CMSGenres />} />
-          <Route path="actors" element={<CMSActors />} />
-          <Route path="comments" element={<CMSComments />} />
-          <Route path="users" element={<CMSUsers />} />
+          <Route path="validate" element={<ProtectedRouteCMS element={<CMSValidate />} />} />
+          <Route path="awards" element={<ProtectedRouteCMS element={<CMSAward />} />} />
+          <Route path="countries" element={<ProtectedRouteCMS element={<CMSCountries />} />} />
+          <Route path="genres" element={<ProtectedRouteCMS element={<CMSGenres />} />} />
+          <Route path="actors" element={<ProtectedRouteCMS element={<CMSActors />} />} />
+          <Route path="comments" element={<ProtectedRouteCMS element={<CMSComments />} />} />
+          <Route path="users" element={<ProtectedRouteCMS element={<CMSUsers />} />} />
           <Route path="bookmark" element={<CMSBookmark />} />
         </Routes>
       </div>
