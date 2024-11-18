@@ -1,39 +1,51 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages1/home';
-import DetailFilm from './pages1/detailFilm';
-import SearchPage from './pages1/searchPage';
-import CMS from './pages1/cms';
-import Signin from './pages1/signin';
-import Signup from './pages1/signup';
-import ProtectedRoute from './pages1/protectedRoute';
-import VerifyOTP from './pages1/content/verifyOTP';
-import NotFound from './pages1/content/notFound';
-import Test from './pages1/content/EditableTable';
-import ProtectedRouteVerifyOTP from './pages1/protectedRouteOTP';
-import ForgotPassword from './pages1/content/forgotPassword';
-import ResetPassword from './pages1/content/resetPassword';
+
+// Main
+import Home from './pages/main/home';
+import DetailFilm from './pages/main/detailFilm';
+import SearchPage from './pages/main/searchPage';
+import CMS from './pages/main/cms';
+
+  // Not Found
+import NotFound from './pages/main/notFound';
+
+// Auth
+import Signin from './pages/auth/signin';
+import Signup from './pages/auth/signup';
+import VerifyOTP from './pages/auth/verifyOTP';
+import ForgotPassword from './pages/auth/forgotPassword';
+import ResetPassword from './pages/auth/resetPassword';
+
+// Protected
+import ProtectedRoute from './pages/protected/protectedRoute';
+import ProtectedRouteVerifyOTP from './pages/protected/protectedRouteOTP';
+
+// Test
+import Test from './pages/test/EditableTable';
 
 import './App.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return sessionStorage.getItem('isAuthenticated') === 'true';
+    return sessionStorage.getItem('token');
   });
 
   const handleLogin = () => {
     setIsAuthenticated(true);
-    sessionStorage.setItem('isAuthenticated', 'true');
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('id_user');
-    sessionStorage.removeItem('role');
-    sessionStorage.removeItem('user');
-    sessionStorage.removeItem('picture');
-    sessionStorage.setItem('isAuthenticated', 'false');
-    setIsAuthenticated(false);
+    try {
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('id_user');
+      sessionStorage.removeItem('role');
+      sessionStorage.removeItem('user');
+      sessionStorage.removeItem('picture');
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   return (

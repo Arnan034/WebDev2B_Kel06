@@ -8,6 +8,7 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: "/auth/google/callback"
 },
+
 async (accessToken, refreshToken, profile, done) => {
     try {
         // Cari pengguna di database berdasarkan email
