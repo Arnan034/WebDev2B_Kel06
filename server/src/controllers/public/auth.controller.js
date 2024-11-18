@@ -1,7 +1,7 @@
 // src/controllers/authController.js
 const Auth = require('../../models/auth.model');
 const axios = require('axios');
-const OAuth2Client = require('google-auth-library');
+const { OAuth2Client } = require('google-auth-library');
 
 //middleware 
 const { AppError } = require('../../middlewares/maintainability/error.middleware');
@@ -202,15 +202,15 @@ class AuthController {
                 return next(new AppError('Google token is missing', 400));
             }
     
-            const googleUser = await this.verifyGoogleToken(googleToken); 
+            const googleUser = await AuthController.verifyGoogleToken(googleToken); 
             
             let user = await Auth.getUserIdGoogle(googleUser.sub);
     
-            if (user.rows.length === 0) {
+            if (user.length === 0) {
                 const pictureUrl = googleUser.picture;
                 const pictureResponse = await axios.get(pictureUrl, { responseType: 'arraybuffer' });
-                const pictureBuffer = Buffer.from(pictureResponse.data, 'binary');//catatan: gambar diambil dari google
-
+                const pictureBuffer = Buffer.from(pictureResponse.data, 'binary');
+                console.log(googleUser.name, googleUser.email, googleUser.sub, pictureBuffer);
                 await Auth.createGoogleAuth(googleUser.name, googleUser.email, googleUser.sub, pictureBuffer);
                 user = await Auth.getUserIdGoogle(googleUser.sub);
             }
@@ -230,7 +230,6 @@ class AuthController {
     
         } catch (error) {
             logger.error("Error during sign-in Google:", {
-                token_google: googleToken,
                 error: error.message,
                 duration: Date.now() - start
             });
@@ -239,16 +238,15 @@ class AuthController {
     }
     
     static async verifyGoogleToken (token) {
-        const client = new OAuth2Client(process.env.CLIENT_ID);
         try {
+            const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
             const ticket = await client.verifyIdToken({
                 idToken: token,
-                audience: process.env.CLIENT_ID,
+                audience: process.env.GOOGLE_CLIENT_ID,
             });
             return ticket.getPayload();
         } catch (error) {
             logger.error("Error verifying Google token:", {
-                token_google: token,
                 error: error.message,
             });
             throw new AppError("Invalid Google token", 400);

@@ -60,15 +60,15 @@ const Signin = ({ handleLogin }) => {
             const token_google = credentialResponse.credential;
             const response = await apiServicePublic.signGoogle({ token_google: token_google });
             
-            sessionStorage.setItem('token', response.data.token);
-            sessionStorage.setItem('id_user', response.data.id_user);
-            sessionStorage.setItem('role', response.data.role);
-            sessionStorage.setItem('user', response.data.username);
-            sessionStorage.setItem('picture', response.data.picture);
+            sessionStorage.setItem('token', response.data.data.token);
+            sessionStorage.setItem('id_user', response.data.data.id_user);
+            sessionStorage.setItem('role', response.data.data.role);
+            sessionStorage.setItem('user', response.data.data.username);
+            sessionStorage.setItem('picture', response.data.data.picture);
             setMessage(response.data.message);
             setError('');
             setTimeout(() => {
-                navigate('/cms');
+                navigate('/');
                 handleLogin();
             }, 1000);
         } catch (error) {
