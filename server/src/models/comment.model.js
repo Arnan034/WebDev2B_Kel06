@@ -52,9 +52,10 @@ class Comment {
     }
 
     static async create(id_user, id_film, rating, review){
-        const query = `INSERT INTO comment (id_user, id_film, comment, rate, date, posted) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, false);`;
+        const query = `INSERT INTO comment (id_user, id_film, comment, rate, date, posted) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, false) RETURNING id_comment;`;
         const result = await QueryOptimizer.executeQuery(pool, query, [id_user, id_film, review, rating], 'createComment');
-    }
+        return result[0];
+    }   
 
     static async approveComment(id){
         const query = `UPDATE comment set posted = true WHERE id_comment = $1;`;

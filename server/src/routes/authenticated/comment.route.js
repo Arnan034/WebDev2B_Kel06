@@ -2,9 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const commentController = require('../../controllers/authenticated/comment.controller');
-const { createCommentLimiter } = require('../../middlewares/security/rateLimiter.middleware');
+// const { createCommentLimiter } = require('../../middlewares/security/rateLimiter.middleware');
 
 
-router.post('/create/:userId/:filmId', createCommentLimiter, commentController.createComment);
+router.post('/create/:userId/:filmId', commentController.createComment);
 
 module.exports = router;

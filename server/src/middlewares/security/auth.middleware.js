@@ -2,7 +2,7 @@ const { verifyToken } = require('../../utils/security/jwt.utils');
 
 const authenticateToken = (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers['authorization'];
     
     if (!authHeader) {
       return res.status(401).json({
@@ -33,8 +33,10 @@ const authenticateToken = (req, res, next) => {
 
 // Middleware untuk routes yang bisa diakses admin & user
 const isAuthenticated = (req, res, next) => {
-  // Tidak perlu cek req.user karena authenticateToken sudah memastikan ada user
-  if (req.headers.role === 'admin' || req.headers.role === 'user') {
+  // Menggunakan x-role dan toLowerCase() untuk case-insensitive comparison
+  const role = (req.headers['x-role'] || '').toLowerCase();
+  
+  if (role === 'admin' || role === 'user') {
     next();
   } else {
     res.status(403).json({
@@ -46,8 +48,7 @@ const isAuthenticated = (req, res, next) => {
 
 // Khusus untuk fitur admin
 const isAdmin = (req, res, next) => {
-  // Tidak perlu cek req.user karena authenticateToken sudah memastikan ada user
-  if (req.headers.role === 'admin') {
+  if (req.headers['x-role'] === 'admin') {
     next();
   } else {
     res.status(403).json({

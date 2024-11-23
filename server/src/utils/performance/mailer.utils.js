@@ -75,10 +75,8 @@ const sendEmail = async (email, type, data) => {
 
         const start = Date.now();
         const info = await emailTransporter.sendMail(mailOptions);
-        console.log(`Email sent in ${Date.now() - start}ms`);
         return info;
     } catch (error) {
-        console.error('Error sending email:', error);
         // Reset transporter jika terjadi error autentikasi
         if (error.code === 'EAUTH') {
             transporter = null;

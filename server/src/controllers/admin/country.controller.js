@@ -6,8 +6,8 @@ const { cmsLogger } = require('../../utils/maintainability/logger.utils');
 class CountryController {
     static async createCountry (req, res, next) {
         const start = Date.now();
+        const { country_name } = req.body;
         try {
-            const { country_name } = req.body;
             if (!country_name || country_name.trim() === '') {
                 return ApiResponse.error(res, 'Country name is required', 400);
             }
@@ -26,22 +26,22 @@ class CountryController {
                 country: {id: newCountry.id_country, name: newCountry.country_name},
                 duration: Date.now() - start
             });
-            return ApiResponse.success(res, {country_name: newCountry.country_name}, 'Country created successfully', 201);
+            return ApiResponse.success(res, newCountry, 'Country created successfully', 201);
         } catch (error) {
             cmsLogger.error('Error creating country:', {
                 country: country_name,
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
     static async updateCountry (req, res, next) {
         const start = Date.now();
+        const { id } = req.params;
+        const { name } = req.body;
         try {
-            const { id } = req.params;
-            const { name } = req.body;
 
             if (!id || isNaN(id)) {
                 return ApiResponse.error(res, 'Invalid ID', 400);
@@ -67,7 +67,7 @@ class CountryController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return ApiResponse.serverError(res, 'Server error', 500);
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -98,7 +98,7 @@ class CountryController {
             if (error.code === '23503') {
                 return ApiResponse.error(res, 'Cant delete the country because its still the movie being referenced.', 400);
             } else {
-                return ApiResponse.serverError(res, 'Server error', 500);
+                return ApiResponse.serverError(res, 'Server error', error);
             }
         }
     }

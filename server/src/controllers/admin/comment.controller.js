@@ -34,18 +34,20 @@ class CommentController {
 
             if (Array.isArray(ids) && ids.length > 0) {
                 const updateApprove = ids.map(id => Comment.approveComment(id));
-                await Promise.all(updateApprove); 
+                const results = await Promise.all(updateApprove);
+                
+                if (results.some(result => result === null)) {
+                    return ApiResponse.error(res, 'One or more comments not found', 404);
+                }
             } else {
                 return ApiResponse.error(res, 'Invalid or empty ID list.', 400);
             }
-            if (!updateApprove) {
-                return ApiResponse.error(res, 'Failed to update approve comment', 400);
-            }
+
             cmsLogger.info('Success update approve comment', {
                 id: ids,
                 duration: Date.now() - start
             });
-            return ApiResponse.success(res, null, 'Comments approved successfully.', 200);
+            return ApiResponse.success(res, null, 'Update approve comment successfully', 200);
         } catch (error) {
             cmsLogger.error("Error update approve comment: ", {
                 id: ids,
@@ -63,15 +65,18 @@ class CommentController {
             if (!ids) {
                 return ApiResponse.error(res, 'ID list is required', 400);
             }
+
             if (Array.isArray(ids) && ids.length > 0) {
-                const deleteComment = ids.map(id => Comment.deleteComment(id));
-                await Promise.all(deleteComment);
+                const deleteResults = await Promise.all(
+                    ids.map(id => Comment.deleteComment(id))
+                );
+                if (deleteResults.some(result => result === null)) {
+                    return ApiResponse.error(res, 'One or more comments not found', 404);
+                }
             } else {
                 return ApiResponse.error(res, 'Invalid or empty ID list.', 400);
             }
-            if (!deletedComment) {
-                return ApiResponse.error(res, 'Failed to delete comment', 400);
-            }
+
             cmsLogger.info('Success delete comment', {
                 id: ids,
                 duration: Date.now() - start

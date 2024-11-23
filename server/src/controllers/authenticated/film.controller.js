@@ -33,6 +33,7 @@ class FilmController {
             return ApiResponse.error(res, 'All fields are required', 400);
         }
 
+
         const parsedAward = JSON.parse(award);
         const parsedGenre = JSON.parse(genre);
         const parsedActor = actor ? actor.map(actorStr => JSON.parse(actorStr)) : [] ;
@@ -92,7 +93,7 @@ class FilmController {
                 duration: Date.now() - start
             });
 
-            return ApiResponse.success(res, null, 'Film berhasil dibuat', 201);
+            return ApiResponse.success(res, {id_film: film_id}, 'Film berhasil dibuat', 201);
         } catch (error) {
             await client.query('ROLLBACK');
             cmsLogger.error('Error Create film:', {
@@ -101,7 +102,7 @@ class FilmController {
                 error: error.message, 
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         } finally {
             client.release();
         }

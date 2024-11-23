@@ -8,6 +8,7 @@ class ActorController {
         const start = Date.now();
         try {
             const actors = await Actor.getAll();
+            
             if (!actors || actors.length === 0) {
                 return ApiResponse.error(res, 'No actors found', 404);
             }
@@ -17,7 +18,10 @@ class ActorController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return ApiResponse.serverError(res, 'Error fetching actors', error);
+            return ApiResponse.serverError(res, error.message, {
+                status: 'error',
+                message: error.message
+            });
         }
     }
 }

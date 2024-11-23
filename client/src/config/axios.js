@@ -26,14 +26,12 @@ axiosInstance.interceptors.request.use(
     // Ambil token dari localStorage atau state management
     const token = sessionStorage.getItem('token');
     const role = sessionStorage.getItem('role');
-    console.log('token:', token);
-    console.log('role:', role);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     
     if (role) {
-      config.headers.Role = role;
+      config.headers['x-role'] = role;
     }
 
     return config;

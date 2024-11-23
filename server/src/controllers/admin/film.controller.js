@@ -99,17 +99,13 @@ class FilmController {
             actor,
         } = req.body;
 
-        if(req.file){
-            return ApiResponse.error(res, 'File is required', 400);
-        }
-
-        if (!title || !picture || !alt_title || !year || !country || !synopsis || !link_trailer || !availability || !status) {
+        if (!title || !picture ||!alt_title || !year || !country || !synopsis || !link_trailer || !availability || !status) {
             return ApiResponse.error(res, 'All fields are required', 400);
         }
 
         const parsedAward = JSON.parse(award);
         const parsedGenre = JSON.parse(genre || '[]');
-        const parsedActor = actor ? actor.map(actorStr => JSON.parse(actorStr)) : [];
+        const parsedActor = req.body['actor[]'] ? [JSON.parse(req.body['actor[]'])] : [];
 
         let pictureBuffer; 
         if (picture.startsWith('data:image')) {
@@ -190,16 +186,13 @@ class FilmController {
             await Comment.deleteCommentFilm(client, id);
             
             const deleteFilm = await Film.delete(client, id);
-            if (!deleteFilm) {
-                return ApiResponse.error(res, 'Failed to delete film', 400);
-            }
             
             await client.query('COMMIT');
             cmsLogger.info('Success delete film', {
                 filmId: id,
                 duration: Date.now() - start
             });
-            return ApiResponse.success(res, null, 'Film deleted successfully', 200);
+            return ApiResponse.success(res, deleteFilm, 'Film deleted successfully', 200);
         } catch (error) {
             await client.query('ROLLBACK');
             cmsLogger.error('Error Delete Film:', {
@@ -207,7 +200,7 @@ class FilmController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         } finally {
             client.release();
         }

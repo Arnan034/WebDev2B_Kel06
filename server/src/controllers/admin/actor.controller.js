@@ -16,15 +16,11 @@ class ActorController {
         try {
             const checkActor = await Actor.check(name);
             if (checkActor) {
-                return ApiResponse.error(res, 'Actor already exists', 400);
+                return ApiResponse.error(res, 'Actor already exists', 409);
             }
 
             const pictureBuffer = convertBase64ToBuffer(picture);
             const newActor = await Actor.create(country, name, birth_date, pictureBuffer);
-            
-            if (!newActor) {
-                return ApiResponse.error(res, 'Failed to create actor', 400);
-            }
             
             cmsLogger.info('Success Create actor', {
                 actor: {
@@ -96,7 +92,7 @@ class ActorController {
                 duration: Date.now() - start
             });
 
-            return ApiResponse.success(res, updatedActor, 'Actor updated successfully');
+            return ApiResponse.success(res, updatedActor, 'Actor updated successfully', 200);
         } catch (error) {
             cmsLogger.error('Error to update actor', {
                 actorId: id,

@@ -72,7 +72,7 @@ class GenreController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -86,7 +86,7 @@ class GenreController {
             const genreExists = await Genre.check(id); 
 
             if (!genreExists) {
-                return next(new AppError('Genre not found', 404));
+                return ApiResponse.error(res, 'Genre not found', 404);
             }
 
             await Genre.deleteGenre(client, id);
@@ -107,9 +107,9 @@ class GenreController {
                 duration: Date.now() - start
             });
             if (error.code === '23503') {
-                return next(new AppError('Cannot delete genre as it is still referenced in other tables.', 400));
+                return ApiResponse.error(res, 'Cannot delete genre as it is still referenced in other tables.', 400);
             } else {
-                return next(new AppError('Server error', 500));
+                return ApiResponse.serverError(res, 'Server error', error);
             }
         } finally {
             client.release();

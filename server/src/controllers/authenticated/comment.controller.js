@@ -17,8 +17,8 @@ class CommentController {
                 return ApiResponse.error(res, 'Rating must be between 1 and 5', 400);
             }
         
-            await Comment.create( userId, filmId, rating, review)
-            return ApiResponse.success(res, null, "Comment created", 201);
+            const comment = await Comment.create( userId, filmId, rating, review)
+            return ApiResponse.success(res, comment, "Comment created", 201);
         } catch (error) {
             logger.error("Error Comment 03: ", {
                 error: error.message,
