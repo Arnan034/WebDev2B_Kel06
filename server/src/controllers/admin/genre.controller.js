@@ -3,7 +3,6 @@ const pool = require('../../config/db');
 const Genre = require('../../models/genre.model');
 const ApiResponse = require('../../utils/maintainability/response.utils');
 const { cmsLogger } = require('../../utils/maintainability/logger.utils');
-const { AppError } = require('../../middlewares/maintainability/error.middleware');
 
 class GenreController {
 
@@ -14,7 +13,7 @@ class GenreController {
             const genreExists = await Genre.check(genre);
 
             if (genreExists) {
-                return next(new AppError('Genre already exists', 400));
+                return ApiResponse.error(res, 'Genre already exists', 400);
             }
     
             const newGenre = await Genre.create(genre);
@@ -29,7 +28,7 @@ class GenreController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -40,14 +39,15 @@ class GenreController {
         try {
         
             if (!id || isNaN(id)) {
-                return next(new AppError('Invalid ID', 400));
+                return ApiResponse.error(res, 'Invalid ID', 400);
             }
             if (!name) {
-                return next(new AppError('Genre name is required', 400));
+                return ApiResponse.error(res, 'Genre name is required', 400);
             }
             const genreExists = await Genre.check(id);
+
             if (!genreExists) {
-                return next(new AppError('Genre ID not found', 404));
+                return ApiResponse.error(res, 'Genre ID not found', 404);
             }
 
             const changes = [];
@@ -56,6 +56,10 @@ class GenreController {
             }
 
             const genre = await Genre.update(id, name);
+            if (!genre) {
+                return ApiResponse.error(res, 'Failed to update genre', 400);
+            }
+            
             cmsLogger.info('Success update genre', {
                 genreId: genre.id_genre,
                 changes: changes,

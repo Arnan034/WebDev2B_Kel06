@@ -31,7 +31,7 @@ class Genre {
         let query, values;
     
         if (isNaN(param)) {
-            query = 'SELECT * FROM genre WHERE genre = $1';
+            query = 'SELECT * FROM genre WHERE LOWER(genre) = LOWER($1)';
             values = [param];
         } else {
             query = 'SELECT * FROM genre WHERE id_genre = $1';

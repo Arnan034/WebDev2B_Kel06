@@ -1,33 +1,43 @@
 //server/src/controllers/public/actor.controller.js
 const Actor = require('../../models/actor.model');
-
+const Film = require('../../models/film.model');
 //utils
 const ApiResponse = require('../../utils/maintainability/response.utils');
 const { logger } = require('../../utils/maintainability/logger.utils');
 
-//middleware
-const { AppError } = require('../../middlewares/maintainability/error.middleware');
-
-
 class ActorController {
-    static async getActorByIdFilm(req, res, next) {
+    static async getActorByIdFilm(req, res) {
         const start = Date.now();
         const { id_film } = req.params;
+        
         try {
-            const actors = await Actor.getByIdFilm(id_film);
-            
-            if (!actors) {
-                return next(new AppError('No actors found for this film', 404));
+            const checkFilm = await Film.checkFilm(id_film);
+
+            if (!checkFilm) {
+                return ApiResponse.error(res, 'Film not found', 404);
             }
             
-            return ApiResponse.success(res, actors, 'Film actors retrieved successfully');
+            const actors = await Actor.getByIdFilm(id_film);
+            
+            if (!actors || actors.length === 0) {
+                return ApiResponse.error(res, 'No actors found for this film', 404);
+            }
+            
+            return ApiResponse.success(res, actors, 'Film actors retrieved successfully', 200);
         } catch (error) {
+            // Log error untuk tracking
             logger.error('Error fetching film actors:', {
-                id_film: id_film,
+                id_film,
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+
+            // Langsung kirim response server error
+            return ApiResponse.serverError(
+                res, 
+                'Error fetching film actors', 
+                error
+            );
         }
     }
 
@@ -38,7 +48,7 @@ class ActorController {
             const actor = await Actor.getById(id);
             
             if (!actor) {
-                return next(new AppError('Actor not found', 404));
+                return ApiResponse.error(res, 'Actor not found', 404);
             }
             
             return ApiResponse.success(res, actor, 'Actor retrieved successfully');
@@ -48,7 +58,7 @@ class ActorController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Error fetching actor', error);
         }
     }
 }

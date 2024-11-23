@@ -11,13 +11,16 @@ class CommentController {
             const { filter } = req.query;
 
             const comments = await Comment.findAll(filter);
+            if (!comments) {
+                return ApiResponse.error(res, 'No one comments', 404);
+            }
             return ApiResponse.success(res, comments, 'Comments fetched successfully', 200);
         } catch (error) {
             cmsLogger.error("Error get all comments: ", {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', 500);
         }
     }
 
@@ -25,11 +28,18 @@ class CommentController {
         const start = Date.now();
         const { ids } = req.body;
         try {
+            if (!ids) {
+                return ApiResponse.error(res, 'ID list is required', 400);
+            }
+
             if (Array.isArray(ids) && ids.length > 0) {
                 const updateApprove = ids.map(id => Comment.approveComment(id));
                 await Promise.all(updateApprove); 
             } else {
-                return next(new AppError('Invalid or empty ID list.', 400));
+                return ApiResponse.error(res, 'Invalid or empty ID list.', 400);
+            }
+            if (!updateApprove) {
+                return ApiResponse.error(res, 'Failed to update approve comment', 400);
             }
             cmsLogger.info('Success update approve comment', {
                 id: ids,
@@ -42,21 +52,25 @@ class CommentController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', 500);
         }
     }
 
     static async deleteComment (req, res, next) {
         const start = Date.now();
         const { ids } = req.body;
-        console.log(ids);
         try {
-
+            if (!ids) {
+                return ApiResponse.error(res, 'ID list is required', 400);
+            }
             if (Array.isArray(ids) && ids.length > 0) {
                 const deleteComment = ids.map(id => Comment.deleteComment(id));
                 await Promise.all(deleteComment);
             } else {
-                return next(new AppError('Invalid or empty ID list.', 400));
+                return ApiResponse.error(res, 'Invalid or empty ID list.', 400);
+            }
+            if (!deletedComment) {
+                return ApiResponse.error(res, 'Failed to delete comment', 400);
             }
             cmsLogger.info('Success delete comment', {
                 id: ids,
@@ -69,7 +83,7 @@ class CommentController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', 500);
         }
     }
 }

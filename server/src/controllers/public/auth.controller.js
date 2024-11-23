@@ -3,9 +3,6 @@ const Auth = require('../../models/auth.model');
 const axios = require('axios');
 const { OAuth2Client } = require('google-auth-library');
 
-//middleware 
-const { AppError } = require('../../middlewares/maintainability/error.middleware');
-
 //utils
 const { sendEmail } = require('../../utils/performance/mailer.utils');
 const ApiResponse = require('../../utils/maintainability/response.utils');
@@ -46,17 +43,17 @@ class AuthController {
             const user = await Auth.getUserByUsernameOrEmail(username);
     
             if (!user) {
-                return next(new AppError('User not found', 404));
+                return ApiResponse.error(res, 'User not found', 404);
             }
 
             if (!user.status){
-                return next(new AppError('User has been blacklisted', 403));
+                return ApiResponse.error(res, 'User has been blacklisted', 403);
             }
     
             const isPasswordMatch = await comparePassword(password, user.password);
 
             if (!isPasswordMatch) {
-                return next(new AppError('Invalid Password', 400));
+                return ApiResponse.error(res, 'Invalid Password', 400);
             }
 
             const token = generateToken({id: user.id_user, username: user.username, role: user.role}, '3h');
@@ -66,14 +63,14 @@ class AuthController {
                 duration: Date.now() - start
             });
 
-            return ApiResponse.success(res, { token: token, id_user: user.id_user, username: user.username, role: user.role, picture: user.picture.toString('base64')}, 'Sign-in successful', 200);
+            return ApiResponse.success(res, { token: token, id_user: user.id_user, username: user.username, role: user.role, picture: convertBufferToBase64(user.picture)}, 'Sign-in successful', 200);
         } catch (error) {
             authLogger.error('Error during sign-in:', {
                 username: username,
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -95,7 +92,7 @@ class AuthController {
             const checkUsername = await Auth.checkUsername(username);
 
             if (checkUsername){
-                return next(new AppError('Username already registered', 422));
+                return ApiResponse.error(res, 'Username already registered', 422);
             }
 
             const checkEmail = await Auth.checkEmail(email);
@@ -103,7 +100,7 @@ class AuthController {
                 if (!checkEmail.is_verified){
                     await Auth.deleteUnverifiedUser(email);
                 } else {
-                    return next(new AppError('Email already registered', 422));
+                    return ApiResponse.error(res, 'Email already registered', 422);
                 }
             }
 
@@ -112,7 +109,7 @@ class AuthController {
             const result = await AuthController.#sendOTP(email, 'otp');
 
             if (!result.success) {
-                return next(new AppError(`Error sending OTP ${result.error}`, 500));
+                return ApiResponse.serverError(res, `Error sending OTP`, 500);
             }
 
             const user = await Auth.createUser(username, email, hashedPassword, pictureBuffer);
@@ -130,7 +127,7 @@ class AuthController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -143,13 +140,13 @@ class AuthController {
                 decoded = verifyToken(token);
             } catch (err) {
                 if (err.name === 'TokenExpiredError') {
-                    return next(new AppError('OTP has expired. Please request a new one.', 401))
+                    return ApiResponse.error(res, 'OTP has expired. Please request a new one.', 401)
                 }
-                return next(new AppError('Invalid token. Please request a new OTP.', 401))
+                return ApiResponse.error(res, 'Invalid token. Please request a new OTP.', 401)
             }
 
             if (!(decoded.otp === otpJoin)) {
-                return next(new AppError('Invalid OTP code. Please try again.', 400));
+                return ApiResponse.error(res, 'Invalid OTP code. Please try again.', 400);
             }
 
             await Auth.userVerified(id);
@@ -164,7 +161,7 @@ class AuthController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -175,7 +172,7 @@ class AuthController {
             const result = await AuthController.#sendOTP(email, 'otp');
 
             if (!result.success) {
-                return next(new AppError('Server error', 500));
+                return ApiResponse.serverError(res, `Error sending OTP`, 500);
             }
 
             logger.info('Success resend OTP', {
@@ -190,7 +187,7 @@ class AuthController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -199,10 +196,14 @@ class AuthController {
         const googleToken = req.body.token_google;
         try {
             if (!googleToken) {
-                return next(new AppError('Google token is missing', 400));
+                return ApiResponse.error(res, 'Google token is missing', 400);
             }
     
             const googleUser = await AuthController.verifyGoogleToken(googleToken); 
+
+            if (!googleUser.success) {
+                return ApiResponse.error(res, 'Invalid Google token', 400);
+            }
             
             let user = await Auth.getUserIdGoogle(googleUser.sub);
     
@@ -233,7 +234,7 @@ class AuthController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
     
@@ -249,18 +250,17 @@ class AuthController {
             logger.error("Error verifying Google token:", {
                 error: error.message,
             });
-            throw new AppError("Invalid Google token", 400);
+            return { success: false, error: error.message };
         }
     }
 
     static async forgetPassword (req, res, next) {
         const start = Date.now();
         const { email } = req.body;
-        console.log(email);
         try {
             const checkEmail = await Auth.checkEmail(email);
             if (!checkEmail) {
-                return next(new AppError('Email Not Registered', 404));
+                return ApiResponse.error(res, 'Email Not Registered', 404);
             }
             
             const token = generateToken({ email: email }, '5m');
@@ -268,7 +268,7 @@ class AuthController {
             const result = await AuthController.#sendOTP(email, 'forget-password', token);
             
             if (!result.success) {
-                return next(new AppError('Server error', 500));
+                return ApiResponse.serverError(res, `Error sending email`, 500);
             }
 
             logger.info('Success request forget password', {
@@ -283,7 +283,7 @@ class AuthController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -299,7 +299,7 @@ class AuthController {
             const result = await Auth.changePassword(email, hashedPassword);
     
             if (result) {
-                return next(new AppError('User not found', 404));
+                return ApiResponse.error(res, 'User not found', 404);
             }
     
             logger.info('Success reset password', {
@@ -314,9 +314,9 @@ class AuthController {
                 duration: Date.now() - start
             });
             if (error.name === 'TokenExpiredError') {
-                return next(new AppError('Token has expired', 400));
+                return ApiResponse.error(res, 'Token has expired', 400);
             }
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 };

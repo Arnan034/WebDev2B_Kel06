@@ -103,7 +103,8 @@ app.get('/performance', (req, res) => {
 });
 
 // Jalankan server
-pool.connect()
+if (process.env.NODE_ENV !== 'test') {
+  pool.connect()
     .then(() => {
         console.log('Koneksi ke database berhasil');
 
@@ -118,3 +119,6 @@ pool.connect()
             console.log(`Server berjalan di http://localhost:${port} meskipun gagal terhubung ke database.`);
         });
     });
+}
+
+module.exports = app;

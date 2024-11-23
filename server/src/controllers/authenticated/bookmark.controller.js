@@ -1,6 +1,5 @@
 const Bookmark = require('../../models/bookmark.model'); // Sesuaikan dengan model yang digunakan
 const ApiResponse = require('../../utils/maintainability/response.utils');
-const { AppError } = require('../../middlewares/maintainability/error.middleware');
 const { logger } = require('../../utils/maintainability/logger.utils');
 
 class BookmarkController {
@@ -9,13 +8,16 @@ class BookmarkController {
         const { userId } = req.params;
         try {
             const bookmark = await Bookmark.getBookmark(userId);
+            if (!bookmark) {
+                return ApiResponse.error(res, 'No one bookmark film', 404);
+            }
             return ApiResponse.success(res, bookmark, 'Bookmark fetched successfully', 200);
         } catch (error) {
             logger.error('Error fetching bookmarks:', {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Failed to fetch bookmarks', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -34,16 +36,14 @@ class BookmarkController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Failed to check bookmark status', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
     static async createBookmark (req, res, next) {
         const start = Date.now();
         const { userId, filmId } = req.body;
-        
         try {
-
             await Bookmark.addBookmark(userId, filmId);
             return ApiResponse.success(res, null, 'Bookmark added successfully', 201);
         } catch (error) {
@@ -51,7 +51,7 @@ class BookmarkController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Failed to create bookmark', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -62,7 +62,7 @@ class BookmarkController {
         try {
             const result = await Bookmark.delBookmark(userId, filmId);
             if (!result) {
-                return next(new AppError('Bookmark not found', 404));
+                return ApiResponse.error(res, 'Bookmark not found', 404);
             }
             return ApiResponse.success(res, null, 'Bookmark removed successfully', 200);
         } catch (error) {
@@ -70,7 +70,7 @@ class BookmarkController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Failed to delete bookmark', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 };

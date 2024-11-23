@@ -9,13 +9,16 @@ class FilterController {
         const start = Date.now();
         try {
             const filter = await Filter.getYears();
+            if (!filter) {
+                return ApiResponse.error(res, 'No one year', 404);
+            }
             return ApiResponse.success(res, filter, 'Success fetch all year', 200);
-        } catch (err) {
+        } catch (error) {
             logger.error('Error fetching year:', {
-                error: err.message,
+                error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -23,13 +26,16 @@ class FilterController {
         const start = Date.now();
         try {
             const filter = await Filter.getAvailabilitys();
+            if (!filter) {
+                return ApiResponse.error(res, 'No one availability', 404);
+            }
             return ApiResponse.success(res, filter, 'Success fetch all availability', 200);
-        } catch (err) {
+        } catch (error) {
             logger.error('Error fetching availability:', {
-                error: err.message,
+                error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 }

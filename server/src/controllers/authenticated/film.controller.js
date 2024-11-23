@@ -7,8 +7,6 @@ const Actor = require('../../models/actor.model');
 // utils
 const ApiResponse = require('../../utils/maintainability/response.utils');
 const { cmsLogger } = require('../../utils/maintainability/logger.utils');
-// middleware
-const { AppError } = require('../../middlewares/maintainability/error.middleware');
 
 class FilmController {
     static async createFilm (req, res) {
@@ -29,7 +27,10 @@ class FilmController {
         } = req.body;
     
         if (!req.file) {
-            return next(new AppError('File gambar diperlukan.', 400));
+            return ApiResponse.error(res, 'image is required', 400);
+        }
+        if (!title || !alt_title || !year || !country || !synopsis || !link_trailer || !availability || !status || !posted_by) {
+            return ApiResponse.error(res, 'All fields are required', 400);
         }
 
         const parsedAward = JSON.parse(award);
@@ -41,7 +42,6 @@ class FilmController {
         try {
             await client.query('BEGIN');
             
-            // Simpan film ke database
             const film_id = await Film.create(
                 title,
                 pictureBuffer,
@@ -57,7 +57,6 @@ class FilmController {
             
             const operations = [];
     
-            // Simpan penghargaan
             if (parsedAward && parsedAward.length > 0) {
                 const awardPromises = parsedAward.map(({ value }) => {
                     return Award.updatefilm(client, value, film_id);

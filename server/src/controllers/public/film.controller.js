@@ -2,7 +2,6 @@
 const Film = require('../../models/film.model');
 const ApiResponse = require('../../utils/maintainability/response.utils');
 const { logger } = require('../../utils/maintainability/logger.utils');
-const { AppError } = require('../../middlewares/maintainability/error.middleware');
 
 class FilmController {
     static async getAllFilms (req, res, next) {
@@ -10,13 +9,16 @@ class FilmController {
         try {
             const { country, sort, year, availability, genre, award, status } = req.query;
             const film = await Film.getAll(country, sort, year, availability, genre, award, status);
+            if (!film) {
+                return ApiResponse.error(res, 'No one film found', 404);
+            }
             return ApiResponse.success(res, film, 'Success', 200);
         } catch (error) {
             logger.error('Error fetching all movies:', {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -25,13 +27,16 @@ class FilmController {
         try {
             const { search, sort, country, year, availability, genre, award, status } = req.query;
             const films = await Film.getBySearch(search, sort, country, year, availability, genre, award, status);
+            if (!films) {
+                return ApiResponse.error(res, 'No one search film found', 404);
+            }
             return ApiResponse.success(res, films, 'Success', 200);
         } catch (error) {
             logger.error('Error fetching search movies:', {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -41,13 +46,16 @@ class FilmController {
             const { id } = req.params;
 
             const film = await Film.getById(id);
+            if (!film) {
+                return ApiResponse.error(res, 'Film not found', 404);
+            }
             return ApiResponse.success(res, film, 'Success', 200);
         } catch (error) {
             logger.error('Error fetching movies detail:', {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 
@@ -62,7 +70,7 @@ class FilmController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 }

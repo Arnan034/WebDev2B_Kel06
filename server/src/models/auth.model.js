@@ -46,8 +46,9 @@ class AuthModel {
     }
 
     static async updateStatus(id, status) {
-        const query = 'UPDATE "user" SET status = $2 WHERE id_user = $1;';
+        const query = 'UPDATE "user" SET status = $2 WHERE id_user = $1 RETURNING *;';
         const result = await QueryOptimizer.executeQuery(pool, query, [id, status], 'updateStatus');
+        return result[0];
     }
 
     static async checkEmail(email) {

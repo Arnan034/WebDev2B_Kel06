@@ -9,13 +9,16 @@ class GenreController {
         const start = Date.now();
         try {
             const genre = await Genre.getAll();
+            if (!genre) {
+                return ApiResponse.error(res, 'No one genre', 404);
+            }
             return ApiResponse.success(res, genre, 'Success fetch all genre', 200);
-        } catch (err) {
+        } catch (error) {
             logger.error('Error fetching all genre:', {
-                error: err.message,
+                error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', error);
         }
     }
 }

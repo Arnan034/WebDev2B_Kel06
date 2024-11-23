@@ -9,8 +9,7 @@ const Comment = require('../../models/comment.model');
 const ApiResponse = require('../../utils/maintainability/response.utils');
 const { cmsLogger } = require('../../utils/maintainability/logger.utils');
 const { convertBase64ToBuffer, bufferImage } = require('../../utils/security/image.utils');
-// middleware
-const { AppError } = require('../../middlewares/maintainability/error.middleware');
+
 
 class FilmController {
     static async getValidateFilms (req, res, next) {
@@ -18,13 +17,16 @@ class FilmController {
         try {
             const { filter } = req.query;
             const film = await Film.getAllValidate(filter);
+            if (!film) {
+                return ApiResponse.error(res, 'No films found validate', 404);
+            }
             return ApiResponse.success(res, film, 'Fetch Validate Film Success', 200);
         } catch (error) {
             cmsLogger.error('Error fetching Validate movies:', {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', 500);
         }
     }
 
@@ -36,10 +38,10 @@ class FilmController {
             const filmDetails = await Film.getFilmEdit(client, id);
         
             if (!filmDetails) {
-                return next(new AppError('Film not found', 404));
+                return ApiResponse.error(res, 'Film not found', 404);
             }
 
-            await Award.updateAwardFilm( client , id);
+            await Award.updateAwardFilm(client , id);
         
             await client.query('COMMIT');
             return ApiResponse.success(res, filmDetails, 'Fetch Edit Film Success', 200);
@@ -50,7 +52,7 @@ class FilmController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', 500);
         } finally {
             client.release();
         }
@@ -60,7 +62,10 @@ class FilmController {
         const start = Date.now();
         const { id } = req.params;
         try {
-            await Film.updateValidate(id);
+            const updateValidate = await Film.updateValidate(id);
+            if (!updateValidate) {
+                return ApiResponse.error(res, 'Failed to update film validate', 400);
+            }
             cmsLogger.info('Success update film validate', {
                 filmId: id,
                 duration: Date.now() - start
@@ -72,7 +77,7 @@ class FilmController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', 500);
         }
     }
 
@@ -94,6 +99,14 @@ class FilmController {
             actor,
         } = req.body;
 
+        if(req.file){
+            return ApiResponse.error(res, 'File is required', 400);
+        }
+
+        if (!title || !picture || !alt_title || !year || !country || !synopsis || !link_trailer || !availability || !status) {
+            return ApiResponse.error(res, 'All fields are required', 400);
+        }
+
         const parsedAward = JSON.parse(award);
         const parsedGenre = JSON.parse(genre || '[]');
         const parsedActor = actor ? actor.map(actorStr => JSON.parse(actorStr)) : [];
@@ -113,7 +126,10 @@ class FilmController {
     
             await Genre.deleteGenreFilm(client, id);
 
-            await Film.updateEditFilm(client, id, title, pictureBuffer, alt_title, year, country, synopsis, link_trailer, availability, status);
+            const updateEditFilm = await Film.updateEditFilm(client, id, title, pictureBuffer, alt_title, year, country, synopsis, link_trailer, availability, status);
+            if (!updateEditFilm) {
+                return ApiResponse.error(res, 'Failed to update film', 400);
+            }
     
             // Simpan penghargaan
             if (parsedAward.length > 0) {
@@ -152,7 +168,7 @@ class FilmController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Terjadi kesalahan saat membuat film', 500));
+            return ApiResponse.serverError(res, 'Terjadi kesalahan saat membuat film', 500);
         } finally {
             client.release();
         }
@@ -172,8 +188,11 @@ class FilmController {
             await Genre.deleteGenreFilm(client, id);
 
             await Comment.deleteCommentFilm(client, id);
-
-            await Film.delete(client, id);
+            
+            const deleteFilm = await Film.delete(client, id);
+            if (!deleteFilm) {
+                return ApiResponse.error(res, 'Failed to delete film', 400);
+            }
             
             await client.query('COMMIT');
             cmsLogger.info('Success delete film', {

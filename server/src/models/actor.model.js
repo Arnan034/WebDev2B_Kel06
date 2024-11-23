@@ -71,46 +71,32 @@ class Actor {
     }
 
     static async update(id, country, name, birth_date, pictureBuffer) {
-        try {
-            const query = `
-                UPDATE actor SET country = $1, name = $2, birth_date = $3, picture = $4 WHERE id_actor = $5 RETURNING *
-            `;
-            const values = [country, name, birth_date, pictureBuffer, id];
-            const result = await QueryOptimizer.executeQuery(pool, query, values, 'updateActor');
-            return result[0];
-        } catch (error) {
-            console.error('Database update error:', error);
-            throw error;
-        }
+        const query = `
+            UPDATE actor SET country = $1, name = $2, birth_date = $3, picture = $4 WHERE id_actor = $5 RETURNING *
+        `;
+        const values = [country, name, birth_date, pictureBuffer, id];
+        const result = await QueryOptimizer.executeQuery(pool, query, values, 'updateActor');
+        return result[0];
     }
 
     static async delete(client, id) {
-        try {
-            const query = `DELETE FROM actor WHERE id_actor = $1 RETURNING *`;
-            const result = await QueryOptimizer.executeQuery(client, query, [id], 'deleteActor');
-            return result[0];
-        } catch (error) {
-            console.error('Database delete error:', error);
-            throw error;
-        }
+        const query = `DELETE FROM actor WHERE id_actor = $1 RETURNING *`;
+        const result = await QueryOptimizer.executeQuery(client, query, [id], 'deleteActor');
+        return result[0];
     }
 
     static async addActorFilm(client, id_actor, cast, film_id) {
-        try {
-            const query = `
-                INSERT INTO actor_film (id_film, id_actor, cast_as) VALUES ($1, $2, $3) RETURNING *
+        const query = `
+            INSERT INTO actor_film (id_film, id_actor, cast_as) VALUES ($1, $2, $3) RETURNING *
             `;
-            const result = await QueryOptimizer.executeQuery(client, query, [film_id, id_actor, cast], 'addActorFilm');
-            return result[0];
-        } catch (error) {
-            console.error('Error adding actor to film:', error);
-            throw new Error('Failed to add actor to film');
-        }
+        const result = await QueryOptimizer.executeQuery(client, query, [film_id, id_actor, cast], 'addActorFilm');
+        return result[0];   
     }
 
     static async deleteActorFilm(client, id){
-        const query = 'DELETE FROM actor_film WHERE id_film = $1;';
+        const query = 'DELETE FROM actor_film WHERE id_film = $1 RETURNING *;';
         const result = await QueryOptimizer.executeQuery(client, query, [id], 'deleteActorFilm');
+        return result[0];
     }
 
     static async check(param) {

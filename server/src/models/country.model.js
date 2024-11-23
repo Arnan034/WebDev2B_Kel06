@@ -47,7 +47,7 @@ class Country {
         let query, values;
     
         if (isNaN(param)) {
-            query = 'SELECT * FROM country WHERE country_name = $1';
+            query = 'SELECT * FROM country WHERE LOWER(country_name) = LOWER($1)';
             values = [param];
         } else {
             query = 'SELECT * FROM country WHERE id_country = $1';

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --detectOpenHandles --forceExit"
   },
   "keywords": [],
   "author": "",
@@ -35,5 +35,9 @@
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0",
     "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
   }
 }

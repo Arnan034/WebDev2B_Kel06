@@ -3,8 +3,6 @@ const Auth = require('../../models/auth.model');
 // utils
 const { cmsLogger } = require('../../utils/maintainability/logger.utils');
 const ApiResponse = require('../../utils/maintainability/response.utils');
-// middleware
-const { AppError } = require('../../middlewares/maintainability/error.middleware');
 
 class AuthController {
     static async monitorUser (req, res, next) {
@@ -12,14 +10,16 @@ class AuthController {
         try {
             const { filter } = req.body;
             const users = await Auth.getMonitor(filter);
-            
+            if (!users) {
+                return ApiResponse.error(res, 'No one users', 404);
+            }
             return ApiResponse.success(res, users, 'Users fetched successfully', 200);
         } catch (error) {
             cmsLogger.error('Error during fetch users monitor:', {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', 500);
         }
     }
 
@@ -27,8 +27,14 @@ class AuthController {
         const start = Date.now();
         const { id } = req.params;
         const { status } = req.body;
+        if (!status) {
+            return ApiResponse.error(res, 'Status is required', 400);
+        }
         try {
-            await Auth.updateStatus(id, status);
+            const updatedUser = await Auth.updateStatus(id, status);
+            if (!updatedUser) {
+                return ApiResponse.error(res, 'User not found', 404);
+            }
             cmsLogger.info('Success update status user', {
                 id: id,
                 status: status,
@@ -42,7 +48,7 @@ class AuthController {
                 error: err.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', 500);
         }
     }
 }

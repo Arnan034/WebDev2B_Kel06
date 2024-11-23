@@ -4,17 +4,27 @@ const pool = require('../../config/db');
 // utils
 const ApiResponse = require('../../utils/maintainability/response.utils');
 const {cmsLogger} = require('../../utils/maintainability/logger.utils');
-// middleware
-const { AppError } = require('../../middlewares/maintainability/error.middleware');
-
+const {convertBase64ToBuffer, bufferImage} = require('../../utils/security/image.utils');
 
 class ActorController {
     static async createActor(req, res, next) {
         const start = Date.now();
         const { country, name, birth_date, picture } = req.body;
+        if (!country || !name || !birth_date || !picture) {
+            return ApiResponse.error(res, 'All fields are required', 400);
+        }
         try {
-            const pictureBuffer = Buffer.from(picture.split(',')[1], 'base64');
+            const checkActor = await Actor.check(name);
+            if (checkActor) {
+                return ApiResponse.error(res, 'Actor already exists', 400);
+            }
+
+            const pictureBuffer = convertBase64ToBuffer(picture);
             const newActor = await Actor.create(country, name, birth_date, pictureBuffer);
+            
+            if (!newActor) {
+                return ApiResponse.error(res, 'Failed to create actor', 400);
+            }
             
             cmsLogger.info('Success Create actor', {
                 actor: {
@@ -33,8 +43,7 @@ class ActorController {
                 error: error.message, 
                 duration: Date.now() - start
             });
-
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', 500);
         }
     }
 
@@ -42,11 +51,14 @@ class ActorController {
         const start = Date.now();
         const { id } = req.params;
         const { country, name, birth_date, picture } = req.body;
+        if (!country || !name || !birth_date || !picture) {
+            return ApiResponse.error(res, 'All fields are required', 400);
+        }
         try {
             const checkActor = await Actor.check(id);
 
             if (!checkActor) {
-                return next(new AppError('Actor not found', 404));
+                return ApiResponse.error(res, 'Actor not found', 404);
             }
 
             // Track changes
@@ -67,16 +79,15 @@ class ActorController {
             let pictureBuffer;
             if (picture) {
                 if (picture.startsWith('data:image')) {
-                    pictureBuffer = Buffer.from(picture.split(',')[1], 'base64');
+                    pictureBuffer = convertBase64ToBuffer(picture);
                 } else {
-                    pictureBuffer = Buffer.from(picture, 'base64');
+                    pictureBuffer = bufferImage(picture);
                 }
             }
 
             const updatedActor = await Actor.update(id, country, name, birth_date, pictureBuffer);
-            
             if (!updatedActor) {
-                return next(new AppError('Actor not found', 404));
+                return ApiResponse.error(res, 'Failed to update actor', 400);
             }
 
             cmsLogger.info('Actor updated', {
@@ -97,7 +108,7 @@ class ActorController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', 500);
         }
     }
 
@@ -113,8 +124,9 @@ class ActorController {
             
             if (!deletedActor) {
                 await client.query('ROLLBACK');
-                return next(new AppError('Actor not found', 404));
+                return ApiResponse.error(res, 'Actor not found', 404);
             }
+            
             await client.query('COMMIT');
             cmsLogger.info('Success Delete actor', {
                 actor: {
@@ -133,7 +145,7 @@ class ActorController {
                 error: error.message, 
                 duration: Date.now() - start
             });
-            return next(new AppError('Server error', 500));
+            return ApiResponse.serverError(res, 'Server error', 500);
         } finally {
             client.release();
         }

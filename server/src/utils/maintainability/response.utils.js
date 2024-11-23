@@ -32,6 +32,24 @@ class ApiResponse {
         }
       });
     }
+  
+    static serverError(res, message = 'Internal Server Error', error = null) {
+      const response = {
+        status: 'error',
+        message: process.env.NODE_ENV === 'production' 
+          ? 'Internal Server Error' 
+          : message
+      };
+  
+      if (process.env.NODE_ENV === 'development' && error) {
+        response.error = {
+          message: error.message,
+          stack: error.stack
+        };
+      }
+  
+      return res.status(500).json(response);
+    }
   }
   
   module.exports = ApiResponse;

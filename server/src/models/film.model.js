@@ -231,7 +231,6 @@ class Film {
             params.push(search.toLowerCase());
         }
     
-        // Menambahkan kondisi untuk negara
         if (country) {
             conditions.push(`f.id_country = $${params.length + 1}`);
             params.push(country);
@@ -319,13 +318,15 @@ class Film {
     }
 
     static async updateValidate(id){
-        const query = `UPDATE film SET validate = $2 , date_upload = CURRENT_TIMESTAMP WHERE id_film = $1;`;
+        const query = `UPDATE film SET validate = $2 , date_upload = CURRENT_TIMESTAMP WHERE id_film = $1 RETURNING *;`;
         const result = await QueryOptimizer.executeQuery(pool, query, [id, "true"], 'updateValidate');
+        return result[0];
     }
 
     static async delete(client, id){
-        const query = `DELETE FROM film WHERE id_film = $1;`;
+        const query = `DELETE FROM film WHERE id_film = $1 RETURNING *;`;
         const result = await QueryOptimizer.executeQuery(client, query, [id], 'delete');
+        return result[0];
     }
 
     static async getFilmEdit(client, id){
@@ -429,8 +430,15 @@ class Film {
                 link_trailer = $8, 
                 availability = $9, 
                 status = $10  
-            WHERE id_film = $1`;
+            WHERE id_film = $1 RETURNING *`;
         const result = await QueryOptimizer.executeQuery(client, query, [id, title, pictureBuffer, alt_title, year, country, synopsis, link_trailer, availability, status], 'updateEditFilm');
+        return result[0];
+    }
+
+    static async checkFilm(id){
+        const query = `SELECT id_film FROM film WHERE id_film = $1;`;
+        const result = await QueryOptimizer.executeQuery(pool, query, [id], 'checkFilm');
+        return result[0];
     }
 
     static async checkEmail(email){
@@ -438,7 +446,6 @@ class Film {
         const result = await QueryOptimizer.executeQuery(pool, query, [email], 'checkEmail');
         return result[0];
     }
-
 }
 
 module.exports = Film;
