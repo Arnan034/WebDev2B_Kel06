@@ -2,7 +2,7 @@ const rateLimit = require('express-rate-limit');
 
 // General rate limiter
 const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 5 * 60 * 1000, // 5 minutes
   max: 1000, // Limit each IP to 1000 requests per windowMs
   message: {
       status: 'error',
@@ -32,7 +32,7 @@ const createCommentLimiter = rateLimit({
   max: 2, // Limit each IP to 2 comment per day
   message: {
     status: 'error',
-    message: 'Too many create comment attempts. Please try again later.'
+    message: 'Too many create comment attempts. Please try again next day.'
   }, skip: (req) => {
     return req.user && req.user.role === 'admin';
   }

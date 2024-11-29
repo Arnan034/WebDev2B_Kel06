@@ -4,7 +4,7 @@ import { apiServicePublic } from '../../services/api';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const ClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+const REACT_APP_GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 const Signin = ({ handleLogin }) => {
     const [username, setUsername] = useState('');
@@ -72,6 +72,7 @@ const Signin = ({ handleLogin }) => {
                 handleLogin();
             }, 1000);
         } catch (error) {
+            console.error('Full error:', error);
             setError(`Google login failed: ${error.response?.data?.message || error.message}`);
             setMessage('');
         } finally {
@@ -79,7 +80,8 @@ const Signin = ({ handleLogin }) => {
         }
     };
 
-    const handleGoogleLoginError = () => {
+    const handleGoogleLoginError = (error) => {
+        console.error('Google Login Error:', error);
         setError("Google login failed. Please try again.");
         setMessage('');
     };
@@ -144,7 +146,7 @@ const Signin = ({ handleLogin }) => {
                     <hr className="my-4" />
 
                     <div className="d-flex justify-content-center">
-                    <GoogleOAuthProvider clientId={ClientId}>
+                    <GoogleOAuthProvider clientId={REACT_APP_GOOGLE_CLIENT_ID}>
                         <GoogleLogin
                             onSuccess={handleGoogleLoginSuccess}
                             onError={handleGoogleLoginError}

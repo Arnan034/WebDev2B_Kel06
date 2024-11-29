@@ -44,7 +44,6 @@ const CommentInput = ({ filmId, userId }) => {
     return (
         <div className="comment-form-container">
             <h2>Add Yours!</h2>
-            {error && <p className="error-message">{error}</p>}
             <form id="review-form" onSubmit={handleSubmit}>
                 <div className="comment-stars-container">
                     <label htmlFor="rate">Rating:</label>
@@ -72,6 +71,7 @@ const CommentInput = ({ filmId, userId }) => {
                         required
                     ></textarea>
                 </div>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
                 <div className="comment-form-buttons">
                     <button type="button" className="btn btn-danger" onClick={handleReset}>
                         Reset

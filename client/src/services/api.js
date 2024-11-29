@@ -36,6 +36,8 @@ export const apiServicePublic = {
 
   //genre
   getAllGenre: () => axiosInstance.get('/api/genre/get-all'),
+
+  
 };
 
 export const apiServiceAuth = {
@@ -98,6 +100,8 @@ export const apiServiceAdmin = {
   createGenre: (data) => axiosInstance.post('/admin/genre/create', data),
   updateGenre: (id, data) => axiosInstance.put(`/admin/genre/update/${id}`, data),
   deleteGenre: (id) => axiosInstance.delete(`/admin/genre/delete/${id}`),
+
+  performance: () => axiosInstance.get('/admin/performance')
 };
 
 // Perbaikan export default

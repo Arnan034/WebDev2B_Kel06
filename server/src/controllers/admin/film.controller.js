@@ -46,8 +46,6 @@ class FilmController {
                 })
                 return ApiResponse.error(res, 'Film not found', 404);
             }
-
-            await Award.updateAwardFilm(client , id);
         
             await client.query('COMMIT');
             return ApiResponse.success(res, filmDetails, 'Fetch Edit Film Success', 200);
@@ -99,7 +97,7 @@ class FilmController {
             status,
             award,
             genre,
-            actor,
+            actor
         } = req.body;
 
         if (!title || !picture ||!alt_title || !year || !country || !synopsis || !link_trailer || !availability || !status) {
@@ -111,7 +109,8 @@ class FilmController {
 
         const parsedAward = JSON.parse(award);
         const parsedGenre = JSON.parse(genre || '[]');
-        const parsedActor = req.body['actor[]'] ? [JSON.parse(req.body['actor[]'])] : [];
+        const parsedActor = actor ? actor.map(actorStr => JSON.parse(actorStr)) : [] ;
+
 
         let pictureBuffer; 
         if (picture.startsWith('data:image')) {
@@ -123,6 +122,8 @@ class FilmController {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
+            
+            await Award.updateAwardFilm(client , id);
     
             await Actor.deleteActorFilm(client, id);
     

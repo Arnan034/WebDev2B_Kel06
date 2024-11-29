@@ -39,10 +39,10 @@ class FilmController {
             return ApiResponse.error(res, 'All fields are required', 400);
         }
 
-
         const parsedAward = JSON.parse(award);
         const parsedGenre = JSON.parse(genre);
         const parsedActor = actor ? actor.map(actorStr => JSON.parse(actorStr)) : [] ;
+        
         const pictureBuffer = req.file.buffer;
 
         const client = await pool.connect();

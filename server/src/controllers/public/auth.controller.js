@@ -209,7 +209,7 @@ class AuthController {
         }
     }
 
-    static async signGoogle (req, res, next) {
+    static async signGoogle (req, res) {
         const start = Date.now();
         const googleToken = req.body.token_google;
         try {
@@ -218,18 +218,16 @@ class AuthController {
             }
     
             const googleUser = await AuthController.verifyGoogleToken(googleToken); 
-
-            if (!googleUser.success) {
+            if (googleUser.error) {
                 return ApiResponse.error(res, 'Invalid Google token', 400);
             }
             
             let user = await Auth.getUserIdGoogle(googleUser.sub);
     
-            if (user.length === 0) {
+            if (!user) {
                 const pictureUrl = googleUser.picture;
                 const pictureResponse = await axios.get(pictureUrl, { responseType: 'arraybuffer' });
                 const pictureBuffer = Buffer.from(pictureResponse.data, 'binary');
-                console.log(googleUser.name, googleUser.email, googleUser.sub, pictureBuffer);
                 await Auth.createGoogleAuth(googleUser.name, googleUser.email, googleUser.sub, pictureBuffer);
                 user = await Auth.getUserIdGoogle(googleUser.sub);
             }
@@ -268,7 +266,7 @@ class AuthController {
             logger.error("Error verifying Google token:", {
                 error: error.message,
             });
-            return { success: false, error: error.message };
+            return { error: error.message };
         }
     }
 

@@ -244,58 +244,58 @@ const GenreSelection = ({ handleCheckboxChange, resetCheckboxes, selectedGenres 
                 setGenres(options);
 
                 if (selectedGenres && selectedGenres.length > 0) {
-                  const genresToCheck = selectedGenres.reduce((acc, genre) => {
-                    acc[genre.value] = true; // Mark as checked
-                    return acc;
-                  }, {});
-                  setSelectedGenresState(genresToCheck);
+                    const genresToCheck = selectedGenres.reduce((acc, genre) => {
+                        acc[genre.value] = true; // Mark as checked
+                        return acc;
+                    }, {});
+                    setSelectedGenresState(genresToCheck);
                 }
             } catch (error) {
                 console.error(error);
             }
         };
-    
+
         fetchGenre();
-    },[selectedGenres]);
+    }, [selectedGenres]);
 
     useEffect(() => {
-      if (resetCheckboxes) {
-        setSelectedGenresState({});
-      }
+        if (resetCheckboxes) {
+            setSelectedGenresState({}); // Clear selections when resetCheckboxes is true
+        }
     }, [resetCheckboxes]);
 
     const handleChange = (event) => {
-      const { value, checked } = event.target;
+        const { value, checked } = event.target;
 
-      setSelectedGenresState(prev => ({
-          ...prev,
-          [value]: checked,
-      }));
+        setSelectedGenresState(prev => ({
+            ...prev,
+            [value]: checked, // Update the state based on whether the checkbox is checked or not
+        }));
 
-      handleCheckboxChange(event); // Call parent's checkbox change handler
+        handleCheckboxChange(event); // Call parent's checkbox change handler
     };
 
     return (
-      <div className="row mt-4">
-        <div className="col-12">
-          <h6 className="form-label">Add Genres</h6>
-        </div>
-        {genre.map(genre => (
-          <div className="col-md-3 mb-3" key={genre.value}>
-            <div className="form-check">
-            <input
-                className="form-check-input"
-                type="checkbox"
-                value={genre.value}
-                id={genre.label}
-                checked={selectedGenresState[genre.value] || false}
-                onChange={handleChange}
-              />
-              <label className="form-check-label" htmlFor={genre.genre}>{genre.label}</label>
+        <div className="row mt-4">
+            <div className="col-12">
+                <h6 className="form-label">Add Genres</h6>
             </div>
-          </div>
-        ))}
-      </div>
+            {genre.map(genre => (
+                <div className="col-md-3 mb-3" key={genre.value}>
+                    <div className="form-check">
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            value={genre.value}
+                            id={genre.label}
+                            checked={selectedGenresState[genre.value] || false} // Ensure checkbox reflects state
+                            onChange={handleChange}
+                        />
+                        <label className="form-check-label" htmlFor={genre.label}>{genre.label}</label>
+                    </div>
+                </div>
+            ))}
+        </div>
     );
 };
   

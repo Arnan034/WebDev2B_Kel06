@@ -4,8 +4,8 @@ const router = express.Router();
 const multer = require('multer');
 const filmController = require('../../controllers/authenticated/film.controller');
 const upload = multer({ storage: multer.memoryStorage() });
-// const { createFilmLimiter } = require('../../middlewares/security/rateLimiter.middleware');
+const { createFilmLimiter } = require('../../middlewares/security/rateLimiter.middleware');
 
-router.post('/create', upload.single('picture'), filmController.createFilm);
+router.post('/create', createFilmLimiter, upload.single('picture'), filmController.createFilm);
 
 module.exports = router;

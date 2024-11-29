@@ -126,14 +126,14 @@ const NewDrama = () => {
 
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
-    const selectedLabel = event.target.nextSibling.textContent; // Get the label from the label element
+    const selectedLabel = event.target.nextSibling.textContent;
 
     if (checked) {
-        setSelectedGenre(prev => [...prev, { id: value, label: selectedLabel }]);
+      setSelectedGenre(prev => [...prev, { id: value, label: selectedLabel }]);
     } else {
-        setSelectedGenre(prev => prev.filter(genre => genre.id !== value));
+      setSelectedGenre(prev => prev.filter(genre => String(genre.id) !== String(value)));
     }
-};
+  };
 
   const chandleSearchChange = (event) => {
     setSelectedActors(event);
@@ -246,7 +246,7 @@ const NewDrama = () => {
     }
 
     try {
-        console.log(formDataToSubmit);
+        console.log(selectedGenre);
         const response = await apiServiceAdmin.saveEditValidate(id_film, formDataToSubmit);
 
         setSuccessMessage(response.data.message);

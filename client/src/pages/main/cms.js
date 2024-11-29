@@ -11,6 +11,7 @@ import CMSActors from "../cms/cmsActors";
 import CMSComments from "../cms/cmsComments";
 import CMSUsers from "../cms/cmsUsers";
 import CMSBookmark from "../cms/cmsBookmark";
+import CMSPerformance from "../cms/cmsPerformance";
 
 const CMSLayout = () => {
   return (
@@ -28,6 +29,7 @@ const CMSLayout = () => {
           <Route path="comments" element={<ProtectedRouteCMS element={<CMSComments />} />} />
           <Route path="users" element={<ProtectedRouteCMS element={<CMSUsers />} />} />
           <Route path="bookmark" element={<CMSBookmark />} />
+          <Route path="performance" element={<ProtectedRouteCMS element={<CMSPerformance />} />} />
         </Routes>
       </div>
     </div>

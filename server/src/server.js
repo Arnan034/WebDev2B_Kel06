@@ -42,7 +42,7 @@ const { authenticateToken, isAdmin, isAuthenticated } = require('./middlewares/s
 const healthCheck = require('./middlewares/monitoring/health.middleware');
 
 //utils
-const { register } = require('./utils/monitoring/metrics.utils');
+// const { register } = require('./utils/monitoring/metrics.utils');
 
 // express app
 const app = express();
@@ -87,20 +87,20 @@ adminRoutes.use('/comment', commentAdminRoutes);
 adminRoutes.use('/country', countryAdminRoutes);
 adminRoutes.use('/film', filmAdminRoutes);
 adminRoutes.use('/genre', genreAdminRoutes);
-app.use('/admin', adminRoutes);
-
-app.get('/health', healthCheck);
-
-app.get('/metrics', async (req, res) => {
-    res.set('Content-Type', register.contentType);
-    res.end(await register.metrics());
-});
-
-// performance metrics
-app.get('/performance', (req, res) => {
+adminRoutes.get('/performance', (req, res) => {
     const metrics = require('./utils/performance/performance.utils').getMetrics();;
     res.json(metrics);
 });
+app.use('/admin', adminRoutes);
+
+// fitur untuk melakukan check db
+// app.get('/health', healthCheck);
+
+// app.get('/metrics', async (req, res) => {
+//     res.set('Content-Type', register.contentType);
+//     res.end(await register.metrics());
+// });
+
 
 // Jalankan server
 if (process.env.NODE_ENV !== 'test') {

@@ -101,6 +101,12 @@ const CmsSidebar = () => {
                                     <span>Users</span>
                                 </Link>
                             </li>
+                            <li className="side" style={isActive('/cms/performance') ? activeStyle : {}}>
+                                <i className="fas fa-chart-line fa-lg"></i>
+                                <Link to="/cms/performance" style={isActive('/cms/performance') ? activeLinkStyle : {}}>
+                                    <span>Performance</span>
+                                </Link>
+                            </li>
                         </>
                     ) : (
                         <li className="side" style={isActive('/cms/bookmark') ? activeStyle : {}}>

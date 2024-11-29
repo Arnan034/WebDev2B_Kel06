@@ -63,7 +63,7 @@ const CMSCountries = () => {
       });
       console.log(newCountry);
       setNewCountry('');
-      setMessage(`Country "${response.data.country_name}" berhasil ditambahkan!`);
+      setMessage(`Country "${response.data.data.country_name}" berhasil ditambahkan!`);
     } catch (error) {
       console.error("Error adding country:", error);
       setError("Failed to add country");
