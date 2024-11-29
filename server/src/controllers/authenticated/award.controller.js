@@ -9,6 +9,9 @@ class AwardController {
         try {
             const award = await Award.getUnselected();
             if (!award) {
+                logger.error('No one award unselected', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'No one award unselected', 404);
             }
             return ApiResponse.success(res, award, 'Award fetched successfully', 200);

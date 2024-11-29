@@ -12,6 +12,9 @@ class CommentController {
 
             const comments = await Comment.findAll(filter);
             if (!comments) {
+                cmsLogger.error('No one comments', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'No one comments', 404);
             }
             return ApiResponse.success(res, comments, 'Comments fetched successfully', 200);
@@ -29,6 +32,9 @@ class CommentController {
         const { ids } = req.body;
         try {
             if (!ids) {
+                cmsLogger.error('ID list is required', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'ID list is required', 400);
             }
 
@@ -37,9 +43,15 @@ class CommentController {
                 const results = await Promise.all(updateApprove);
                 
                 if (results.some(result => result === null)) {
+                    cmsLogger.error('One or more comments not found', {
+                        duration: Date.now() - start
+                    });
                     return ApiResponse.error(res, 'One or more comments not found', 404);
                 }
             } else {
+                cmsLogger.error('Invalid or empty ID list.', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'Invalid or empty ID list.', 400);
             }
 
@@ -63,6 +75,9 @@ class CommentController {
         const { ids } = req.body;
         try {
             if (!ids) {
+                cmsLogger.error('ID list is required', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'ID list is required', 400);
             }
 
@@ -71,9 +86,15 @@ class CommentController {
                     ids.map(id => Comment.deleteComment(id))
                 );
                 if (deleteResults.some(result => result === null)) {
+                    cmsLogger.error('One or more comments not found', {
+                        duration: Date.now() - start
+                    });
                     return ApiResponse.error(res, 'One or more comments not found', 404);
                 }
             } else {
+                cmsLogger.error('Invalid or empty ID list.', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'Invalid or empty ID list.', 400);
             }
 

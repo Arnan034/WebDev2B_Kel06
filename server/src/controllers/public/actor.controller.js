@@ -14,12 +14,20 @@ class ActorController {
             const checkFilm = await Film.checkFilm(id_film);
 
             if (!checkFilm) {
+                logger.error('Film not found:', {
+                    id_film,
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'Film not found', 404);
             }
             
             const actors = await Actor.getByIdFilm(id_film);
             
             if (!actors || actors.length === 0) {
+                logger.error('No actors found for this film:', {
+                    id_film,
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'No actors found for this film', 404);
             }
             
@@ -48,6 +56,10 @@ class ActorController {
             const actor = await Actor.getById(id);
             
             if (!actor) {
+                logger.error('Actor not found:', {
+                    id: id,
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'Actor not found', 404);
             }
             

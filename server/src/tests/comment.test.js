@@ -11,7 +11,6 @@ let userId;
 let filmId = 1;
 let responseCreateComment;
 
-// Tambahkan timeout yang lebih lama jika diperlukan
 jest.setTimeout(10000);
 
 beforeAll(async () => {
@@ -206,6 +205,7 @@ describe('Comment admin access PUT updateApproveComment', () => {
         });
         jest.restoreAllMocks();
     });
+
 });
 
 // Test untuk deleteComment

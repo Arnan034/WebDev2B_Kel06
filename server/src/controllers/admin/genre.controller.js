@@ -13,6 +13,9 @@ class GenreController {
             const genreExists = await Genre.check(genre);
 
             if (genreExists) {
+                cmsLogger.error('Genre already exists', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Genre already exists', 400);
             }
     
@@ -39,14 +42,23 @@ class GenreController {
         try {
         
             if (!id || isNaN(id)) {
+                cmsLogger.error('Invalid ID', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Invalid ID', 400);
             }
             if (!name) {
+                cmsLogger.error('Genre name is required', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Genre name is required', 400);
             }
             const genreExists = await Genre.check(id);
 
             if (!genreExists) {
+                cmsLogger.error('Genre ID not found', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Genre ID not found', 404);
             }
 
@@ -86,6 +98,9 @@ class GenreController {
             const genreExists = await Genre.check(id); 
 
             if (!genreExists) {
+                cmsLogger.error('Genre not found', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Genre not found', 404);
             }
 

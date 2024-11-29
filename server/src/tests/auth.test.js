@@ -67,6 +67,23 @@ describe('Auth public access POST signin', () => {
         expect(response.statusCode).toBe(400);
         expect(response.body.message).toBe('Invalid Password');
     });
+
+    it('should return 500 if there is an error', async () => {
+        jest.spyOn(Auth, 'getUserByUsernameOrEmail').mockRejectedValue(new Error('Database error'));
+
+        const response = await request(app)
+            .post('/api/auth/sign-in')
+            .send({
+                username: 'users',
+                password: 'users'
+            });
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toMatchObject({
+            status: 'error',
+            message: expect.any(String)
+        });
+    });
 });
 
 describe('Auth public access POST signup', () => {
@@ -114,6 +131,25 @@ describe('Auth public access POST signup', () => {
         expect(response.statusCode).toBe(422);
         expect(response.body.message).toBe('Email already registered');
     });
+
+    it('should return 500 if there is an error', async () => {
+        jest.spyOn(Auth, 'checkEmail').mockRejectedValue(new Error('Database error'));
+
+        const response = await request(app)
+            .post('/api/auth/sign-up')
+            .send({
+                username: 'users123',
+                email: 'test@example.com',
+                password: 'password123',
+                picture: 'data:image/jpeg;base64,/9j/4AAQSkZJRg=='
+            });
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toMatchObject({
+            status: 'error',
+            message: expect.any(String)
+        });
+    });
 });
 
 // Admin Routes Tests
@@ -158,6 +194,24 @@ describe('Auth admin access POST monitorUser', () => {
 
         expect(response.statusCode).toBe(404);
         expect(response.body.message).toBe('No one users');
+    });
+
+    it('should return 500 if there is an error', async () => {
+        jest.spyOn(Auth, 'getMonitor').mockRejectedValue(new Error('Database error'));
+
+        const response = await request(app)
+            .post('/admin/auth/get-user-monitoring')
+            .set('Authorization', `Bearer ${authTokenAdmin}`)
+            .set('x-role', userRoleAdmin)
+            .send({
+                filter: {}
+            });
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toMatchObject({
+            status: 'error',
+            message: expect.any(String)
+        });
     });
 });
 
@@ -227,7 +281,6 @@ afterAll(async () => {
         }
         await pool.end();
     } catch (error) {
-        console.error('Cleanup error:', error);
         await pool.end();
     }
 });

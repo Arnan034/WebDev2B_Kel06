@@ -10,6 +10,9 @@ class FilmController {
             const { country, sort, year, availability, genre, award, status } = req.query;
             const film = await Film.getAll(country, sort, year, availability, genre, award, status);
             if (!film) {
+                logger.error('No one film found',{
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'No one film found', 404);
             }
             return ApiResponse.success(res, film, 'Success get all films', 200);
@@ -28,6 +31,9 @@ class FilmController {
             const { search, sort, country, year, availability, genre, award, status } = req.query;
             const films = await Film.getBySearch(search, sort, country, year, availability, genre, award, status);
             if (!films || films.length === 0) {
+                logger.error('No one search film found',{
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'No one search film found', 404);
             }
             return ApiResponse.success(res, films, 'Success get films by search', 200);
@@ -47,6 +53,9 @@ class FilmController {
 
             const film = await Film.getById(id);
             if (!film) {
+                logger.error('Film not found',{
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Film not found', 404);
             }
             return ApiResponse.success(res, film, 'Success', 200);
@@ -67,6 +76,9 @@ class FilmController {
             // Cek film dulu
             const checkFilm = await Film.getById(id);
             if (!checkFilm) {
+                logger.error('Film not found',{
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Film not found', 404);
             }
 

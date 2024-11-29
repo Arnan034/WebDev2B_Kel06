@@ -27,9 +27,15 @@ class FilmController {
         } = req.body;
     
         if (!req.file) {
+            cmsLogger.error('image is required', {
+                duration: Date.now() - start
+            })
             return ApiResponse.error(res, 'image is required', 400);
         }
         if (!title || !alt_title || !year || !country || !synopsis || !link_trailer || !availability || !status || !posted_by) {
+            cmsLogger.error('All fields are required', {
+                duration: Date.now() - start
+            })
             return ApiResponse.error(res, 'All fields are required', 400);
         }
 

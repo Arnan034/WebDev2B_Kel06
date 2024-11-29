@@ -11,6 +11,9 @@ class AwardController {
         try {
             const award = await Award.getInstitution();
             if (!award) {
+                logger.error('No one award', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'No one award', 404);
             }
             return ApiResponse.success(res, award, 'Award fetched successfully', 200);

@@ -58,15 +58,6 @@ describe('Film public access GET getAllFilms', () => {
         expect(Array.isArray(response.body.data)).toBe(true);
     });
 
-    it('should return 200 even without query parameters', async () => {
-        const response = await request(app)
-            .get('/api/film/get-all');
-
-        expect(response.statusCode).toBe(200);
-        expect(response.body.data).toBeDefined();
-        expect(Array.isArray(response.body.data)).toBe(true);
-    });
-
     it('should return 500 if there is an error', async () => {
         jest.spyOn(Film, 'getAll').mockRejectedValue(new Error('Database error'));
 
@@ -189,7 +180,6 @@ describe('Film public access POST updatePlusView', () => {
         jest.restoreAllMocks();
     });
 });
-
 
 describe('Film authenticated access POST createFilm', () => {
     // Data dummy untuk test

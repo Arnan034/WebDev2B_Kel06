@@ -9,6 +9,9 @@ class CountryController {
         try {
             const country = await Country.getAll();
             if (!country) {
+                logger.error('No one country', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'No one country', 404);
             }
             return ApiResponse.success(res, country, 'Country fetched successfully', 200);

@@ -18,6 +18,9 @@ class FilmController {
             const { filter } = req.query;
             const film = await Film.getAllValidate(filter);
             if (!film) {
+                cmsLogger.error('All fields are required', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'No films found validate', 404);
             }
             return ApiResponse.success(res, film, 'Fetch Validate Film Success', 200);
@@ -38,6 +41,9 @@ class FilmController {
             const filmDetails = await Film.getFilmEdit(client, id);
         
             if (!filmDetails) {
+                cmsLogger.error('All fields are required', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Film not found', 404);
             }
 
@@ -63,14 +69,11 @@ class FilmController {
         const { id } = req.params;
         try {
             const updateValidate = await Film.updateValidate(id);
-            if (!updateValidate) {
-                return ApiResponse.error(res, 'Failed to update film validate', 400);
-            }
             cmsLogger.info('Success update film validate', {
                 filmId: id,
                 duration: Date.now() - start
             });
-            return ApiResponse.success(res, null, 'Film di Approve', 200);
+            return ApiResponse.success(res, updateValidate, 'Film di Approve', 200);
         } catch (error) {
             cmsLogger.error('Error Update Film:', {
                 filmId: id,
@@ -100,6 +103,9 @@ class FilmController {
         } = req.body;
 
         if (!title || !picture ||!alt_title || !year || !country || !synopsis || !link_trailer || !availability || !status) {
+            cmsLogger.error('All fields are required', {
+                duration: Date.now() - start
+            })
             return ApiResponse.error(res, 'All fields are required', 400);
         }
 
@@ -123,9 +129,6 @@ class FilmController {
             await Genre.deleteGenreFilm(client, id);
 
             const updateEditFilm = await Film.updateEditFilm(client, id, title, pictureBuffer, alt_title, year, country, synopsis, link_trailer, availability, status);
-            if (!updateEditFilm) {
-                return ApiResponse.error(res, 'Failed to update film', 400);
-            }
     
             // Simpan penghargaan
             if (parsedAward.length > 0) {

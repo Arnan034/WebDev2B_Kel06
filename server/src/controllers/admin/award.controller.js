@@ -9,6 +9,9 @@ class AwardController {
         try {
             const award = await Award.getAll();
             if (!award) {
+                cmsLogger.error('No one award', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'No one award', 404);
             }
             return ApiResponse.success(res, award, 'Award fetched successfully', 200);
@@ -25,19 +28,22 @@ class AwardController {
         const start = Date.now();
         const { institution, year, name } = req.body;
         if (!institution || !year || !name) {
+            cmsLogger.error('All fields are required', {
+                duration: Date.now() - start
+            });
             return ApiResponse.error(res, 'All fields are required', 400);
         }
         try {
             const existingAward = await Award.check(institution, year, name);
     
             if (existingAward) {
+                cmsLogger.error('Award already exists', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'Award already exists', 400);
             }
 
             const newAward = await Award.create(institution, year, name);
-            if (!newAward) {
-                return ApiResponse.error(res, 'Failed to create award', 400);
-            }
 
             cmsLogger.info('Success create award', {
                 award: {
@@ -69,11 +75,17 @@ class AwardController {
         const { institution, year, name } = req.body;
         try {
             if (!institution || !year || !name) {
+                cmsLogger.error('All fields are required', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'All fields are required', 400);
             }
 
             const existingAward = await Award.checkId(id);
             if (!existingAward) {
+                cmsLogger.error('Award not found', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'Award not found', 404);
             }
 
@@ -90,6 +102,9 @@ class AwardController {
 
             const updatedAward = await Award.update(id, institution, year, name);
             if (!updatedAward) {
+                cmsLogger.error('Failed to update award', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'Failed to update award', 400);
             }
             
@@ -120,6 +135,9 @@ class AwardController {
         try {
             const deletedAward = await Award.delete(id);
             if (!deletedAward) {
+                cmsLogger.error('Award not found', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'Award not found', 404);
             }
             cmsLogger.info('Success delete award', {

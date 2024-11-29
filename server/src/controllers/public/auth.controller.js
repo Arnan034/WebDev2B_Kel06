@@ -43,16 +43,25 @@ class AuthController {
             const user = await Auth.getUserByUsernameOrEmail(username);
     
             if (!user) {
+                authLogger.error('User not found', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'User not found', 404);
             }
 
             if (!user.status){
+                authLogger.error('User has been blacklisted', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'User has been blacklisted', 403);
             }
     
             const isPasswordMatch = await comparePassword(password, user.password);
 
             if (!isPasswordMatch) {
+                authLogger.error('Invalid Password', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'Invalid Password', 400);
             }
 
@@ -92,6 +101,9 @@ class AuthController {
             const checkUsername = await Auth.checkUsername(username);
 
             if (checkUsername){
+                logger.error('Username already registered', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'Username already registered', 422);
             }
 
@@ -100,6 +112,9 @@ class AuthController {
                 if (!checkEmail.is_verified){
                     await Auth.deleteUnverifiedUser(email);
                 } else {
+                    logger.error('Email already registered', {
+                        duration: Date.now() - start
+                    });
                     return ApiResponse.error(res, 'Email already registered', 422);
                 }
             }
@@ -109,6 +124,9 @@ class AuthController {
             const result = await AuthController.#sendOTP(email, 'otp');
 
             if (!result.success) {
+                logger.error('Error sending OTP', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.serverError(res, `Error sending OTP`, 500);
             }
 

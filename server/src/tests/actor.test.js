@@ -41,7 +41,7 @@ describe('Actor public access GET getActorByIdFilm', () => {
         expect(response.body.message).toBe('Film actors retrieved successfully');
     });
 
-    it('should return 400 if film not found', async () => {
+    it('should return 404 if film not found', async () => {
         const response = await request(app).get('/api/actor/get-by-id-film/0');
         expect(response.statusCode).toBe(404);
         expect(response.body.message).toBe('Film not found');
@@ -136,7 +136,7 @@ describe('Actor admin access GET getAllActor', () => {
             .set('x-role', userRole);
             
         expect(response.statusCode).toBe(404);
-        expect(response.body.message).toBe('No actors found');
+        expect(response.body.message).toBe('No one actor');
     });
 
     it('should return 500 if there is an error', async () => {
@@ -171,7 +171,6 @@ describe('Actor admin access POST createActor', () => {
                 birth_date: '1983-04-03',
                 picture: 'data:image/jpeg;base64,/9j/4AAQSkZJRg==',
         });
-        console.log(responseCreateActor.body.data);
         expect(responseCreateActor.statusCode).toBe(201);
         expect(responseCreateActor.body.data).toBeDefined();
         expect(responseCreateActor.body.message).toBe('Actor created successfully');

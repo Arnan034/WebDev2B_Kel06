@@ -91,6 +91,14 @@ describe('Award auth access GET getUnselectedAward', () => {
         expect(response.body.message).toBe('No one award unselected');
     });
 
+    it('should return 403 if not user', async () => {
+        const response = await request(app)
+            .get('/auth/award/get-unselected')
+        console.log(response.body.message)
+        expect(response.statusCode).toBe(401);
+        expect(response.body.message).toBe('Access denied. No token provided.');
+    });
+
     it('should return 500 if there is an error', async () => {
         jest.spyOn(Award, 'getUnselected').mockRejectedValue(new Error('Database error'));
 
@@ -143,6 +151,21 @@ describe('Award admin access GET getAllAward', () => {
         expect(response.statusCode).toBe(404);
         expect(response.body.message).toBe('No one award');
     });
+
+    it('should return 500 if there is an error', async () => {
+        jest.spyOn(Award, 'getAll').mockRejectedValue(new Error('Database error'));
+
+        const response = await request(app)
+            .get('/admin/award/get-all')
+            .set('Authorization', `Bearer ${authTokenAdmin}`)
+            .set('x-role', userRoleAdmin);
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toMatchObject({
+            status: 'error',
+            message: expect.any(String)
+        });
+    });
 });
 
 describe('Award admin access POST createAward', () => {
@@ -190,6 +213,38 @@ describe('Award admin access POST createAward', () => {
         expect(response.statusCode).toBe(400);
         expect(response.body.message).toBe('Award already exists');
     });
+
+    it('should return 403 if not admin', async () => {
+        const response = await request(app)
+            .post('/admin/award/create')
+            .set('Authorization', `Bearer ${authTokenUser}`)
+            .set('x-role', userRoleUser)
+            .send({
+                institution: 'Test Institution',
+            });
+
+        expect(response.statusCode).toBe(403);
+        expect(response.body.message).toBe('Access denied. Admin rights required.');
+    });
+
+    it('should return 500 if there is an error', async () => {
+        jest.spyOn(Award, 'create').mockRejectedValue(new Error('Database error'));
+
+        const response = await request(app)
+            .post('/admin/award/create')
+            .set('Authorization', `Bearer ${authTokenAdmin}`)
+            .set('x-role', userRoleAdmin)
+            .send({
+                institution: 'Test Institutions',
+                year: 2024,
+                name: 'Test Award'
+            });
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toMatchObject({
+            status: 'error',
+            message: expect.any(String)
+        });
+    });
 });
 
 describe('Award admin access PUT updateAward', () => {
@@ -236,6 +291,26 @@ describe('Award admin access PUT updateAward', () => {
         expect(response.statusCode).toBe(404);
         expect(response.body.message).toBe('Award not found');
     });
+
+    it('should return 500 if there is an error', async () => {
+        jest.spyOn(Award, 'update').mockRejectedValue(new Error('Database error'));
+
+        const response = await request(app)
+            .put(`/admin/award/update/${responseCreateAward.body.data.id_award}`)
+            .set('Authorization', `Bearer ${authTokenAdmin}`)
+            .set('x-role', userRoleAdmin)
+            .send({
+                institution: 'Test Institution',
+                year: 2024,
+                name: 'Test Award'
+            });
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toMatchObject({
+            status: 'error',
+            message: expect.any(String)
+        });
+    });
 });
 
 describe('Award admin access DELETE deleteAward', () => {
@@ -257,6 +332,21 @@ describe('Award admin access DELETE deleteAward', () => {
 
         expect(response.statusCode).toBe(404);
         expect(response.body.message).toBe('Award not found');
+    });
+
+    it('should return 500 if there is an error', async () => {
+        jest.spyOn(Award, 'delete').mockRejectedValue(new Error('Database error'));
+
+        const response = await request(app)
+            .delete(`/admin/award/delete/${responseCreateAward.body.data.id_award}`)
+            .set('Authorization', `Bearer ${authTokenAdmin}`)
+            .set('x-role', userRoleAdmin);
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toMatchObject({
+            status: 'error',
+            message: expect.any(String)
+        });
     });
 });
 

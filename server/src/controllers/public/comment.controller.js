@@ -14,6 +14,9 @@ class CommentController {
 
             const comment = await Comment.findByIdFilm(id_film, filter);
             if (!comment) {
+                logger.error('No one comment in this film', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'No one comment in this film', 404);
             }
             return ApiResponse.success(res, comment, 'Comment fetched successfully', 200);

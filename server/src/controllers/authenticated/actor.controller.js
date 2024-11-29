@@ -10,7 +10,10 @@ class ActorController {
             const actors = await Actor.getAll();
             
             if (!actors || actors.length === 0) {
-                return ApiResponse.error(res, 'No actors found', 404);
+                logger.error('No one actor:', {
+                    duration: Date.now() - start
+                });
+                return ApiResponse.error(res, 'No one actor', 404);
             }
             return ApiResponse.success(res, actors, 'Actors retrieved successfully', 200);
         } catch (error) {

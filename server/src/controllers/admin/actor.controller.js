@@ -11,11 +11,17 @@ class ActorController {
         const start = Date.now();
         const { country, name, birth_date, picture } = req.body;
         if (!country || !name || !birth_date || !picture) {
+            cmsLogger.error('All fields are required:', {
+                duration: Date.now() - start
+            });
             return ApiResponse.error(res, 'All fields are required', 400);
         }
         try {
             const checkActor = await Actor.check(name);
             if (checkActor) {
+                cmsLogger.error('Actor already exists:', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'Actor already exists', 409);
             }
 
@@ -83,6 +89,9 @@ class ActorController {
 
             const updatedActor = await Actor.update(id, country, name, birth_date, pictureBuffer);
             if (!updatedActor) {
+                cmsLogger.error('Failed to update actor', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'Failed to update actor', 400);
             }
 
@@ -119,6 +128,9 @@ class ActorController {
             const deletedActor = await Actor.delete(client, id);
             
             if (!deletedActor) {
+                cmsLogger.error('Actor not found', {
+                    duration: Date.now() - start
+                });
                 await client.query('ROLLBACK');
                 return ApiResponse.error(res, 'Actor not found', 404);
             }

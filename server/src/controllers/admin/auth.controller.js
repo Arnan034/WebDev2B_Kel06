@@ -1,7 +1,7 @@
 //server/src/controllers/admin/auth.controller.js
 const Auth = require('../../models/auth.model');
 // utils
-const { cmsLogger } = require('../../utils/maintainability/logger.utils');
+const { cmsLogger, logger } = require('../../utils/maintainability/logger.utils');
 const ApiResponse = require('../../utils/maintainability/response.utils');
 
 class AuthController {
@@ -11,6 +11,9 @@ class AuthController {
             const { filter } = req.body;
             const users = await Auth.getMonitor(filter);
             if (!users) {
+                cmsLogger.error('No one users', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'No one users', 404);
             }
             return ApiResponse.success(res, users, 'Users fetched successfully', 200);
@@ -28,11 +31,17 @@ class AuthController {
         const { id } = req.params;
         const { status } = req.body;
         if (!status) {
+            cmsLogger.error('Status is required', {
+                duration: Date.now() - start
+            });
             return ApiResponse.error(res, 'Status is required', 400);
         }
         try {
             const updatedUser = await Auth.updateStatus(id, status);
             if (!updatedUser) {
+                cmsLogger.error('User not found', {
+                    duration: Date.now() - start
+                });
                 return ApiResponse.error(res, 'User not found', 404);
             }
             cmsLogger.info('Success update status user', {

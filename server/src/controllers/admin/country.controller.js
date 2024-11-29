@@ -9,19 +9,23 @@ class CountryController {
         const { country_name } = req.body;
         try {
             if (!country_name || country_name.trim() === '') {
+                cmsLogger.error('Country name is required', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Country name is required', 400);
             }
 
             const existingCountry = await Country.check(country_name);
 
             if (existingCountry) {
+                cmsLogger.error('Country already exists', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Country already exists', 400);
             }
 
             const newCountry = await Country.create(country_name);
-            if (!newCountry) {
-                return ApiResponse.error(res, 'Failed to create country', 400);
-            }
+            
             cmsLogger.info('Success create country', {
                 country: {id: newCountry.id_country, name: newCountry.country_name},
                 duration: Date.now() - start
@@ -44,14 +48,23 @@ class CountryController {
         try {
 
             if (!id || isNaN(id)) {
+                cmsLogger.error('Invalid ID', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Invalid ID', 400);
             }
 
             if (!name || name.trim() === '') {
+                cmsLogger.error('Country name is required', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Country name is required', 400);
             }
     
             if (!await Country.check(id)) {
+                cmsLogger.error('Country ID not found', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Country ID not found', 404);
             }
 
@@ -77,13 +90,14 @@ class CountryController {
         try {
             const countryExists = await Country.check(id); 
             if (!countryExists) {
+                cmsLogger.error('Country not found', {
+                    duration: Date.now() - start
+                })
                 return ApiResponse.error(res, 'Country not found', 404);
             }
 
             const deletedCountry = await Country.delete(id);
-            if (!deletedCountry) {
-                return ApiResponse.error(res, 'Failed to delete country', 400);
-            }
+
             cmsLogger.info('Success delete country', {
                 country: {id: deletedCountry.id_country, name: deletedCountry.country_name},
                 duration: Date.now() - start
