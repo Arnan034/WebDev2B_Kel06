@@ -3,16 +3,33 @@ const { Pool } = require('pg');
 const path = require('path');
 const dotenv = require('dotenv');
 
-// Explicitly set path untuk .env server
-const envPath = path.resolve(__dirname, '../../.env');
-dotenv.config({ path: envPath });
+// Load environment variables
+dotenv.config();
 
-const pool = new Pool({
+// Tambahkan logging untuk debug
+const config = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT),
     database: process.env.DB_DATABASE
+};
+
+console.log('Database connection config:', {
+    ...config,
+    password: '****' // Hide password in logs
+});
+
+const pool = new Pool(config);
+
+// Add error handler
+pool.on('error', (err) => {
+    console.error('Unexpected error on idle client', err);
+});
+
+// Add connection test
+pool.on('connect', () => {
+    console.log('Connected to database successfully');
 });
 
 module.exports = pool;

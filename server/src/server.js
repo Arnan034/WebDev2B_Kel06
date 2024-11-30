@@ -104,20 +104,20 @@ app.use('/admin', adminRoutes);
 
 // Jalankan server
 if (process.env.NODE_ENV !== 'test') {
-  pool.connect()
-    .then(() => {
-        console.log('Koneksi ke database berhasil');
-
-        app.listen(port, () => {
-            console.log(`Server berjalan di http://localhost:${port}`);
-        });
+  pool.query('SELECT NOW()')
+    .then(result => {
+      console.log('Database connection successful:', result.rows[0]);
+      
+      app.listen(port, () => {
+        console.log(`Server berjalan di http://localhost:${port}`);
+      });
     })
     .catch(err => {
-        console.error('Gagal terhubung ke database', err);
-        
-        app.listen(port, () => {
-            console.log(`Server berjalan di http://localhost:${port} meskipun gagal terhubung ke database.`);
-        });
+      console.error('Error connecting to database:', err);
+      
+      app.listen(port, () => {
+        console.log(`Server berjalan di http://localhost:${port} meskipun gagal terhubung ke database.`);
+      });
     });
 }
 
