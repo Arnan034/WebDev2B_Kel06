@@ -154,24 +154,25 @@ const RightSidebar = ({ isSidebarOpen, onFiltersChange, handleSortChange }) => {
 
                     <h2 className="black-color">Filter</h2>
                     <div className="mb-3">
-                        <label className="form-label jet-color">Tahun</label>
+                        <label className="form-label jet-color" id="year-label">Tahun</label>
                         <div className="row mb-2">
-                        <Select 
-                            options={yearFilter}
-                            placeholder="Tahun"
-                            isSearchable
-                            isClearable
-                            onChange={(selected) => {
-                                const yearValue = selected ? parseInt(selected.value, 10) : null;
-                                updateFilter('year', yearValue);
-                            }}
-                            value={filters.year ? yearFilter.find(option => option.value === filters.year) : null} 
-                        />
+                            <Select 
+                                options={yearFilter}
+                                placeholder="Tahun"
+                                isSearchable
+                                isClearable
+                                onChange={(selected) => {
+                                    const yearValue = selected ? parseInt(selected.value, 10) : null;
+                                    updateFilter('year', yearValue);
+                                }}
+                                value={filters.year ? yearFilter.find(option => option.value === filters.year) : null}
+                                aria-labelledby="year-label"
+                            />
                         </div>
                     </div>
 
                     <div className="mb-3">
-                        <label className="form-label jet-color">Genre</label>
+                        <label className="form-label jet-color" id="genre-label">Genre</label>
                         <div className="row mb-2">
                             <Select 
                                 options={genreFilter}
@@ -179,13 +180,14 @@ const RightSidebar = ({ isSidebarOpen, onFiltersChange, handleSortChange }) => {
                                 isSearchable
                                 isClearable
                                 onChange={(selected) => updateFilter('genre', selected ? selected.value : null)} 
-                                value={filters.genre ? genreFilter.find(option => option.value === filters.genre) : null} 
+                                value={filters.genre ? genreFilter.find(option => option.value === filters.genre) : null}
+                                aria-labelledby="genre-label" 
                             />
                         </div>
                     </div>
 
                     <div className="mb-3">
-                        <label className="form-label jet-color">Availability</label>
+                        <label className="form-label jet-color" id="availability-label">Availability</label>
                         <div className="row mb-2">
                             <Select 
                                 options={availabilityFilter}
@@ -193,13 +195,14 @@ const RightSidebar = ({ isSidebarOpen, onFiltersChange, handleSortChange }) => {
                                 isSearchable
                                 isClearable
                                 onChange={(selected) => updateFilter('availability', selected ? selected.value : null)} 
-                                value={filters.availability ? availabilityFilter.find(option => option.value === filters.availability) : null} 
+                                value={filters.availability ? availabilityFilter.find(option => option.value === filters.availability) : null}
+                                aria-labelledby="availability-label" 
                             />
                         </div>
                     </div>
 
                     <div className="mb-3">
-                        <label className="form-label jet-color">Award</label>
+                        <label className="form-label jet-color" id="award-label">Award</label>
                         <div className="row mb-2">
                             <Select 
                                 options={awardFilter}
@@ -208,6 +211,7 @@ const RightSidebar = ({ isSidebarOpen, onFiltersChange, handleSortChange }) => {
                                 isClearable
                                 onChange={(selected) => updateFilter('award', selected ? selected.value : null)} 
                                 value={filters.award ? awardFilter.find(option => option.value === filters.award) : null} 
+                                aria-labelledby="award-label" 
                                 styles={{
                                     menu: (provided) => ({
                                         ...provided,
@@ -223,12 +227,13 @@ const RightSidebar = ({ isSidebarOpen, onFiltersChange, handleSortChange }) => {
                     </div>
 
                     <div className="mb-3">
-                        <label className="form-label jet-color">Status</label>
+                        <label className="form-label jet-color" id="status-label">Status</label>
                         <div className="row mb-2">
                             <div className="col-6">
                                 <button 
                                     className={buttonClass('On Going')} 
                                     onClick={() => handleFilterClick('On Going')}
+                                    aria-labelledby="status-label"
                                 >
                                     On Going
                                 </button>
@@ -237,6 +242,7 @@ const RightSidebar = ({ isSidebarOpen, onFiltersChange, handleSortChange }) => {
                                 <button 
                                     className={buttonClass('Completed')} 
                                     onClick={() => handleFilterClick('Completed')}
+                                    aria-labelledby="status-label"
                                 >
                                     Completed
                                 </button>
