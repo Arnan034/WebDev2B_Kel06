@@ -30,7 +30,7 @@ class AuthController {
         const start = Date.now();
         const { id } = req.params;
         const { status } = req.body;
-        if (!status) {
+        if (status === undefined || status === null) {
             cmsLogger.error('Status is required', {
                 duration: Date.now() - start
             });

@@ -22,14 +22,5 @@ console.log('Database connection config:', {
 
 const pool = new Pool(config);
 
-// Add error handler
-pool.on('error', (err) => {
-    console.error('Unexpected error on idle client', err);
-});
-
-// Add connection test
-pool.on('connect', () => {
-    console.log('Connected to database successfully');
-});
 
 module.exports = pool;

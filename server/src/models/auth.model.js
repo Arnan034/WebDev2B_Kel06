@@ -33,7 +33,7 @@ class AuthModel {
     }
 
     static async getMonitor(filter) {
-        let query = `SELECT id_user as id, username as user, email as em, status as st FROM "user" WHERE role != 'admin'`;
+        let query = `SELECT id_user as id, username as user, email as em, status as st FROM "user" WHERE role != 'admin' ORDER BY id_user DESC`;
         let values = [];
     
         if (filter) {
