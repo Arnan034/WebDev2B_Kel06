@@ -7,7 +7,7 @@ services:
       - "5433:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
+      POSTGRES_PASSWORD: asdf123
       POSTGRES_DB: Film
     command: 
       - "postgres"
