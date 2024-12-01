@@ -1,0 +1,42 @@
+# Node modules dan dependensi lokal
+node_modules
+npm-debug.log
+yarn-error.log
+
+# File lingkungan
+.env
+
+# Folder build atau dist (jika ada, hasil dari build frontend/backend)
+build
+dist
+
+# File log
+*.log
+logs
+
+# File sistem atau editor
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+*.iml
+
+# Git metadata
+.git
+.gitignore
+
+# Docker metadata
+.dockerignore
+Dockerfile
+
+# File cache
+*.cache
+.cache/
+*.tmp
+
+# File testing
+coverage
+*.test.js
+*.spec.js
+__tests__/

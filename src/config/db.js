@@ -1,26 +1,26 @@
-// src/config/db.js
 const { Pool } = require('pg');
-const path = require('path');
 const dotenv = require('dotenv');
 
-// Load environment variables
+// Memuat file .env
 dotenv.config();
 
-// Tambahkan logging untuk debug
-const config = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT),
-    database: process.env.DB_DATABASE
+if (!process.env.DB_URL) {
+    console.error('DATABASE_URL is not set in .env file!');
+    process.exit(1);
+}
+
+let instance = null;
+
+const createPool = () => {
+    if (!instance) {
+        instance = new Pool({
+            connectionString: process.env.DB_URL,
+            ssl: {
+                rejectUnauthorized: false,
+            },
+        });
+    }
+    return instance;
 };
 
-console.log('Database connection config:', {
-    ...config,
-    password: '****' // Hide password in logs
-});
-
-const pool = new Pool(config);
-
-
-module.exports = pool;
+module.exports = createPool();
