@@ -46,7 +46,6 @@ const healthCheck = require('./middlewares/monitoring/health.middleware');
 
 // express app
 const app = express();
-const port = process.env.PORT;
 
 // Middleware
 app.use(cors());
@@ -109,14 +108,14 @@ if (process.env.NODE_ENV !== 'test') {
       console.log('Database connection successful:', result.rows[0]);
       
       app.listen(port, () => {
-        console.log(`Server berjalan di http://localhost:${port}`);
+        console.log(`Server berjalan di https://webdev2bkel06-production.up.railway.app/`);
       });
     })
     .catch(err => {
       console.error('Error connecting to database:', err);
       
       app.listen(port, () => {
-        console.log(`Server berjalan di http://localhost:${port} meskipun gagal terhubung ke database.`);
+        console.log(`Server berjalan di https://webdev2bkel06-production.up.railway.app/ meskipun gagal terhubung ke database.`);
       });
     });
 }
