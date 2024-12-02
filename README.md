@@ -31,8 +31,23 @@ Aplikasi ini dikembangkan menggunakan:
 ## 🌐 **Demo**
 
 Anda dapat melihat demo aplikasi yang berjalan di link berikut:
-- Front-end: [https://web-dev3-b-kel06-arn4ns-projects.vercel.app]
-- Back-end: [https://webdev3bkel06-production.up.railway.app]
+- Demo: [https://web-dev3-b-kel06-arn4ns-projects.vercel.app]
+
+---
+
+## 📄 **Feature**
+
+ada beberapa fitur yang dibangun pada aplikasi ini:
+1. **Front-end**
+   - Home Pages
+   - Search Pages
+   - Detail Films Pages
+   - Authentificated
+   - Content Management System
+2. **Back-end**
+   - Security APIs (public, authentification, admin)
+   - Performance Track
+   - Maintenability
 
 ---
 

@@ -98,6 +98,9 @@ export const apiServiceAdmin = {
   createGenre: (data) => axiosInstance.post('/admin/genre/create', data),
   updateGenre: (id, data) => axiosInstance.put(`/admin/genre/update/${id}`, data),
   deleteGenre: (id) => axiosInstance.delete(`/admin/genre/delete/${id}`),
+
+  //performance
+  performance: () => axiosInstance.get('/admin/performance')
 };
 
 // Perbaikan export default
