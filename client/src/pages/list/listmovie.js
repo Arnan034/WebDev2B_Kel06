@@ -46,8 +46,10 @@ const ListMovie = ({ filterCountry, filterMovie, SortFilm }) => {
     }, [filterCountry, filterMovie, SortFilm]);    
 
     useEffect(() => {
-        fetchMovies();
-    }, [fetchMovies]);
+        if (filterCountry || SortFilm || filterMovie) {
+            fetchMovies();
+        }
+    }, [filterCountry, filterMovie, SortFilm]);
 
     const loadMoreMovies = useCallback(async () => {
         if (loadedMovies >= movies.length) {
