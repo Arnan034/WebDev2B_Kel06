@@ -1,4 +1,9 @@
-version: '3'
+version: '3.8'
+
 services:
-  react-app:
-    build: .
+  react-nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80" # Map port 80 dari container ke host
