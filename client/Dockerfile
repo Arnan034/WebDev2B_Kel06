@@ -2,20 +2,19 @@
 FROM node:16
 
 # Tentukan direktori kerja
-WORKDIR /app/cinelux
+WORKDIR /app
 
-# Salin file package.json dan install dependencies
-COPY package.json .
+# Salin file package.json dan package-lock.json
+COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Salin seluruh kode frontend
+# Salin seluruh kode aplikasi ke dalam image
 COPY . .
 
 # Build aplikasi React
 RUN npm run build
 
-# Ekspose port untuk frontend
-EXPOSE 3000
-
-# Jalankan aplikasi
-CMD ["npm", "start"]
+# Gunakan server bawaan React untuk menjalankan aplikasi
+CMD ["npm", "run", "serve"]

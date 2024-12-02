@@ -1,30 +1,18 @@
-# Gunakan image Node.js versi stabil
-FROM node:16
+# Gunakan image resmi Node.js
+FROM node:16-alpine
 
-# Tentukan direktori kerja
-WORKDIR /app/cinelux
+# Set direktori kerja di dalam container
+WORKDIR /app
 
-# Install postgresql-client untuk psql command
-RUN apt-get update && \
-    apt-get install -y postgresql-client iputils-ping && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy wait script
-COPY wait-for-db.sh .
-RUN chmod +x wait-for-db.sh
-
-# Copy package files
+# Salin file package.json dan install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy rest of the application
+# Salin seluruh kode aplikasi ke container
 COPY . .
 
+# Expose port aplikasi
 EXPOSE 5000
 
-# Set environment variables yang dibutuhkan oleh wait script
-ENV DB_USER=postgres \
-    DB_PASSWORD=admin \
-    DB_DATABASE=Film
-
-CMD ["./wait-for-db.sh", "npm", "start"]
+# Jalankan aplikasi
+CMD ["npm", "start"]
