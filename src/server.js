@@ -47,7 +47,7 @@ const healthCheck = require('./middlewares/monitoring/health.middleware');
 // express app
 const app = express();
 const port = process.env.PORT;
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 
 // Middleware
 app.use(cors());
