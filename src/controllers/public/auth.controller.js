@@ -127,7 +127,7 @@ class AuthController {
                 logger.error('Error sending OTP', {
                     duration: Date.now() - start
                 });
-                return ApiResponse.serverError(res, `Error sending OTP`, 500);
+                return ApiResponse.serverError(res, result.message, 500);
             }
             const user = await Auth.createUser(username, email, hashedPassword, pictureBuffer);
             
