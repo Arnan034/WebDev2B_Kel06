@@ -28,6 +28,14 @@ Aplikasi ini dikembangkan menggunakan:
 
 ---
 
+## 🌐 **Demo**
+
+Anda dapat melihat demo aplikasi yang berjalan di link berikut:
+- Front-end: [https://web-dev3-b-kel06-arn4ns-projects.vercel.app]
+- Back-end: [https://webdev3bkel06-production.up.railway.app]
+
+---
+
 ## 🚀 **Cara Instalasi**
 
 Ikuti langkah-langkah di bawah ini untuk menjalankan proyek ini di lingkungan Anda.

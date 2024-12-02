@@ -24,7 +24,7 @@ EXPOSE 5000
 
 # Set environment variables yang dibutuhkan oleh wait script
 ENV DB_USER=postgres \
-    DB_PASSWORD=admin \
+    DB_PASSWORD=asdf123 \
     DB_DATABASE=Film
 
 CMD ["./wait-for-db.sh", "npm", "start"]
