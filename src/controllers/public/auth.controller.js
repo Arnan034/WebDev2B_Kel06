@@ -56,7 +56,7 @@ class AuthController {
                 return ApiResponse.error(res, 'User has been blacklisted', 403);
             }
 
-            if(!user.id_google){
+            if(user.id_google){
                 authLogger.error('User sign-in using Google', {
                     duration: Date.now() - start
                 });
