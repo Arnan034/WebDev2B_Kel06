@@ -6,4 +6,4 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "80:80" # Map port 80 dari container ke host
+      - "80:80"

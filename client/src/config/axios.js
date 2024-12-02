@@ -1,6 +1,5 @@
 import axios from 'axios';
-const API_URL = process.env.REACT_APP_API_BASE_URL;
-console.log(API_URL)
+const API_URL = 'https://webdev3bkel06-production.up.railway.app';
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
