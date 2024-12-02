@@ -3,18 +3,18 @@ const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const OAuth2 = google.auth.OAuth2;
 
-const createTransporter = async () => {
+const oauth2Client = new OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    process.env.GOOGLE_REDIRECT_URI
+);
+
+oauth2Client.setCredentials({
+    refresh_token: process.env.GOOGLE_REFRESH_TOKEN
+});
+
+const createTransporter = async (accessToken) => {
     try {
-        const oauth2Client = new OAuth2(
-            process.env.GOOGLE_CLIENT_ID,
-            process.env.GOOGLE_CLIENT_SECRET,
-            process.env.GOOGLE_REDIRECT_URI
-        );
-
-        oauth2Client.setCredentials({
-            refresh_token: process.env.GOOGLE_REFRESH_TOKEN
-        });
-
         const transporter = nodemailer.createTransport({
             pool: true,
             maxConnections: 10,
@@ -28,8 +28,8 @@ const createTransporter = async () => {
                 clientId: process.env.GOOGLE_CLIENT_ID,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
                 refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
-                accessToken: process.env.GOOGLE_ACCESS_TOKEN
-                // accessToken: accessToken
+                // accessToken: process.env.GOOGLE_ACCESS_TOKEN
+                accessToken: accessToken
             },
             tls: {
                 rejectUnauthorized: false
@@ -42,11 +42,14 @@ const createTransporter = async () => {
     }
 };
 
+let accessToken_ = null;
 let transporter = null;
 const getTransporter = async () => {
-    if (!transporter) {
-        transporter = await createTransporter();
-    }
+    const accessToken = await oauth2Client.getAccessToken();
+    if((!transporter && !accessToken_) || (accessToken_ !== accessToken)){
+        accessToken_ = accessToken;
+        transporter = await createTransporter(accessToken);
+    } 
     return transporter;
 };
 
