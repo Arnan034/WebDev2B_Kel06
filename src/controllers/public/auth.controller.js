@@ -99,7 +99,7 @@ class AuthController {
         const { username, email, password, picture } = req.body;
         try {
             const checkUsername = await Auth.checkUsername(username);
-
+            console.log('berhasil check');
             if (checkUsername){
                 logger.error('Username already registered', {
                     duration: Date.now() - start
@@ -145,7 +145,7 @@ class AuthController {
                 error: error.message,
                 duration: Date.now() - start
             });
-            return ApiResponse.serverError(res, 'Server error', error);
+            return ApiResponse.serverError(res, error.message , error);
         }
     }
 
