@@ -67,7 +67,7 @@ const sendEmail = async (email, type, data) => {
                 break;
             case 'forget-password':
                 mailOptions.subject = 'Reset Your Password';
-                mailOptions.html = `<p>You requested a password reset</p><p>Click this <a href="http://localhost:3000/resetPassword?token=${data.token}">link</a> to reset your password</p>`;
+                mailOptions.html = `<p>You requested a password reset</p><p>Click this <a href="https://web-dev3-b-kel06-arn4ns-projects.vercel.app/resetPassword?token=${data.token}">link</a> to reset your password</p>`;
                 break;
             default:
                 throw new Error('Invalid email type');
