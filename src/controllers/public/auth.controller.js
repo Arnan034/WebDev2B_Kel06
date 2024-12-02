@@ -55,6 +55,13 @@ class AuthController {
                 });
                 return ApiResponse.error(res, 'User has been blacklisted', 403);
             }
+
+            if(!user.id_google){
+                authLogger.error('User sign-in using Google', {
+                    duration: Date.now() - start
+                });
+                return ApiResponse.error(res, 'User sign-in using Google', 400);
+            }
     
             const isPasswordMatch = await comparePassword(password, user.password);
 
@@ -230,6 +237,14 @@ class AuthController {
                 await Auth.createGoogleAuth(googleUser.name, googleUser.email, googleUser.sub, pictureBuffer);
                 user = await Auth.getUserIdGoogle(googleUser.sub);
             }
+
+            if (!user.status){
+                authLogger.error('User has been blacklisted', {
+                    duration: Date.now() - start
+                });
+                return ApiResponse.error(res, 'User has been blacklisted', 403);
+            }
+            
             const token = generateToken({ id_user: user.id_user, username: user.username }, '1h' );
     
             logger.info('Success sign-in Google', {
@@ -274,6 +289,13 @@ class AuthController {
         const { email } = req.body;
         try {
             const checkEmail = await Auth.checkEmail(email);
+            if(checkEmail.id_google){
+                authLogger.error('User sign-in using Google', {
+                    duration: Date.now() - start
+                });
+                return ApiResponse.error(res, 'User sign-in using Google', 400);
+            }
+
             if (!checkEmail) {
                 return ApiResponse.error(res, 'Email Not Registered', 404);
             }

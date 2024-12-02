@@ -22,14 +22,14 @@ const recordMetric = (data) => {
     metrics.requests[key].count++;
     metrics.requests[key].totalDuration += duration;
     metrics.requests[key].avgDuration = 
-      metrics.requests[key].totalDuration / metrics.requests[key].count;
+    metrics.requests[key].totalDuration / metrics.requests[key].count;
   
     // Record status codes
     metrics.requests[key].statusCodes[statusCode] = 
       (metrics.requests[key].statusCodes[statusCode] || 0) + 1;
   
     // Record slow requests (> 1000ms)
-    if (duration > 1000) {
+    if (duration > 5000) {
       metrics.slowRequests.push({
         path,
         method,

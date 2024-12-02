@@ -52,7 +52,7 @@ class AuthModel {
     }
 
     static async checkEmail(email) {
-        const query = 'SELECT email, is_verified FROM "user" WHERE email = $1;';
+        const query = 'SELECT email, is_verified, id_google FROM "user" WHERE email = $1;';
         const result = await QueryOptimizer.executeQuery(pool, query, [email], 'checkEmail');
         return result[0];
     }

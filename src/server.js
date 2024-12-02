@@ -47,6 +47,7 @@ const healthCheck = require('./middlewares/monitoring/health.middleware');
 // express app
 const app = express();
 const port = process.env.PORT;
+app.set('trust proxy', true);
 
 // Middleware
 app.use(cors());
@@ -92,15 +93,6 @@ adminRoutes.get('/performance', (req, res) => {
     res.json(metrics);
 });
 app.use('/admin', adminRoutes);
-
-// fitur untuk melakukan check db
-// app.get('/health', healthCheck);
-
-// app.get('/metrics', async (req, res) => {
-//     res.set('Content-Type', register.contentType);
-//     res.end(await register.metrics());
-// });
-
 
 // Jalankan server
 if (process.env.NODE_ENV !== 'test') {
