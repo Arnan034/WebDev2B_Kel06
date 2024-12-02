@@ -19,14 +19,15 @@ const DetailFilm = ({isAuthenticated, handleLogout}) => {
 
     // Fetch data dari API saat komponen dimuat
     useEffect(() => {
+        setLoading(true);
         const fetchMovieData = async () => {
             try {
                 const response = await apiServicePublic.getFilmById(id);
                 setMovieData(response.data.data); // Set data film ke state
-                setLoading(false); // Set loading menjadi false setelah data diambil
             } catch (error) {
                 console.error('Error fetching movie data:', error);
-                setLoading(false); // Set loading menjadi false meskipun ada error
+            } finally {
+                setLoading(false);
             }
         };
 

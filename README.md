@@ -104,7 +104,7 @@ Ikuti langkah-langkah di bawah ini untuk menjalankan proyek ini di lingkungan An
    Ubah nilai variabel `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, dan `DB_NAME` sesuai konfigurasi PostgreSQL Anda.
 4. **Menjalankan Backend**
    ```bash
-   node server
+   npm start
    ```
    Backend akan tersedia di: http://localhost:5000.
 
