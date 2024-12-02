@@ -73,7 +73,6 @@ const sendEmail = async (email, type, data) => {
                 throw new Error('Invalid email type');
         }
 
-        const start = Date.now();
         const info = await emailTransporter.sendMail(mailOptions);
         return info;
     } catch (error) {

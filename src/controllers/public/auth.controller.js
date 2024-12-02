@@ -94,7 +94,7 @@ class AuthController {
         return ApiResponse.success(res, null, 'Logout successful', 200);
     }
 
-    static async signup (req, res, next) {
+    static async signup (req, res) {
         const start = Date.now();
         const { username, email, password, picture } = req.body;
         try {
@@ -129,9 +129,8 @@ class AuthController {
                 });
                 return ApiResponse.serverError(res, `Error sending OTP`, 500);
             }
-
             const user = await Auth.createUser(username, email, hashedPassword, pictureBuffer);
-
+            
             logger.info('Success sign-up OTP', {
                 username: username,
                 email: email,
