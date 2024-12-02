@@ -71,12 +71,22 @@ const DetailFilm = ({isAuthenticated, handleLogout}) => {
         window.history.back();
     };
 
-    if (loading) {
-        return <div>Loading...</div>; // Menampilkan loading jika data belum selesai diambil
-    }
-
     if (!movieData) {
-        return <div>Movie not found</div>; // Menampilkan pesan jika film tidak ditemukan
+        if (loading) {
+            return (
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div class="d-flex justify-content-center">
+                    <h2>Film Not found</h2>
+                </div>
+            );
+        }
     }
 
     return (

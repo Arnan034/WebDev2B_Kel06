@@ -7,10 +7,12 @@ const ListMovie = () => {
     const [loadedMovies, setLoadedMovies] = useState(12);
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const [waitFetch, setWaitFetch] = useState(true);
 
     const user_id = sessionStorage.getItem('id_user')
 
     const fetchMovies = useCallback(async () => {
+        setWaitFetch(true);
         try {
             const response = await apiServiceAuth.getBookmarkFilm(user_id);
     
@@ -29,6 +31,8 @@ const ListMovie = () => {
             setHasMore(formattedMovies.length > 12);
         } catch (error) {
             console.error('Error fetching movie data:', error);
+        } finally {
+            setWaitFetch(false)
         }
     }, [user_id]);    
 
@@ -70,6 +74,16 @@ const ListMovie = () => {
         }
         return stars.join('');
     };
+
+    if (waitFetch){
+        return (
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        ) 
+    }
 
     return (
         <div className="row">

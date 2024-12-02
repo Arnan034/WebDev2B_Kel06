@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { apiServicePublic } from '../../services/api';
 
 const ListActor = ({ id }) => {
-    const [actors, setActors] = useState([]); // Store fetched actors
-    const [loading, setLoading] = useState(true); // Loading state
-    const actorListRef = useRef(null); // Ref to access the actor list
+    const [actors, setActors] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const actorListRef = useRef(null);
 
     useEffect(() => {
         const fetchActors = async () => {
@@ -22,7 +22,11 @@ const ListActor = ({ id }) => {
     }, [id]);
 
     if (loading) {
-        return <div>Loading...</div>; // Show loading indicator while data is being fetched
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div> // Show loading indicator while data is being fetched
     }
     
     const scrollActors = (direction) => {

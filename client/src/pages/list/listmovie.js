@@ -9,9 +9,10 @@ const ListMovie = ({ filterCountry, filterMovie, SortFilm }) => {
     const [loadedMovies, setLoadedMovies] = useState(12);
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const [loadingfilm, setLoadingfilm] = useState(false);
 
     const fetchMovies = useCallback(async () => {
-        console.log("Fetching movies with filters:", filterMovie);
+        setLoadingfilm(true);
         try {
             const response = await apiServicePublic.getAllFilm({
                 country: filterCountry,
@@ -39,6 +40,8 @@ const ListMovie = ({ filterCountry, filterMovie, SortFilm }) => {
             setHasMore(formattedMovies.length > 12);
         } catch (error) {
             console.error('Error fetching movie data:', error);
+        } finally {
+            setLoadingfilm(false);
         }
     }, [filterCountry, filterMovie, SortFilm]);    
 
@@ -58,8 +61,8 @@ const ListMovie = ({ filterCountry, filterMovie, SortFilm }) => {
         // Simulasi delay 3 detik
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        setLoadedMovies((prevLoadedMovies) => prevLoadedMovies + 12); // Tambahkan 12 film lagi
-        setIsLoading(false); // Set loading state to false
+        setLoadedMovies((prevLoadedMovies) => prevLoadedMovies + 12);
+        setIsLoading(false);
     }, [loadedMovies, movies.length]);
 
     useEffect(() => {
@@ -103,33 +106,41 @@ const ListMovie = ({ filterCountry, filterMovie, SortFilm }) => {
 
     return (
         <div className="row">
-            {movies.slice(0, loadedMovies).map((movie, index) => (
-                <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={index}>
-                    <div onClick={() => handleMovieClick(movie.id)}>
-                        <div className="card bg-transparent">
-                            <img src={movie.imgSrc} className="card-img-top" alt="Movie Img" />
-                            <span className={`badge ${movie.badge === "On Going" ? "on-going" : "completed"}`}>
-                                {movie.badge}
-                            </span>
-                            <div className="card-body">
-                                <h5 className="card-title">{movie.title}</h5>
-                                <p className="card-text">{movie.year}</p>
-                                <p className="card-text">{movie.genres}</p>
-                                <div className="rating-container">
-                                    <p className="card-text mb-0 rating" 
-                                        data-bs-toggle="tooltip" 
-                                        data-bs-placement="top"
-                                        data-bs-custom-class="custom-tooltip"
-                                        data-bs-title={`Rating: ${movie.rating}`}>
-                                            {renderStars(movie.rating)}
-                                    </p>
-                                    {movie.views && <p className="card-text mb-0">views {movie.views}</p>}
+            {loadingfilm ? (
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            ) : (
+                movies.slice(0, loadedMovies).map((movie, index) => (
+                    <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={index}>
+                        <div onClick={() => handleMovieClick(movie.id)}>
+                            <div className="card bg-transparent">
+                                <img src={movie.imgSrc} className="card-img-top" alt="Movie Img" />
+                                <span className={`badge ${movie.badge === "On Going" ? "on-going" : "completed"}`}>
+                                    {movie.badge}
+                                </span>
+                                <div className="card-body">
+                                    <h5 className="card-title">{movie.title}</h5>
+                                    <p className="card-text">{movie.year}</p>
+                                    <p className="card-text">{movie.genres}</p>
+                                    <div className="rating-container">
+                                        <p className="card-text mb-0 rating" 
+                                            data-bs-toggle="tooltip" 
+                                            data-bs-placement="top"
+                                            data-bs-custom-class="custom-tooltip"
+                                            data-bs-title={`Rating: ${movie.rating}`}>
+                                                {renderStars(movie.rating)}
+                                        </p>
+                                        {movie.views && <p className="card-text mb-0">views {movie.views}</p>}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            ))}
+                ))
+            )}
             {isLoading && (
                 <div className="d-flex justify-content-center loading-spinner">
                     {/* Gambar Spinner */}
@@ -138,7 +149,7 @@ const ListMovie = ({ filterCountry, filterMovie, SortFilm }) => {
                     </div>
                 </div>
             )}
-            {!hasMore && !isLoading && <p>No more movies to load.</p>} {/* Optional message when there are no more movies */}
+            {!hasMore && !isLoading && <p>No more movies to load.</p>}
         </div>
     );
 };
