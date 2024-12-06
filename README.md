@@ -31,19 +31,27 @@ Aplikasi ini dikembangkan menggunakan:
 ## 🌐 **Demo**
 
 Anda dapat melihat demo aplikasi yang berjalan di link berikut:
-- Demo: [https://web-dev3-b-kel06-arn4ns-projects.vercel.app]
+   - Demo: [https://web-dev3-b-kel06-arn4ns-projects.vercel.app](https://web-dev3-b-kel06-arn4ns-projects.vercel.app)  
+
+**Akun Admin:**
+   - Username: `admin`
+   - Password: `password`
+
+**Akun User:**
+   - Username: `users`
+   - Password: `users`
 
 ---
 
 ## 📄 **Feature**
 
-ada beberapa fitur yang dibangun pada aplikasi ini:
+Ada beberapa fitur yang dibangun pada aplikasi ini, yaitu:
 1. **Front-end**
    - Home Pages
    - Search Pages
    - Detail Films Pages
    - Authentificated
-   - Content Management System
+   - Content Management System (CMS)
 2. **Back-end**
    - Security APIs (public, authentification, admin)
    - Performance Track
